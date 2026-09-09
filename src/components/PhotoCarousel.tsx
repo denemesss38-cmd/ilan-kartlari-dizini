@@ -30,7 +30,7 @@ function usePrefersReducedMotion() {
  * İlan fotoğrafları için otomatik geçişli galeri.
  * - Tekli (split=1) veya üçlü kolaj (split=3) modu.
  * - Mobilde yatay swipe, masaüstünde önce/sonra kontrolleri ve noktalar.
- * - Dokunma/kaydırma/fare ile etkileşimde otomatik geçiş duraklar, sonra devam eder.
+ * - Otomatik geçiş sürekli döner; kullanıcı müdahalesi durdurmaz.
  * - Tek fotoğrafta kontroller ve otomatik geçiş gösterilmez; fotoğraf yoksa zarif yer tutucu.
  */
 export function PhotoCarousel({
@@ -44,10 +44,8 @@ export function PhotoCarousel({
   const count = list.length;
   const split = Math.max(1, Math.min(3, splitProp ?? 1));
   const [index, setIndex] = useState(0);
-  const [paused, setPaused] = useState(false);
   const reduced = usePrefersReducedMotion();
   const touch = useRef<{ x: number; y: number; horizontal: boolean | null } | null>(null);
-  const resume = useRef<number | null>(null);
 
   const canTriptych = count >= split && split > 1;
   const slideCount = canTriptych ? count : count > 1 ? count : 1;
@@ -62,23 +60,14 @@ export function PhotoCarousel({
     [slideCount],
   );
 
-  /** Etkileşimden sonra otomatik geçişi kısa bir gecikmeyle sürdürür. */
-  const pauseThenResume = useCallback((delay = 2500) => {
-    setPaused(true);
-    if (resume.current) window.clearTimeout(resume.current);
-    resume.current = window.setTimeout(() => setPaused(false), delay);
-  }, []);
-
-  useEffect(() => () => void (resume.current && window.clearTimeout(resume.current)), []);
-
   useEffect(() => {
-    if (!autoplay || paused) return;
+    if (!autoplay) return;
     const id = window.setInterval(
       () => setIndex((i) => (i + 1) % slideCount),
       Math.max(1, intervalSeconds) * 1000,
     );
     return () => window.clearInterval(id);
-  }, [autoplay, paused, slideCount, intervalSeconds]);
+  }, [autoplay, slideCount, intervalSeconds]);
 
   if (count === 0) {
     return (
@@ -105,14 +94,11 @@ export function PhotoCarousel({
   return (
     <div
       className={`group relative overflow-hidden bg-secondary/70 ${className ?? ""}`}
-      onMouseEnter={() => !single && setPaused(true)}
-      onMouseLeave={() => !single && setPaused(false)}
       onTouchStart={(e) => {
         if (single) return;
         const t = e.touches[0];
         if (!t) return;
         touch.current = { x: t.clientX, y: t.clientY, horizontal: null };
-        setPaused(true);
       }}
       onTouchMove={(e) => {
         const start = touch.current;
@@ -129,7 +115,6 @@ export function PhotoCarousel({
       onTouchEnd={(e) => {
         const start = touch.current;
         touch.current = null;
-        pauseThenResume();
         const end = e.changedTouches[0];
         if (!start || !end || start.horizontal !== true) return;
         const dx = end.clientX - start.x;
@@ -170,10 +155,7 @@ export function PhotoCarousel({
           <button
             type="button"
             aria-label="Önceki fotoğraf"
-            onClick={() => {
-              go(index - 1);
-              pauseThenResume();
-            }}
+            onClick={() => go(index - 1)}
             className="absolute left-1.5 top-1/2 z-10 hidden -translate-y-1/2 place-items-center rounded-full bg-background/70 p-2 text-foreground ring-1 ring-border transition-opacity hover:bg-background md:grid"
           >
             <ChevronLeft className="size-5" />
@@ -181,10 +163,7 @@ export function PhotoCarousel({
           <button
             type="button"
             aria-label="Sonraki fotoğraf"
-            onClick={() => {
-              go(index + 1);
-              pauseThenResume();
-            }}
+            onClick={() => go(index + 1)}
             className="absolute right-1.5 top-1/2 z-10 hidden -translate-y-1/2 place-items-center rounded-full bg-background/70 p-2 text-foreground ring-1 ring-border transition-opacity hover:bg-background md:grid"
           >
             <ChevronRight className="size-5" />
@@ -197,10 +176,7 @@ export function PhotoCarousel({
                 type="button"
                 aria-label={`${i + 1}. fotoğraf grubunu göster`}
                 aria-current={i === index}
-                onClick={() => {
-                  go(i);
-                  pauseThenResume();
-                }}
+                onClick={() => go(i)}
                 className="grid h-6 w-4 place-items-center"
               >
                 <span
