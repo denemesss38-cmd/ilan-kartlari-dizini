@@ -16,9 +16,14 @@ const { pool } = require("./db");
       "/static/samples/placeholder-3.jpg",
     ];
     const demo = [
-      ["Ayşe Y.", "Profesyonel özel ders ve etüt desteği.", "Diyarbakır / Bağlar", "905551112233", "VIP", "Kendi yeri var"],
-      ["Mehmet K.", "Ev ve ofis taşıma, montaj hizmeti.", "Diyarbakır / Kayapınar", "905551112244", null, "Apart"],
-      ["Zeynep D.", "Kurumsal fotoğraf ve ürün çekimi.", "Diyarbakır / Sur", "905551112255", "YENİ", "Otel"],
+      ["Ayşe Y.", "Profesyonel özel ders ve etüt desteği. Hafta içi her saat müsait.", "Diyarbakır / Bağlar", "905551112233", "VIP", "Kendi yeri var"],
+      ["Mehmet K.", "Ev ve ofis taşıma, montaj hizmeti. Şehir içi hızlı çözüm.", "Diyarbakır / Kayapınar", "905551112244", null, "Apart"],
+      ["Zeynep D.", "Kurumsal fotoğraf ve ürün çekimi. Portföy talep üzerine.", "Diyarbakır / Sur", "905551112255", "YENİ", "Otel"],
+      ["Burak A.", "Klima bakım ve tesisat işleri. Aynı gün randevu imkânı.", "Diyarbakır / Yenişehir", "905551112266", null, "Kendi yeri var"],
+      ["Elif S.", "Bilgisayar ve telefon teknik servis desteği.", "Diyarbakır / Bağlar", "905551112277", "VIP", "Ev"],
+      ["Kerem T.", "Boya, badana ve küçük tadilat işleri.", "Diyarbakır / Kayapınar", "905551112288", null, "Apart"],
+      ["Derya M.", "Etkinlik organizasyon ve ikram hizmetleri.", "Diyarbakır / Sur", "905551112299", "YENİ", "Rezidans"],
+      ["Onur B.", "Oto detaylı temizlik ve iç bakım hizmeti.", "Diyarbakır / Yenişehir", "905551113300", null, "Otel"],
     ];
     for (let i = 0; i < demo.length; i += 1) {
       const [name, description, location, phone, badge, venue] = demo[i];
