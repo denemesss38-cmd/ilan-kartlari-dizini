@@ -26,6 +26,16 @@ const app = express();
 app.disable("x-powered-by");
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: false }));
+app.use((_req, res, next) => {
+  res.set({
+    "X-Content-Type-Options": "nosniff",
+    "X-Frame-Options": "DENY",
+    "Referrer-Policy": "strict-origin-when-cross-origin",
+    "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+    "Content-Security-Policy": "default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'",
+  });
+  next();
+});
 app.use("/static", express.static(path.join(__dirname, "public"), { maxAge: "7d" }));
 app.use("/uploads", express.static(UPLOAD_DIR, { maxAge: "30d" }));
 
@@ -33,12 +43,13 @@ const upload = multer({
   storage: multer.diskStorage({
     destination: (_req, _file, cb) => cb(null, UPLOAD_DIR),
     filename: (_req, file, cb) => {
-      const ext = (path.extname(file.originalname) || ".jpg").toLowerCase().slice(0, 5);
+      const extensions = { "image/jpeg": ".jpg", "image/png": ".png", "image/webp": ".webp", "image/gif": ".gif" };
+      const ext = extensions[file.mimetype] || ".jpg";
       cb(null, `${Date.now()}-${crypto.randomBytes(6).toString("hex")}${ext}`);
     },
   }),
   limits: { fileSize: 8 * 1024 * 1024, files: 12 },
-  fileFilter: (_req, file, cb) => cb(null, /^image\//.test(file.mimetype)),
+  fileFilter: (_req, file, cb) => cb(null, ["image/jpeg", "image/png", "image/webp", "image/gif"].includes(file.mimetype)),
 });
 
 /* ---------------- oturum ---------------- */
@@ -70,6 +81,40 @@ function passwordMatches(input) {
 function requireAdmin(req, res, next) {
   if (isValidToken(req.cookies[COOKIE])) return next();
   return res.redirect("/admin/login");
+}
+
+function csrfToken(req, res) {
+  const current = req.cookies.il_csrf;
+  if (typeof current === "string" && /^[a-f0-9]{64}$/.test(current)) return current;
+  const token = crypto.randomBytes(32).toString("hex");
+  res.cookie("il_csrf", token, {
+    httpOnly: true,
+    sameSite: "strict",
+    secure: req.protocol === "https" || req.headers["x-forwarded-proto"] === "https",
+    path: "/",
+  });
+  return token;
+}
+
+function requireCsrf(req, res, next) {
+  const cookie = String(req.cookies.il_csrf || "");
+  const body = String(req.body._csrf || "");
+  if (cookie.length === body.length && cookie.length === 64 && crypto.timingSafeEqual(Buffer.from(cookie), Buffer.from(body))) return next();
+  removeUploaded(req.files);
+  return res.status(403).type("html").send("<p>Güvenlik doğrulaması başarısız. Sayfayı yenileyip tekrar deneyin.</p>");
+}
+
+function validId(req, res, next) {
+  if (!/^\d+$/.test(String(req.params.id || ""))) return res.status(400).send("Geçersiz kayıt.");
+  next();
+}
+
+function cleanText(value, max) {
+  return String(value ?? "").trim().slice(0, max);
+}
+
+function removeUploaded(files) {
+  for (const file of files || []) fs.promises.unlink(file.path).catch(() => {});
 }
 
 /* ---------------- veri ---------------- */
@@ -128,10 +173,10 @@ app.get("/robots.txt", (_req, res) => {
 
 app.get("/admin/login", (req, res) => {
   if (isValidToken(req.cookies[COOKIE])) return res.redirect("/admin");
-  res.type("html").send(loginPage(req.query.hata ? "Şifre hatalı." : ""));
+  res.type("html").send(loginPage(req.query.hata ? "Şifre hatalı." : "", csrfToken(req, res)));
 });
 
-app.post("/admin/login", (req, res) => {
+app.post("/admin/login", requireCsrf, (req, res) => {
   if (!passwordMatches(req.body.password || "")) return res.redirect("/admin/login?hata=1");
   res.cookie(COOKIE, makeToken(), {
     httpOnly: true,
@@ -143,24 +188,24 @@ app.post("/admin/login", (req, res) => {
   res.redirect("/admin");
 });
 
-app.get("/admin/logout", (_req, res) => {
+app.post("/admin/logout", requireAdmin, requireCsrf, (_req, res) => {
   res.clearCookie(COOKIE, { path: "/" });
   res.redirect("/admin/login");
 });
 
-app.get("/admin", requireAdmin, async (_req, res, next) => {
+app.get("/admin", requireAdmin, async (req, res, next) => {
   try {
     const [settings, listings] = await Promise.all([
       getSettings(),
       pool.query(`SELECT ${LISTING_COLUMNS} FROM listings ORDER BY sort_order ASC, created_at DESC`),
     ]);
-    res.type("html").send(adminPage({ listings: listings.rows, settings }));
+    res.type("html").send(adminPage({ listings: listings.rows, settings, csrf: csrfToken(req, res) }));
   } catch (err) {
     next(err);
   }
 });
 
-app.post("/admin/settings", requireAdmin, async (req, res, next) => {
+app.post("/admin/settings", requireAdmin, requireCsrf, async (req, res, next) => {
   try {
     const keys = [
       "site_city",
@@ -172,7 +217,8 @@ app.post("/admin/settings", requireAdmin, async (req, res, next) => {
       "seo_description",
       "seo_keywords",
     ];
-    for (const k of keys) await saveSetting(k, req.body[k]);
+    const limits = { site_city: 80, site_title: 100, site_subtitle: 160, site_name: 120, promo_whatsapp: 20, seo_title: 70, seo_description: 180, seo_keywords: 300 };
+    for (const k of keys) await saveSetting(k, cleanText(req.body[k], limits[k]));
     const secs = Math.min(30, Math.max(0, parseInt(req.body.carousel_interval_seconds, 10) || 0));
     await saveSetting("carousel_interval_seconds", String(secs));
     res.redirect("/admin");
@@ -181,8 +227,12 @@ app.post("/admin/settings", requireAdmin, async (req, res, next) => {
   }
 });
 
-app.post("/admin/listings", requireAdmin, upload.array("photos", 12), async (req, res, next) => {
+app.post("/admin/listings", requireAdmin, upload.array("photos", 12), requireCsrf, async (req, res, next) => {
   try {
+    if (!cleanText(req.body.name, 80)) {
+      removeUploaded(req.files);
+      return res.status(400).type("html").send("<p>İlan adı zorunludur.</p>");
+    }
     const newUrls = (req.files || []).map((f) => `/uploads/${f.filename}`);
     const sortOrder = parseInt(req.body.sort_order, 10);
     await pool.query(
@@ -190,13 +240,13 @@ app.post("/admin/listings", requireAdmin, upload.array("photos", 12), async (req
        VALUES ($1, $2, $3, $4, $5, NULLIF($6, ''), NULLIF($7, ''), $8::text[],
                COALESCE($9, (SELECT MAX(sort_order) + 1 FROM listings), 1), $10)`,
       [
-        req.body.name,
-        req.body.description || "",
-        req.body.location || "",
-        req.body.phone || "",
-        req.body.whatsapp || "",
-        req.body.badge || "",
-        req.body.venue || "",
+        cleanText(req.body.name, 80),
+        cleanText(req.body.description, 300),
+        cleanText(req.body.location, 80),
+        cleanText(req.body.phone, 20),
+        cleanText(req.body.whatsapp, 20).replace(/\D/g, ""),
+        cleanText(req.body.badge, 20),
+        cleanText(req.body.venue, 40),
         newUrls,
         Number.isFinite(sortOrder) ? sortOrder : null,
         req.body.is_published === undefined ? true : Boolean(req.body.is_published),
@@ -204,13 +254,18 @@ app.post("/admin/listings", requireAdmin, upload.array("photos", 12), async (req
     );
     res.redirect("/admin");
   } catch (err) {
+    removeUploaded(req.files);
     next(err);
   }
 });
 
 
-app.post("/admin/listings/:id", requireAdmin, upload.array("photos", 12), async (req, res, next) => {
+app.post("/admin/listings/:id", requireAdmin, validId, upload.array("photos", 12), requireCsrf, async (req, res, next) => {
   try {
+    if (!cleanText(req.body.name, 80)) {
+      removeUploaded(req.files);
+      return res.status(400).type("html").send("<p>İlan adı zorunludur.</p>");
+    }
     const newUrls = (req.files || []).map((f) => `/uploads/${f.filename}`);
     await pool.query(
       `UPDATE listings SET
@@ -220,13 +275,13 @@ app.post("/admin/listings/:id", requireAdmin, upload.array("photos", 12), async 
          photos = photos || $10::text[], updated_at = now()
        WHERE id = $11`,
       [
-        req.body.name,
-        req.body.description || "",
-        req.body.location || "",
-        req.body.phone || "",
-        req.body.whatsapp || "",
-        req.body.badge || "",
-        req.body.venue || "",
+         cleanText(req.body.name, 80),
+         cleanText(req.body.description, 300),
+         cleanText(req.body.location, 80),
+         cleanText(req.body.phone, 20),
+         cleanText(req.body.whatsapp, 20).replace(/\D/g, ""),
+         cleanText(req.body.badge, 20),
+         cleanText(req.body.venue, 40),
         parseInt(req.body.sort_order, 10) || 0,
         Boolean(req.body.is_published),
         newUrls,
@@ -235,12 +290,13 @@ app.post("/admin/listings/:id", requireAdmin, upload.array("photos", 12), async 
     );
     res.redirect("/admin");
   } catch (err) {
+    removeUploaded(req.files);
     next(err);
   }
 });
 
 /** Yayın durumunu tek dokunuşla açar/kapatır. */
-app.get("/admin/listings/:id/toggle", requireAdmin, async (req, res, next) => {
+app.post("/admin/listings/:id/toggle", requireAdmin, validId, requireCsrf, async (req, res, next) => {
   try {
     await pool.query("UPDATE listings SET is_published = NOT is_published, updated_at = now() WHERE id = $1", [
       req.params.id,
@@ -252,10 +308,10 @@ app.get("/admin/listings/:id/toggle", requireAdmin, async (req, res, next) => {
 });
 
 /** İlanı bir üste veya bir alta taşır (komşusuyla sıra değiştirir). */
-app.get("/admin/listings/:id/move", requireAdmin, async (req, res, next) => {
+app.post("/admin/listings/:id/move", requireAdmin, validId, requireCsrf, async (req, res, next) => {
   const client = await pool.connect();
   try {
-    const dir = req.query.dir === "up" ? "up" : "down";
+    const dir = req.body.dir === "up" ? "up" : "down";
     await client.query("BEGIN");
     const { rows } = await client.query(
       "SELECT id, sort_order FROM listings ORDER BY sort_order ASC, created_at DESC",
@@ -284,9 +340,9 @@ app.get("/admin/listings/:id/move", requireAdmin, async (req, res, next) => {
   }
 });
 
-app.get("/admin/listings/:id/photo/delete", requireAdmin, async (req, res, next) => {
+app.post("/admin/listings/:id/photo/delete", requireAdmin, validId, upload.none(), requireCsrf, async (req, res, next) => {
   try {
-    const url = String(req.query.url || "");
+    const url = String(req.body.url || "");
     await pool.query("UPDATE listings SET photos = array_remove(photos, $1), updated_at = now() WHERE id = $2", [
       url,
       req.params.id,
@@ -302,10 +358,10 @@ app.get("/admin/listings/:id/photo/delete", requireAdmin, async (req, res, next)
 });
 
 /** Fotoğrafı sırada sola/sağa taşır veya kapak yapar. */
-app.get("/admin/listings/:id/photo/move", requireAdmin, async (req, res, next) => {
+app.post("/admin/listings/:id/photo/move", requireAdmin, validId, upload.none(), requireCsrf, async (req, res, next) => {
   try {
-    const url = String(req.query.url || "");
-    const dir = String(req.query.dir || "left");
+    const [dir, ...urlParts] = String(req.body.move || "left|").split("|");
+    const url = urlParts.join("|");
     const { rows } = await pool.query("SELECT photos FROM listings WHERE id = $1", [req.params.id]);
     const photos = rows[0]?.photos || [];
     const index = photos.indexOf(url);
@@ -326,7 +382,7 @@ app.get("/admin/listings/:id/photo/move", requireAdmin, async (req, res, next) =
 });
 
 
-app.get("/admin/listings/:id/delete", requireAdmin, async (req, res, next) => {
+app.post("/admin/listings/:id/delete", requireAdmin, validId, upload.none(), requireCsrf, async (req, res, next) => {
   try {
     const { rows } = await pool.query("DELETE FROM listings WHERE id = $1 RETURNING photos", [req.params.id]);
     (rows[0]?.photos || []).forEach((url) => {
