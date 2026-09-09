@@ -181,18 +181,33 @@ app.post("/admin/settings", requireAdmin, async (req, res, next) => {
   }
 });
 
-app.post("/admin/listings", requireAdmin, async (req, res, next) => {
+app.post("/admin/listings", requireAdmin, upload.array("photos", 12), async (req, res, next) => {
   try {
+    const newUrls = (req.files || []).map((f) => `/uploads/${f.filename}`);
+    const sortOrder = parseInt(req.body.sort_order, 10);
     await pool.query(
-      `INSERT INTO listings (name, location, phone, whatsapp, sort_order)
-       VALUES ($1, $2, $3, $4, COALESCE((SELECT MAX(sort_order) + 1 FROM listings), 1))`,
-      [req.body.name, req.body.location || "", req.body.phone || "", req.body.whatsapp || ""],
+      `INSERT INTO listings (name, description, location, phone, whatsapp, badge, venue, photos, sort_order, is_published)
+       VALUES ($1, $2, $3, $4, $5, NULLIF($6, ''), NULLIF($7, ''), $8::text[],
+               COALESCE($9, (SELECT MAX(sort_order) + 1 FROM listings), 1), $10)`,
+      [
+        req.body.name,
+        req.body.description || "",
+        req.body.location || "",
+        req.body.phone || "",
+        req.body.whatsapp || "",
+        req.body.badge || "",
+        req.body.venue || "",
+        newUrls,
+        Number.isFinite(sortOrder) ? sortOrder : null,
+        req.body.is_published === undefined ? true : Boolean(req.body.is_published),
+      ],
     );
     res.redirect("/admin");
   } catch (err) {
     next(err);
   }
 });
+
 
 app.post("/admin/listings/:id", requireAdmin, upload.array("photos", 12), async (req, res, next) => {
   try {
