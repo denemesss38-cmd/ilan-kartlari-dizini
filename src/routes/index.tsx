@@ -73,7 +73,9 @@ function ListingCard({ item, intervalSeconds }: { item: Listing; intervalSeconds
           intervalSeconds={intervalSeconds}
           split={3}
           className={
-            hasPhotos ? "h-56 w-full xs:h-72 md:h-96" : "h-32 w-full xs:h-36 md:h-44"
+            hasPhotos
+              ? "aspect-[16/9] w-full md:aspect-auto md:h-96"
+              : "h-32 w-full xs:h-36 md:h-44"
           }
         />
         <div className="pointer-events-none absolute right-2.5 top-2.5 z-10 flex flex-col items-end gap-1.5 md:right-4 md:top-4">
