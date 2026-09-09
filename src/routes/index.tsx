@@ -1,7 +1,9 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { AlertTriangle, MapPin, MessageCircle, Phone } from "lucide-react";
 
-import { listings, siteConfig, type Listing } from "@/data/listings";
+import { siteConfig, type Listing } from "@/data/listings";
+import { getPublishedListings } from "@/lib/listings.functions";
+import { photoUrl } from "@/lib/photos";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -21,33 +23,44 @@ export const Route = createFileRoute("/")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
+  loader: () => getPublishedListings(),
   component: Index,
+  errorComponent: () => (
+    <div className="flex min-h-screen items-center justify-center bg-background px-6 text-center">
+      <p className="text-sm text-muted-foreground">
+        İlanlar şu anda yüklenemedi. Lütfen sayfayı yenileyin.
+      </p>
+    </div>
+  ),
+  notFoundComponent: () => (
+    <div className="flex min-h-screen items-center justify-center bg-background px-6 text-center">
+      <p className="text-sm text-muted-foreground">Sayfa bulunamadı.</p>
+    </div>
+  ),
 });
 
 function ListingCard({ item }: { item: Listing }) {
-  const [main, ...rest] = item.photos;
+  const photos = item.photos?.length ? item.photos : [];
+  const main = photos[0];
+  const rest = photos.slice(1, 3);
 
   return (
     <article className="overflow-hidden rounded-2xl border border-border bg-card shadow-lg">
       <div className="grid grid-cols-3 gap-1 p-1">
         <div className="col-span-2 overflow-hidden rounded-xl">
           <img
-            src={main}
+            src={photoUrl(main)}
             alt={`${item.name} ilan fotoğrafı`}
-            width={640}
-            height={640}
             loading="lazy"
             className="h-44 w-full object-cover sm:h-56"
           />
         </div>
         <div className="grid grid-rows-2 gap-1">
-          {rest.slice(0, 2).map((photo, i) => (
+          {[0, 1].map((i) => (
             <div key={i} className="overflow-hidden rounded-xl">
               <img
-                src={photo}
+                src={photoUrl(rest[i] ?? main)}
                 alt={`${item.name} ek fotoğraf ${i + 1}`}
-                width={640}
-                height={640}
                 loading="lazy"
                 className="h-full w-full object-cover"
               />
@@ -68,10 +81,12 @@ function ListingCard({ item }: { item: Listing }) {
           ) : null}
         </div>
 
-        <p className="mt-1 flex items-center gap-1 text-xs font-medium text-primary">
-          <MapPin className="size-3.5 shrink-0" />
-          <span className="truncate">{item.location}</span>
-        </p>
+        {item.location ? (
+          <p className="mt-1 flex items-center gap-1 text-xs font-medium text-primary">
+            <MapPin className="size-3.5 shrink-0" />
+            <span className="truncate">{item.location}</span>
+          </p>
+        ) : null}
 
         <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{item.description}</p>
 
@@ -99,6 +114,8 @@ function ListingCard({ item }: { item: Listing }) {
 }
 
 function Index() {
+  const listings = Route.useLoaderData();
+
   return (
     <div className="min-h-screen bg-background">
       <header className="sticky top-0 z-20 border-b border-border bg-background/90 backdrop-blur">
@@ -139,14 +156,25 @@ function Index() {
           </div>
         </section>
 
-        <div className="mt-6 space-y-4 sm:grid sm:grid-cols-2 sm:gap-4 sm:space-y-0">
-          {listings.map((item) => (
-            <ListingCard key={item.id} item={item} />
-          ))}
-        </div>
+        {listings.length === 0 ? (
+          <p className="mt-8 text-center text-sm text-muted-foreground">
+            Şu anda yayınlanmış ilan bulunmuyor.
+          </p>
+        ) : (
+          <div className="mt-6 space-y-4 sm:grid sm:grid-cols-2 sm:gap-4 sm:space-y-0">
+            {listings.map((item) => (
+              <ListingCard key={item.id} item={item} />
+            ))}
+          </div>
+        )}
 
         <p className="mt-8 text-center text-xs leading-relaxed text-muted-foreground">
           {siteConfig.footerNote}
+        </p>
+        <p className="mt-3 text-center text-xs text-muted-foreground">
+          <Link to="/admin" className="underline">
+            Yönetim paneli
+          </Link>
         </p>
       </main>
     </div>
