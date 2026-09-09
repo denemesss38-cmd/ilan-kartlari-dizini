@@ -44,10 +44,8 @@ export function PhotoCarousel({
   const count = list.length;
   const split = Math.max(1, Math.min(3, splitProp ?? 1));
   const [index, setIndex] = useState(0);
-  const [paused, setPaused] = useState(false);
   const reduced = usePrefersReducedMotion();
   const touch = useRef<{ x: number; y: number; horizontal: boolean | null } | null>(null);
-  const resume = useRef<number | null>(null);
 
   const canTriptych = count >= split && split > 1;
   const slideCount = canTriptych ? count : count > 1 ? count : 1;
@@ -62,23 +60,14 @@ export function PhotoCarousel({
     [slideCount],
   );
 
-  /** Etkileşimden sonra otomatik geçişi kısa bir gecikmeyle sürdürür. */
-  const pauseThenResume = useCallback((delay = 2500) => {
-    setPaused(true);
-    if (resume.current) window.clearTimeout(resume.current);
-    resume.current = window.setTimeout(() => setPaused(false), delay);
-  }, []);
-
-  useEffect(() => () => void (resume.current && window.clearTimeout(resume.current)), []);
-
   useEffect(() => {
-    if (!autoplay || paused) return;
+    if (!autoplay) return;
     const id = window.setInterval(
       () => setIndex((i) => (i + 1) % slideCount),
       Math.max(1, intervalSeconds) * 1000,
     );
     return () => window.clearInterval(id);
-  }, [autoplay, paused, slideCount, intervalSeconds]);
+  }, [autoplay, slideCount, intervalSeconds]);
 
   if (count === 0) {
     return (
