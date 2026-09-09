@@ -63,12 +63,22 @@ function carousel(photos, alt, intervalSeconds) {
   const slots = [0, 1, 2]
     .map(
       (i) =>
-        `<div class="slot"><img src="${esc(list[i % list.length])}" alt="${esc(alt)}" loading="lazy" /></div>`,
+        `<div class="slot"><img src="${esc(list[i % list.length])}" alt="${esc(alt)} fotoğraf ${i + 1}" loading="lazy" draggable="false" /></div>`,
     )
     .join("");
-  return `<div class="gallery" data-photos="${esc(JSON.stringify(list))}" data-interval="${Number(intervalSeconds) || 0}">${slots}
-    ${list.length > 3 ? '<button class="nav prev" type="button" aria-label="Önceki">‹</button><button class="nav next" type="button" aria-label="Sonraki">›</button>' : ""}
-  </div>`;
+  const multi = list.length > 1;
+  const dots = multi
+    ? `<div class="dots">${list
+        .map(
+          (_, i) =>
+            `<button type="button" data-dot="${i}" aria-current="${i === 0}" aria-label="${i + 1}. fotoğraf grubunu göster"></button>`,
+        )
+        .join("")}</div>`
+    : "";
+  const nav = multi
+    ? '<button class="nav prev" type="button" aria-label="Önceki fotoğraf">‹</button><button class="nav next" type="button" aria-label="Sonraki fotoğraf">›</button>'
+    : "";
+  return `<div class="gallery" data-photos="${esc(JSON.stringify(list))}" data-interval="${Number(intervalSeconds) || 0}">${slots}${nav}${dots}</div>`;
 }
 
 function listingCard(item, intervalSeconds) {
