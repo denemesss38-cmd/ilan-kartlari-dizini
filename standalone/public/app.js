@@ -12,6 +12,7 @@
     if (photos.length < 2) return;
 
     var slots = el.querySelectorAll(".slot img");
+    var dots = el.querySelectorAll(".dots button");
     var interval = parseInt(el.getAttribute("data-interval"), 10) || 0;
     var offset = 0;
 
@@ -19,6 +20,9 @@
       slots.forEach(function (img, i) {
         var next = photos[(offset + i) % photos.length];
         if (img.getAttribute("src") !== next) img.setAttribute("src", next);
+      });
+      dots.forEach(function (dot, i) {
+        dot.setAttribute("aria-current", String(i === offset));
       });
     }
 
@@ -30,6 +34,13 @@
     el.querySelectorAll(".nav").forEach(function (btn) {
       btn.addEventListener("click", function () {
         step(btn.classList.contains("prev") ? -1 : 1);
+      });
+    });
+
+    dots.forEach(function (dot, i) {
+      dot.addEventListener("click", function () {
+        offset = i;
+        render();
       });
     });
 
