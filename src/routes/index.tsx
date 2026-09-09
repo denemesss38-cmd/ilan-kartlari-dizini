@@ -53,9 +53,12 @@ function formatPhone(raw: string) {
   return raw;
 }
 
-/** Büyük, çerçeveli ilan kartı: fotoğraf slider'ı, rozetler ve iletişim aksiyonları. */
+/** Büyük, çerçeveli ilan kartı: üçlü fotoğraf kolajı, rozetler ve iletişim aksiyonları. */
 function ListingCard({ item, intervalSeconds }: { item: Listing; intervalSeconds: number }) {
   const hasPhotos = (item.photos ?? []).filter(Boolean).length > 0;
+  const phoneParts = formatPhone(item.phone).split(" ");
+  const prefix = phoneParts[0] ?? "+90";
+  const rest = phoneParts.slice(1).join(" ");
 
   return (
     <article className="overflow-hidden rounded-3xl border border-border/80 bg-card/80 shadow-[0_18px_40px_-24px_oklch(0_0_0/0.9)] backdrop-blur">
@@ -64,6 +67,7 @@ function ListingCard({ item, intervalSeconds }: { item: Listing; intervalSeconds
           photos={item.photos}
           alt={item.name}
           intervalSeconds={intervalSeconds}
+          split={3}
           className={
             hasPhotos ? "h-56 w-full xs:h-72 md:h-96" : "h-32 w-full xs:h-36 md:h-44"
           }
@@ -99,11 +103,12 @@ function ListingCard({ item, intervalSeconds }: { item: Listing; intervalSeconds
           )}
           <a
             href={`tel:${item.phone}`}
-            className="mt-2 inline-flex items-center gap-1.5 text-xs font-black text-foreground underline-offset-2 hover:underline md:text-sm"
+            className="mt-2 inline-flex items-center gap-1.5 text-sm font-black text-foreground underline-offset-2 hover:underline md:text-base"
             aria-label={`${item.name} telefon numarası ${item.phone}`}
           >
-            <Phone className="size-3.5 shrink-0 text-primary md:size-4" />
-            {formatPhone(item.phone)}
+            <Phone className="size-5 shrink-0 text-primary md:size-6" />
+            <span className="text-2xl leading-none text-primary md:text-3xl">{prefix}</span>
+            <span className="text-foreground/90">{rest}</span>
           </a>
         </div>
 
