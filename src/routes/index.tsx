@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { AlertTriangle, BadgeCheck, MapPin, MessageCircle, Phone } from "lucide-react";
+import { BadgeCheck, MapPin, MessageCircle, Phone } from "lucide-react";
 
 import { PhotoCarousel } from "@/components/PhotoCarousel";
 import { siteConfig, type Listing } from "@/data/listings";
