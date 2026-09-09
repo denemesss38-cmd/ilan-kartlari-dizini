@@ -142,12 +142,12 @@
 /* İlan kartı için turuncu testere/zikzak kenar */
 @utility zigzag-top {
   background:
-    linear-gradient(-45deg, transparent 50%, var(--primary) 50%) 0 0 / 18px 18px repeat-x,
-    linear-gradient(45deg, transparent 50%, var(--primary) 50%) 0 0 / 18px 18px repeat-x;
+    linear-gradient(-45deg, transparent 50%, var(--background) 50%) 0 0 / 18px 18px repeat-x,
+    linear-gradient(45deg, transparent 50%, var(--background) 50%) 0 0 / 18px 18px repeat-x;
 }
 
 @utility zigzag-bottom {
   background:
-    linear-gradient(-135deg, transparent 50%, var(--primary) 50%) 0 100% / 18px 18px repeat-x,
-    linear-gradient(135deg, transparent 50%, var(--primary) 50%) 0 100% / 18px 18px repeat-x;
+    linear-gradient(-135deg, transparent 50%, var(--background) 50%) 0 100% / 18px 18px repeat-x,
+    linear-gradient(135deg, transparent 50%, var(--background) 50%) 0 100% / 18px 18px repeat-x;
 }
