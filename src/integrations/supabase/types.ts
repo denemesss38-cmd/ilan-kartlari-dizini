@@ -27,6 +27,7 @@ export type Database = {
           photos: string[]
           sort_order: number
           updated_at: string
+          venue: string | null
           whatsapp: string
         }
         Insert: {
@@ -41,6 +42,7 @@ export type Database = {
           photos?: string[]
           sort_order?: number
           updated_at?: string
+          venue?: string | null
           whatsapp?: string
         }
         Update: {
@@ -55,6 +57,7 @@ export type Database = {
           photos?: string[]
           sort_order?: number
           updated_at?: string
+          venue?: string | null
           whatsapp?: string
         }
         Relationships: []
