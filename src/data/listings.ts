@@ -41,6 +41,8 @@ export type Listing = {
   phone: string;
   whatsapp: string;
   badge: string | null;
+  /** Görüşme yeri: "Kendi yeri var", "Apart", "Otel" vb. */
+  venue: string | null;
   sort_order: number;
   is_published: boolean;
 };

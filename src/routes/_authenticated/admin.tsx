@@ -33,6 +33,7 @@ const emptyDraft: Draft = {
   phone: "",
   whatsapp: "",
   badge: "",
+  venue: "",
   sort_order: 0,
   is_published: true,
 };
@@ -83,6 +84,7 @@ function AdminPage() {
         phone: item.phone.trim(),
         whatsapp: item.whatsapp.replace(/[^0-9]/g, ""),
         badge: item.badge?.trim() ? item.badge.trim() : null,
+        venue: item.venue?.trim() ? item.venue.trim() : null,
         photos: item.photos,
         sort_order: Number(item.sort_order) || 0,
         is_published: item.is_published,
@@ -268,6 +270,23 @@ function AdminPage() {
                 onChange={(v) => setDraft({ ...draft, badge: v })}
                 max={12}
               />
+              <div>
+                <label className="text-xs font-bold text-muted-foreground">
+                  Görüşme yeri (isteğe bağlı)
+                </label>
+                <select
+                  value={draft.venue ?? ""}
+                  onChange={(e) => setDraft({ ...draft, venue: e.target.value })}
+                  className="mt-1 w-full rounded-xl border border-border bg-secondary px-3 py-2.5 text-sm text-foreground"
+                >
+                  <option value="">Belirtilmedi</option>
+                  <option value="Kendi yeri var">Kendi yeri var</option>
+                  <option value="Apart">Apart</option>
+                  <option value="Otel">Otel</option>
+                  <option value="Ev">Ev</option>
+                  <option value="Rezidans">Rezidans</option>
+                </select>
+              </div>
               <Field
                 label="Sıra numarası"
                 value={String(draft.sort_order)}
@@ -403,6 +422,7 @@ function AdminPage() {
                       phone: item.phone,
                       whatsapp: item.whatsapp,
                       badge: item.badge ?? "",
+                      venue: item.venue ?? "",
                       sort_order: item.sort_order,
                       is_published: item.is_published,
                     })
