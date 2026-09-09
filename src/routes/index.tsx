@@ -103,12 +103,12 @@ function ListingCard({ item, intervalSeconds }: { item: Listing; intervalSeconds
           )}
           <a
             href={`tel:${item.phone}`}
-            className="mt-2 inline-flex items-center gap-1.5 text-sm font-black text-foreground underline-offset-2 hover:underline md:text-base"
+            className="mt-2 inline-flex items-center gap-1.5 font-black text-foreground underline-offset-2 hover:underline"
             aria-label={`${item.name} telefon numarası ${item.phone}`}
           >
             <Phone className="size-5 shrink-0 text-primary md:size-6" />
             <span className="text-2xl leading-none text-primary md:text-3xl">{prefix}</span>
-            <span className="text-foreground/90">{rest}</span>
+            <span className="text-2xl leading-none text-foreground/90 md:text-3xl">{rest}</span>
           </a>
         </div>
 
