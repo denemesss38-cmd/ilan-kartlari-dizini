@@ -224,6 +224,51 @@ app.post("/admin/listings/:id", requireAdmin, upload.array("photos", 12), async 
   }
 });
 
+/** Yayın durumunu tek dokunuşla açar/kapatır. */
+app.get("/admin/listings/:id/toggle", requireAdmin, async (req, res, next) => {
+  try {
+    await pool.query("UPDATE listings SET is_published = NOT is_published, updated_at = now() WHERE id = $1", [
+      req.params.id,
+    ]);
+    res.redirect("/admin");
+  } catch (err) {
+    next(err);
+  }
+});
+
+/** İlanı bir üste veya bir alta taşır (komşusuyla sıra değiştirir). */
+app.get("/admin/listings/:id/move", requireAdmin, async (req, res, next) => {
+  const client = await pool.connect();
+  try {
+    const dir = req.query.dir === "up" ? "up" : "down";
+    await client.query("BEGIN");
+    const { rows } = await client.query(
+      "SELECT id, sort_order FROM listings ORDER BY sort_order ASC, created_at DESC",
+    );
+    const index = rows.findIndex((r) => String(r.id) === String(req.params.id));
+    const target = dir === "up" ? index - 1 : index + 1;
+    if (index !== -1 && target >= 0 && target < rows.length) {
+      // Sıra numaraları eşit olabileceği için listeyi baştan yeniden numaralandırıyoruz.
+      const ordered = rows.slice();
+      const [moved] = ordered.splice(index, 1);
+      ordered.splice(target, 0, moved);
+      for (let i = 0; i < ordered.length; i += 1) {
+        await client.query("UPDATE listings SET sort_order = $1, updated_at = now() WHERE id = $2", [
+          i + 1,
+          ordered[i].id,
+        ]);
+      }
+    }
+    await client.query("COMMIT");
+    res.redirect("/admin");
+  } catch (err) {
+    await client.query("ROLLBACK").catch(() => {});
+    next(err);
+  } finally {
+    client.release();
+  }
+});
+
 app.get("/admin/listings/:id/photo/delete", requireAdmin, async (req, res, next) => {
   try {
     const url = String(req.query.url || "");
