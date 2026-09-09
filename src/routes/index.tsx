@@ -49,18 +49,16 @@ function formatPhone(raw: string) {
   return raw;
 }
 
-/** Tam genişlikte fotoğraf kolajı, üstüne isim etiketi ve yuvarlak iletişim ikonları. */
+/** Tam genişlikte fotoğraf kolajı; üst/alt düz turuncu ayraç, isim etiketi ve yuvarlak iletişim ikonları. */
 function ListingCard({ item }: { item: Listing }) {
   const photos = photoTrio(item.photos);
 
   return (
     <article className="relative w-full bg-primary">
-      {/* üst zikzak kenar */}
-      <div className="zigzag-top pointer-events-none absolute inset-x-0 top-0 z-10 h-[9px] md:h-[11px]" />
-      {/* alt zikzak kenar */}
-      <div className="zigzag-bottom pointer-events-none absolute inset-x-0 bottom-0 z-10 h-[9px] md:h-[11px]" />
+      {/* üst düz turuncu ayraç */}
+      <div className="pointer-events-none h-1 w-full bg-primary" />
 
-      <div className="grid grid-cols-3 gap-[3px] px-0 py-[9px] md:gap-1 md:py-[11px]">
+      <div className="grid grid-cols-3 gap-[3px] px-0 py-[3px] md:gap-1 md:py-1">
         {photos.map((src, i) => (
           <img
             key={i}
@@ -72,8 +70,11 @@ function ListingCard({ item }: { item: Listing }) {
         ))}
       </div>
 
+      {/* alt düz turuncu ayraç */}
+      <div className="pointer-events-none h-1 w-full bg-primary" />
+
       {/* isim etiketi */}
-      <div className="absolute bottom-6 left-0 z-20 max-w-[62%] bg-primary/90 px-3 py-1.5 pr-5 md:bottom-10 md:px-5 md:py-2.5">
+      <div className="absolute bottom-5 left-0 z-20 max-w-[62%] bg-primary/90 px-3 py-1.5 pr-5 md:bottom-8 md:px-5 md:py-2.5">
         <h2 className="truncate text-lg font-extrabold italic tracking-tight text-primary-foreground xs:text-xl md:text-3xl">
           {item.name}
         </h2>
@@ -91,7 +92,7 @@ function ListingCard({ item }: { item: Listing }) {
       </div>
 
       {/* iletişim ikonları */}
-      <div className="absolute bottom-5 right-2.5 z-20 flex items-center gap-2 md:bottom-8 md:right-5 md:gap-3">
+      <div className="absolute bottom-4 right-2.5 z-20 flex items-center gap-2 md:bottom-7 md:right-5 md:gap-3">
         <a
           href={`https://wa.me/${item.whatsapp}`}
           target="_blank"
