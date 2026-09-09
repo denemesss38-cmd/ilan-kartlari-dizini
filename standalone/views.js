@@ -18,7 +18,7 @@ function formatPhone(raw) {
   return raw || "";
 }
 
-function layout({ title, description, keywords, canonical, body, admin }) {
+function layout({ title, description, keywords, canonical, body, admin, csrf = "" }) {
   return `<!doctype html>
 <html lang="tr">
 <head>
@@ -37,6 +37,7 @@ ${admin ? '<meta name="robots" content="noindex,nofollow" />' : ""}
 </head>
 <body>
 ${body}
+${admin && csrf ? `<script>window.__CSRF__=${JSON.stringify(csrf)};</script>` : ""}
 <script src="/static/app.js" defer></script>
 </body>
 </html>`;
@@ -160,7 +161,7 @@ function homePage({ listings, settings, siteUrl }) {
   });
 }
 
-function loginPage(error) {
+function loginPage(error, csrf) {
   return layout({
     title: "Yönetim Girişi",
     description: "Yönetim paneli girişi",
@@ -169,6 +170,7 @@ function loginPage(error) {
   <h1 class="page-title">Yönetim Girişi</h1>
   ${error ? `<p class="error">${esc(error)}</p>` : ""}
   <form method="post" action="/admin/login" class="panel">
+    <input type="hidden" name="_csrf" value="${esc(csrf)}" />
     <label>Yönetici şifresi
       <input type="password" name="password" autocomplete="current-password" required />
     </label>
@@ -178,17 +180,24 @@ function loginPage(error) {
   });
 }
 
-function adminPage({ listings, settings }) {
-  const row = (l) => `<form class="panel listing" method="post" action="/admin/listings/${l.id}" enctype="multipart/form-data">
+function adminPage({ listings, settings, csrf }) {
+  const csrfInput = `<input type="hidden" name="_csrf" value="${esc(csrf)}" />`;
+  const row = (l, index) => `<article class="panel listing">
   <div class="admin-row">
-    <strong>${esc(l.name)}</strong>
+    <div class="listing-summary">
+      ${l.photos?.[0] ? `<img src="${esc(l.photos[0])}" alt="${esc(l.name)} kapak fotoğrafı" loading="lazy" />` : `<span class="admin-placeholder">Fotoğraf yok</span>`}
+      <span><strong>${esc(l.name)}</strong><small>${esc(l.location || "Konum yok")} · sıra ${Number(l.sort_order)}</small></span>
+    </div>
     <span class="row">
-      <a class="btn ghost small" href="/admin/listings/${l.id}/move?dir=up" title="Yukarı taşı">↑</a>
-      <a class="btn ghost small" href="/admin/listings/${l.id}/move?dir=down" title="Aşağı taşı">↓</a>
-      <a class="btn ghost small" href="/admin/listings/${l.id}/toggle">${l.is_published ? "Yayında" : "Kapalı"}</a>
+      <form method="post" action="/admin/listings/${l.id}/move">${csrfInput}<input type="hidden" name="dir" value="up" /><button class="btn ghost icon-btn" type="submit" title="Yukarı taşı" aria-label="Yukarı taşı"${index === 0 ? " disabled" : ""}>↑</button></form>
+      <form method="post" action="/admin/listings/${l.id}/move">${csrfInput}<input type="hidden" name="dir" value="down" /><button class="btn ghost icon-btn" type="submit" title="Aşağı taşı" aria-label="Aşağı taşı"${index === listings.length - 1 ? " disabled" : ""}>↓</button></form>
+      <form method="post" action="/admin/listings/${l.id}/toggle">${csrfInput}<button class="btn ${l.is_published ? "" : "ghost"} small" type="submit">${l.is_published ? "Yayında" : "Yayında değil"}</button></form>
+      <button class="btn ghost small" type="button" data-toggle-edit="edit-${l.id}">Düzenle</button>
     </span>
   </div>
 
+  <form id="edit-${l.id}" class="edit-form" method="post" action="/admin/listings/${l.id}" enctype="multipart/form-data" hidden>
+  ${csrfInput}
   <div class="grid2">
     <label>İlan adı<input name="name" value="${esc(l.name)}" required /></label>
     <label>Konum<input name="location" value="${esc(l.location)}" /></label>
@@ -216,11 +225,11 @@ function adminPage({ listings, settings }) {
       .map(
         (p, i) =>
           `<span class="thumb"><img src="${esc(p)}" alt="" />
-            <a href="/admin/listings/${l.id}/photo/delete?url=${encodeURIComponent(p)}" title="Kaldır">×</a>
+            <button type="submit" formaction="/admin/listings/${l.id}/photo/delete" name="url" value="${esc(p)}" title="Kaldır" aria-label="Fotoğrafı kaldır">×</button>
             <span class="thumb-tools">
-              <a href="/admin/listings/${l.id}/photo/move?dir=left&url=${encodeURIComponent(p)}" title="Sola taşı">‹</a>
-              <a href="/admin/listings/${l.id}/photo/move?dir=cover&url=${encodeURIComponent(p)}" title="Kapak yap">${i === 0 ? "Kapak" : "★"}</a>
-              <a href="/admin/listings/${l.id}/photo/move?dir=right&url=${encodeURIComponent(p)}" title="Sağa taşı">›</a>
+              <button type="submit" formaction="/admin/listings/${l.id}/photo/move" name="move" value="left|${esc(p)}" title="Sola taşı">‹</button>
+              <button type="submit" formaction="/admin/listings/${l.id}/photo/move" name="move" value="cover|${esc(p)}" title="Kapak yap">${i === 0 ? "Kapak" : "★"}</button>
+              <button type="submit" formaction="/admin/listings/${l.id}/photo/move" name="move" value="right|${esc(p)}" title="Sağa taşı">›</button>
             </span>
           </span>`,
       )
@@ -230,9 +239,9 @@ function adminPage({ listings, settings }) {
 
   <div class="row">
     <button class="btn" type="submit">Kaydet</button>
-    <a class="btn ghost" href="/admin/listings/${l.id}/delete" onclick="return confirm('İlan silinsin mi?')">Sil</a>
+    <button class="btn danger" type="submit" formaction="/admin/listings/${l.id}/delete" data-confirm="İlan silinsin mi?">Sil</button>
   </div>
-</form>`;
+</form></article>`;
 
   return layout({
     title: "Yönetim Paneli",
@@ -240,11 +249,12 @@ function adminPage({ listings, settings }) {
     admin: true,
     body: `<main class="wrap">
   <div class="admin-head">
-    <h1 class="page-title">Yönetim Paneli</h1>
-    <a class="btn ghost" href="/admin/logout">Çıkış</a>
+    <span><h1 class="page-title">Yönetim Paneli</h1><a class="site-link" href="/">Siteyi görüntüle</a></span>
+    <form method="post" action="/admin/logout">${csrfInput}<button class="btn ghost" type="submit">Çıkış</button></form>
   </div>
 
   <form class="panel" method="post" action="/admin/settings">
+    ${csrfInput}
     <h2>Site ayarları</h2>
     <div class="grid2">
       <label>Şehir<input name="site_city" value="${esc(settings.site_city)}" /></label>
@@ -260,8 +270,9 @@ function adminPage({ listings, settings }) {
     <button class="btn" type="submit">Ayarları kaydet</button>
   </form>
 
-  <form class="panel" method="post" action="/admin/listings" enctype="multipart/form-data">
-    <h2>Yeni ilan ekle</h2>
+  <button class="btn add-listing" type="button" data-toggle-edit="new-listing">+ Yeni ilan ekle</button>
+  <form id="new-listing" class="panel" method="post" action="/admin/listings" enctype="multipart/form-data" hidden>
+    ${csrfInput}<h2>Yeni ilan ekle</h2>
     <div class="grid2">
       <label>İlan adı<input name="name" required /></label>
       <label>Konum<input name="location" /></label>
@@ -289,6 +300,7 @@ function adminPage({ listings, settings }) {
   <h2 class="page-title">İlanlar (${listings.length})</h2>
   ${listings.map(row).join("")}
 </main>`,
+    csrf,
   });
 }
 
