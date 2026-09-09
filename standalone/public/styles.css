@@ -170,3 +170,7 @@ input[type="checkbox"] { width: 22px; min-height: 22px; }
 .thumb a { position: absolute; top: -6px; right: -6px; width: 24px; height: 24px; display: grid; place-items: center; border-radius: 999px; background-image: var(--cta-alt); color: var(--on-cta); font-weight: 900; }
 .error { padding: 10px 14px; border-radius: 12px; background: color-mix(in oklab, oklch(0.62 0.21 25) 25%, transparent); border: 1px solid color-mix(in oklab, oklch(0.62 0.21 25) 55%, transparent); font-size: 13px; }
 .listing { border-color: color-mix(in oklab, var(--primary) 35%, transparent); }
+
+.admin-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.admin-row strong { font-size: 15px; }
+.btn.small { min-height: 36px; padding: 6px 12px; font-size: 12px; }
