@@ -3,7 +3,7 @@ import { AlertTriangle, MessageCircle, Phone } from "lucide-react";
 
 import { siteConfig, type Listing } from "@/data/listings";
 import { getPublishedListings } from "@/lib/listings.functions";
-import { photoTrio } from "@/lib/photos";
+import { photoUrl } from "@/lib/photos";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -162,7 +162,7 @@ function Index() {
             Şu anda yayınlanmış ilan bulunmuyor.
           </p>
         ) : (
-          <div className="-mx-3 mt-4 space-y-3 xs:-mx-4 md:mx-0 md:mt-6 md:space-y-4">
+          <div className="mt-4 space-y-3 md:mt-6 md:space-y-4">
             {listings.map((item) => (
               <ListingCard key={item.id} item={item} />
             ))}
