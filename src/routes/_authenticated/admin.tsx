@@ -337,22 +337,25 @@ function AdminPage() {
           {items.map((item, index) => (
             <article
               key={item.id}
-              className="rounded-2xl border border-border bg-card p-3"
+              className="rounded-xl border border-border bg-card p-2.5 xs:p-3 md:rounded-2xl md:p-4"
             >
-              <div className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-3">
+              <div className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-2.5 xs:gap-3 md:gap-4">
                 <img
                   src={photoUrl(item.photos?.[0])}
                   alt={item.name}
                   loading="lazy"
-                  className="size-14 shrink-0 rounded-lg object-cover"
+                  className="size-12 shrink-0 rounded-lg object-cover xs:size-14 md:size-16"
                 />
                 <div className="min-w-0">
-                  <h3 className="truncate text-sm font-bold text-foreground">{item.name}</h3>
-                  <p className="truncate text-xs text-muted-foreground">
+                  <h3 className="truncate text-sm font-bold text-foreground md:text-base">
+                    {item.name}
+                  </h3>
+                  <p className="truncate text-[11px] text-muted-foreground md:text-xs">
                     {item.location || "Konum yok"} · sıra {item.sort_order}
                   </p>
                 </div>
               </div>
+
 
               <div className="mt-3 flex flex-wrap items-center gap-2">
                 <button
