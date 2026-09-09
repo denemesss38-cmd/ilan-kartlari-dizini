@@ -6,7 +6,7 @@ const fallbacks = [fallback1, fallback2, fallback3];
 
 /** Depodaki fotoğraf yolunu (veya tam URL'yi) görüntülenebilir adrese çevirir. */
 export function photoUrl(path: string | undefined | null, index = 0): string {
-  if (!path) return fallbacks[index % fallbacks.length];
+  if (!path) return fallbacks[index % fallbacks.length] ?? fallback1;
   if (path.startsWith("http://") || path.startsWith("https://")) return path;
   return `/api/public/foto?p=${encodeURIComponent(path)}`;
 }
