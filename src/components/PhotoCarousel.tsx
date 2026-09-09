@@ -30,7 +30,7 @@ function usePrefersReducedMotion() {
  * İlan fotoğrafları için otomatik geçişli galeri.
  * - Tekli (split=1) veya üçlü kolaj (split=3) modu.
  * - Mobilde yatay swipe, masaüstünde önce/sonra kontrolleri ve noktalar.
- * - Dokunma/kaydırma/fare ile etkileşimde otomatik geçiş duraklar, sonra devam eder.
+ * - Otomatik geçiş sürekli döner; kullanıcı müdahalesi durdurmaz.
  * - Tek fotoğrafta kontroller ve otomatik geçiş gösterilmez; fotoğraf yoksa zarif yer tutucu.
  */
 export function PhotoCarousel({
