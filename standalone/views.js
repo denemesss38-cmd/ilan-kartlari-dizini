@@ -252,16 +252,31 @@ function adminPage({ listings, settings }) {
     <button class="btn" type="submit">Ayarları kaydet</button>
   </form>
 
-  <form class="panel" method="post" action="/admin/listings">
+  <form class="panel" method="post" action="/admin/listings" enctype="multipart/form-data">
     <h2>Yeni ilan ekle</h2>
     <div class="grid2">
       <label>İlan adı<input name="name" required /></label>
       <label>Konum<input name="location" /></label>
       <label>Telefon<input name="phone" /></label>
       <label>WhatsApp<input name="whatsapp" /></label>
+      <label>Rozet (örn. VIP)<input name="badge" /></label>
+      <label>Görüşme yeri
+        <select name="venue">
+          ${["", "Kendi yeri var", "Apart", "Otel", "Ev", "Rezidans"]
+            .map((v) => `<option value="${esc(v)}">${v === "" ? "Belirtilmedi" : esc(v)}</option>`)
+            .join("")}
+        </select>
+      </label>
+      <label>Sıra<input type="number" name="sort_order" placeholder="Otomatik" /></label>
+      <label class="check">Yayında
+        <input type="checkbox" name="is_published" checked />
+      </label>
     </div>
+    <label>Kısa açıklama<textarea name="description" rows="2"></textarea></label>
+    <label>Fotoğraflar (birden çok seçebilirsiniz)<input type="file" name="photos" accept="image/*" multiple /></label>
     <button class="btn" type="submit">Ekle</button>
   </form>
+
 
   <h2 class="page-title">İlanlar (${listings.length})</h2>
   ${listings.map(row).join("")}
