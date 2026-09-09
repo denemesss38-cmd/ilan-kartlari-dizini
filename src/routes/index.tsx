@@ -3,7 +3,7 @@ import { AlertTriangle, MessageCircle, Phone } from "lucide-react";
 
 import { siteConfig, type Listing } from "@/data/listings";
 import { getPublishedListings } from "@/lib/listings.functions";
-import { photoUrl } from "@/lib/photos";
+import { photoTrio } from "@/lib/photos";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -49,60 +49,66 @@ function formatPhone(raw: string) {
   return raw;
 }
 
-/** Düz kenarlı, kompakt yatay ilan kartı. */
+/** Tam genişlikte fotoğraf kolajı; üst/alt düz turuncu ayraç, isim etiketi ve yuvarlak iletişim ikonları. */
 function ListingCard({ item }: { item: Listing }) {
-  const cover = photoUrl(item.photos?.[0], 0);
+  const photos = photoTrio(item.photos);
 
   return (
-    <article className="flex w-full items-stretch overflow-hidden rounded-xl border border-border bg-card">
-      {/* kapak fotoğrafı */}
-      <div className="shrink-0">
-        <img
-          src={cover}
-          alt={`${item.name} kapak fotoğrafı`}
-          loading="lazy"
-          className="h-28 w-28 object-cover xs:h-32 xs:w-32 md:h-36 md:w-36"
-        />
+    <article className="relative w-full bg-primary">
+      {/* üst düz turuncu ayraç */}
+      <div className="pointer-events-none h-1 w-full bg-primary" />
+
+      <div className="grid grid-cols-3 gap-[3px] px-0 py-[3px] md:gap-1 md:py-1">
+        {photos.map((src, i) => (
+          <img
+            key={i}
+            src={src}
+            alt={`${item.name} fotoğraf ${i + 1}`}
+            loading="lazy"
+            className="h-36 w-full object-cover xs:h-44 md:h-56"
+          />
+        ))}
       </div>
 
-      {/* bilgiler */}
-      <div className="flex min-w-0 flex-1 flex-col justify-between px-3 py-2.5 xs:px-4 xs:py-3 md:px-5 md:py-4">
-        <div className="min-w-0">
-          <h2 className="truncate text-base font-extrabold tracking-tight text-card-foreground xs:text-lg md:text-xl">
-            {item.name}
-          </h2>
-          <p className="truncate text-xs font-semibold text-muted-foreground md:text-sm">
-            {item.location || item.badge || "Hepsi"}
-          </p>
-          <a
-            href={`tel:${item.phone}`}
-            className="mt-1 flex items-center gap-1 truncate text-xs font-black text-primary underline-offset-2 hover:underline md:text-sm"
-            aria-label={`${item.name} telefon numarası ${item.phone}`}
-          >
-            <Phone className="size-3 shrink-0 md:size-4" />
-            {formatPhone(item.phone)}
-          </a>
-        </div>
+      {/* alt düz turuncu ayraç */}
+      <div className="pointer-events-none h-1 w-full bg-primary" />
 
-        {/* iletişim ikonları */}
-        <div className="flex items-center gap-2 md:gap-3">
-          <a
-            href={`https://wa.me/${item.whatsapp}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label={`${item.name} WhatsApp`}
-            className="grid size-10 place-items-center rounded-full bg-primary xs:size-11 md:size-12"
-          >
-            <MessageCircle className="size-5 text-primary-foreground md:size-6" />
-          </a>
-          <a
-            href={`tel:${item.phone}`}
-            aria-label={`${item.name} ara`}
-            className="grid size-10 place-items-center rounded-full bg-primary xs:size-11 md:size-12"
-          >
-            <Phone className="size-5 text-primary-foreground md:size-6" />
-          </a>
-        </div>
+      {/* isim etiketi */}
+      <div className="absolute bottom-5 left-0 z-20 max-w-[62%] bg-primary/90 px-3 py-1.5 pr-5 md:bottom-8 md:px-5 md:py-2.5">
+        <h2 className="truncate text-lg font-extrabold italic tracking-tight text-primary-foreground xs:text-xl md:text-3xl">
+          {item.name}
+        </h2>
+        <p className="truncate text-xs font-semibold text-primary-foreground/90 md:text-base">
+          {item.location || item.badge || "Hepsi"}
+        </p>
+        <a
+          href={`tel:${item.phone}`}
+          className="mt-0.5 flex items-center gap-1 truncate text-xs font-black text-primary-foreground underline-offset-2 hover:underline md:text-base"
+          aria-label={`${item.name} telefon numarası ${item.phone}`}
+        >
+          <Phone className="size-3 shrink-0 md:size-4" />
+          {formatPhone(item.phone)}
+        </a>
+      </div>
+
+      {/* iletişim ikonları */}
+      <div className="absolute bottom-4 right-2.5 z-20 flex items-center gap-2 md:bottom-7 md:right-5 md:gap-3">
+        <a
+          href={`https://wa.me/${item.whatsapp}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={`${item.name} WhatsApp`}
+          className="grid size-12 place-items-center rounded-full bg-primary ring-4 ring-background/40 xs:size-14 md:size-16"
+        >
+          <MessageCircle className="size-6 text-primary-foreground xs:size-7 md:size-8" />
+        </a>
+        <a
+          href={`tel:${item.phone}`}
+          aria-label={`${item.name} ara`}
+          className="grid size-12 place-items-center rounded-full bg-primary ring-4 ring-background/40 xs:size-14 md:size-16"
+        >
+          <Phone className="size-6 text-primary-foreground xs:size-7 md:size-8" />
+        </a>
       </div>
     </article>
   );
