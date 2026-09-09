@@ -1,9 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { AlertTriangle, MessageCircle, Phone } from "lucide-react";
+import { AlertTriangle, BadgeCheck, MapPin, MessageCircle, Phone } from "lucide-react";
 
+import { PhotoCarousel } from "@/components/PhotoCarousel";
 import { siteConfig, type Listing } from "@/data/listings";
-import { getPublishedListings } from "@/lib/listings.functions";
-import { photoTrio } from "@/lib/photos";
+import { getPublishedListings, getSiteSettings } from "@/lib/listings.functions";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -23,7 +23,10 @@ export const Route = createFileRoute("/")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
-  loader: () => getPublishedListings(),
+  loader: async () => {
+    const [listings, settings] = await Promise.all([getPublishedListings(), getSiteSettings()]);
+    return { listings, settings };
+  },
   component: Index,
   errorComponent: () => (
     <div className="flex min-h-screen items-center justify-center bg-background px-6 text-center">
@@ -50,134 +53,148 @@ function formatPhone(raw: string) {
   return raw;
 }
 
-
-/** Tam genişlikte fotoğraf kolajı; üst/alt düz turuncu ayraç, isim etiketi ve yuvarlak iletişim ikonları. */
-function ListingCard({ item }: { item: Listing }) {
-  const photos = photoTrio(item.photos);
+/** Büyük, çerçeveli ilan kartı: fotoğraf slider'ı, rozetler ve iletişim aksiyonları. */
+function ListingCard({ item, intervalSeconds }: { item: Listing; intervalSeconds: number }) {
+  const hasPhotos = (item.photos ?? []).filter(Boolean).length > 0;
 
   return (
-    <article className="relative w-full bg-primary">
-      {/* üst düz turuncu ayraç */}
-      <div className="pointer-events-none h-1 w-full bg-primary" />
-
-      <div className="grid grid-cols-3 gap-[3px] px-0 py-[3px] md:gap-1 md:py-1">
-        {photos.map((src, i) => (
-          <img
-            key={i}
-            src={src}
-            alt={`${item.name} fotoğraf ${i + 1}`}
-            loading="lazy"
-            className="h-36 w-full object-cover xs:h-44 md:h-56"
-          />
-        ))}
+    <article className="overflow-hidden rounded-3xl border border-border/80 bg-card/80 shadow-[0_18px_40px_-24px_oklch(0_0_0/0.9)] backdrop-blur">
+      <div className="relative">
+        <PhotoCarousel
+          photos={item.photos}
+          alt={item.name}
+          intervalSeconds={intervalSeconds}
+          className={
+            hasPhotos ? "h-56 w-full xs:h-72 md:h-96" : "h-32 w-full xs:h-36 md:h-44"
+          }
+        />
+        <div className="pointer-events-none absolute right-2.5 top-2.5 z-10 flex items-center gap-1 rounded-full bg-background/80 px-2.5 py-1 text-[11px] font-bold text-primary-foreground ring-1 ring-border md:right-4 md:top-4 md:text-xs">
+          <BadgeCheck className="size-3.5 shrink-0 text-primary md:size-4" />
+          <span className="text-foreground">Onaylı ilan</span>
+        </div>
       </div>
 
-      {/* alt düz turuncu ayraç */}
-      <div className="pointer-events-none h-1 w-full bg-primary" />
+      <div className="grid grid-cols-[minmax(0,1fr)_auto] items-end gap-3 p-3 xs:p-4 md:p-5">
+        <div className="min-w-0">
+          <h2 className="truncate text-lg font-black tracking-tight text-foreground xs:text-xl md:text-2xl">
+            {item.name}
+          </h2>
+          <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
+            {item.location && (
+              <span className="inline-flex max-w-full items-center gap-1 rounded-full bg-secondary px-2.5 py-1 text-[11px] font-semibold text-secondary-foreground ring-1 ring-border md:text-xs">
+                <MapPin className="size-3 shrink-0 text-primary md:size-3.5" />
+                <span className="truncate">{item.location}</span>
+              </span>
+            )}
+            {item.badge && (
+              <span className="max-w-full truncate rounded-full bg-primary/20 px-2.5 py-1 text-[11px] font-bold text-foreground ring-1 ring-primary/50 md:text-xs">
+                {item.badge}
+              </span>
+            )}
+          </div>
+          {item.description && (
+            <p className="mt-2 line-clamp-2 text-xs leading-relaxed text-muted-foreground md:text-sm">
+              {item.description}
+            </p>
+          )}
+          <a
+            href={`tel:${item.phone}`}
+            className="mt-2 inline-flex items-center gap-1.5 text-xs font-black text-foreground underline-offset-2 hover:underline md:text-sm"
+            aria-label={`${item.name} telefon numarası ${item.phone}`}
+          >
+            <Phone className="size-3.5 shrink-0 text-primary md:size-4" />
+            {formatPhone(item.phone)}
+          </a>
+        </div>
 
-      {/* isim etiketi */}
-      <div className="absolute bottom-5 left-0 z-20 max-w-[62%] bg-primary/90 px-3 py-1.5 pr-5 md:bottom-8 md:px-5 md:py-2.5">
-        <h2 className="truncate text-lg font-extrabold italic tracking-tight text-primary-foreground xs:text-xl md:text-3xl">
-          {item.name}
-        </h2>
-        <p className="truncate text-xs font-semibold text-primary-foreground/90 md:text-base">
-          {item.location || item.badge || "Hepsi"}
-        </p>
-        <a
-          href={`tel:${item.phone}`}
-          className="mt-0.5 flex items-center gap-1 truncate text-xs font-black text-primary-foreground underline-offset-2 hover:underline md:text-base"
-          aria-label={`${item.name} telefon numarası ${item.phone}`}
-        >
-          <Phone className="size-3 shrink-0 md:size-4" />
-          {formatPhone(item.phone)}
-        </a>
-      </div>
-
-      {/* iletişim ikonları */}
-      <div className="absolute bottom-4 right-2.5 z-20 flex items-center gap-2 md:bottom-7 md:right-5 md:gap-3">
-        <a
-          href={`https://wa.me/${item.whatsapp}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label={`${item.name} WhatsApp`}
-          className="grid size-12 place-items-center rounded-full bg-primary ring-4 ring-background/40 xs:size-14 md:size-16"
-        >
-          <MessageCircle className="size-6 text-primary-foreground xs:size-7 md:size-8" />
-        </a>
-        <a
-          href={`tel:${item.phone}`}
-          aria-label={`${item.name} ara`}
-          className="grid size-12 place-items-center rounded-full bg-primary ring-4 ring-background/40 xs:size-14 md:size-16"
-        >
-          <Phone className="size-6 text-primary-foreground xs:size-7 md:size-8" />
-        </a>
+        <div className="flex shrink-0 items-center gap-2 md:gap-3">
+          <a
+            href={`https://wa.me/${item.whatsapp}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`${item.name} WhatsApp`}
+            className="grid size-12 place-items-center rounded-full bg-cta-alt ring-1 ring-border md:size-14"
+          >
+            <MessageCircle className="size-6 text-primary-foreground md:size-7" />
+          </a>
+          <a
+            href={`tel:${item.phone}`}
+            aria-label={`${item.name} ara`}
+            className="grid size-12 place-items-center rounded-full bg-cta ring-1 ring-border md:size-14"
+          >
+            <Phone className="size-6 text-primary-foreground md:size-7" />
+          </a>
+        </div>
       </div>
     </article>
   );
 }
 
 function Index() {
-  const listings = Route.useLoaderData();
+  const { listings, settings } = Route.useLoaderData();
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="sticky top-0 z-20 border-b border-border bg-background/95 backdrop-blur">
-        <div className="mx-auto grid max-w-4xl grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-3 py-2.5 xs:px-4 md:px-6 md:py-4">
-          <div className="min-w-0">
-            <h1 className="truncate text-sm font-black tracking-widest text-primary xs:text-base md:text-xl">
-              {siteConfig.title}
-            </h1>
-            <p className="truncate text-[10px] text-muted-foreground md:text-xs">
-              {siteConfig.subtitle}
-            </p>
-          </div>
-          <a
-            href={siteConfig.banner.ctaHref}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="shrink-0 rounded-full border border-primary px-2.5 py-1 text-[11px] font-bold text-primary md:px-4 md:py-1.5 md:text-sm"
-          >
-            İletişim
-          </a>
-        </div>
-      </header>
+    <div className="min-h-screen">
+      <main className="mx-auto max-w-3xl px-3 pb-14 pt-6 xs:px-4 md:px-6 md:pt-10">
+        <header className="text-center">
+          <h1 className="text-3xl font-black leading-none tracking-tight text-foreground xs:text-4xl md:text-6xl">
+            {siteConfig.city}
+          </h1>
+          <p className="mt-1.5 text-xs font-bold uppercase tracking-[0.3em] text-primary xs:text-sm">
+            {siteConfig.title}
+          </p>
+          <p className="mt-1 text-[11px] text-muted-foreground md:text-xs">{siteConfig.subtitle}</p>
+        </header>
 
-      <main className="mx-auto max-w-4xl px-3 pb-12 pt-3 xs:px-4 md:px-6 md:pt-6">
-        <section className="overflow-hidden rounded-xl border border-primary/40 bg-secondary md:rounded-2xl">
-          <div className="flex items-center gap-2 bg-primary px-3 py-1.5 text-primary-foreground md:px-4 md:py-2">
-            <AlertTriangle className="size-3.5 shrink-0 md:size-4" />
-            <span className="text-xs font-black tracking-wide md:text-sm">
-              {siteConfig.banner.title}
-            </span>
-          </div>
-          <div className="px-3 py-2.5 md:px-4 md:py-3">
-            <p className="text-[11px] leading-relaxed text-foreground xs:text-xs md:text-sm">
-              {siteConfig.banner.text}
-            </p>
-            <a
-              href={siteConfig.banner.ctaHref}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-2.5 flex items-center justify-center rounded-lg bg-primary px-4 py-2 text-xs font-black text-primary-foreground md:mt-3 md:rounded-xl md:py-2.5 md:text-sm"
-            >
-              {siteConfig.banner.ctaLabel}
-            </a>
-          </div>
+        <section className="mt-5 flex items-start gap-2.5 rounded-full border border-border bg-background/70 px-3.5 py-2.5 md:mt-7 md:gap-3 md:px-5 md:py-3">
+          <AlertTriangle className="mt-0.5 size-4 shrink-0 text-accent md:size-5" />
+          <p className="min-w-0 text-[11px] leading-relaxed text-muted-foreground md:text-xs">
+            <span className="font-black text-foreground">{siteConfig.banner.title} </span>
+            {siteConfig.banner.text}
+          </p>
         </section>
 
+        <div className="mt-4 grid gap-3 sm:grid-cols-2 md:mt-6">
+          {siteConfig.promos.map((promo) => (
+            <a
+              key={promo.title}
+              href={promo.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`block rounded-3xl p-4 ring-1 ring-border md:p-5 ${
+                promo.variant === "primary" ? "bg-cta" : "bg-cta-alt"
+              }`}
+            >
+              <h2 className="text-sm font-black tracking-wide text-primary-foreground md:text-base">
+                {promo.title}
+              </h2>
+              <p className="mt-1 text-[11px] leading-relaxed text-primary-foreground/90 md:text-xs">
+                {promo.text}
+              </p>
+              <span className="mt-3 inline-flex rounded-full bg-background/25 px-3 py-1.5 text-[11px] font-bold text-primary-foreground md:text-xs">
+                {promo.ctaLabel}
+              </span>
+            </a>
+          ))}
+        </div>
+
         {listings.length === 0 ? (
-          <p className="mt-8 text-center text-sm text-muted-foreground">
+          <p className="mt-10 text-center text-sm text-muted-foreground">
             Şu anda yayınlanmış ilan bulunmuyor.
           </p>
         ) : (
-          <div className="-mx-3 mt-4 space-y-3 xs:-mx-4 md:mx-0 md:mt-6 md:space-y-4">
+          <div className="mt-5 space-y-4 md:mt-8 md:space-y-6">
             {listings.map((item) => (
-              <ListingCard key={item.id} item={item} />
+              <ListingCard
+                key={item.id}
+                item={item}
+                intervalSeconds={settings.carouselIntervalSeconds}
+              />
             ))}
           </div>
         )}
 
-        <p className="mt-8 text-center text-[11px] leading-relaxed text-muted-foreground md:text-xs">
+        <p className="mt-10 text-center text-[11px] leading-relaxed text-muted-foreground md:text-xs">
           {siteConfig.footerNote}
         </p>
       </main>

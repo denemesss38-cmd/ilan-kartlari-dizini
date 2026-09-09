@@ -208,13 +208,16 @@ function AdminPage() {
       </header>
 
       <main className="mx-auto max-w-3xl px-3 pb-16 pt-4">
+        <CarouselSpeedSetting />
+
         <button
           onClick={() => setDraft({ ...emptyDraft, sort_order: items.length + 1 })}
-          className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-black text-primary-foreground"
+          className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-black text-primary-foreground"
         >
           <Plus className="size-4" />
           Yeni ilan ekle
         </button>
+
 
         {draft ? (
           <section className="mt-4 rounded-2xl border border-primary/40 bg-card p-4">
@@ -428,6 +431,75 @@ function AdminPage() {
         </div>
       </main>
     </div>
+  );
+}
+
+/** Site genelinde fotoğraf geçiş hızı (saniye). 0 = otomatik geçiş kapalı. */
+function CarouselSpeedSetting() {
+  const queryClient = useQueryClient();
+  const [value, setValue] = useState<string | null>(null);
+
+  const settingQuery = useQuery({
+    queryKey: ["carousel-interval"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("site_settings")
+        .select("value")
+        .eq("key", "carousel_interval_seconds")
+        .maybeSingle();
+      if (error) throw error;
+      return Number(data?.value ?? 4);
+    },
+  });
+
+  const saveMutation = useMutation({
+    mutationFn: async (seconds: number) => {
+      const { error } = await supabase
+        .from("site_settings")
+        .upsert(
+          { key: "carousel_interval_seconds", value: seconds, updated_at: new Date().toISOString() },
+          { onConflict: "key" },
+        );
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Geçiş hızı kaydedildi.");
+      queryClient.invalidateQueries({ queryKey: ["carousel-interval"] });
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const current = value ?? String(settingQuery.data ?? 4);
+
+  return (
+    <section className="rounded-2xl border border-border bg-card p-4">
+      <h2 className="text-sm font-black text-foreground">Fotoğraf geçiş hızı</h2>
+      <p className="mt-1 text-[11px] text-muted-foreground">
+        Kartlardaki fotoğrafların kaç saniyede bir değişeceği. 0 yazarsanız otomatik geçiş kapanır.
+      </p>
+      <div className="mt-3 flex items-center gap-2">
+        <input
+          type="number"
+          min={0}
+          max={30}
+          value={current}
+          onChange={(e) => setValue(e.target.value)}
+          className="w-24 rounded-xl border border-border bg-secondary px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary"
+        />
+        <span className="text-xs text-muted-foreground">saniye</span>
+        <button
+          onClick={() => {
+            const n = Math.min(30, Math.max(0, Math.round(Number(current) || 0)));
+            setValue(String(n));
+            saveMutation.mutate(n);
+          }}
+          disabled={saveMutation.isPending}
+          className="ml-auto rounded-xl bg-primary px-4 py-2.5 text-xs font-black text-primary-foreground disabled:opacity-60"
+        >
+          {saveMutation.isPending ? "Kaydediliyor..." : "Kaydet"}
+        </button>
+      </div>
+    </section>
   );
 }
 
