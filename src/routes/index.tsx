@@ -56,9 +56,6 @@ function formatPhone(raw: string) {
 /** Büyük, çerçeveli ilan kartı: üçlü fotoğraf kolajı, rozetler ve iletişim aksiyonları. */
 function ListingCard({ item, intervalSeconds }: { item: Listing; intervalSeconds: number }) {
   const hasPhotos = (item.photos ?? []).filter(Boolean).length > 0;
-  const phoneParts = formatPhone(item.phone).split(" ");
-  const prefix = phoneParts[0] ?? "+90";
-  const rest = phoneParts.slice(1).join(" ");
 
   return (
     <article className="overflow-hidden rounded-3xl border border-border/80 bg-card/80 shadow-[0_18px_40px_-24px_oklch(0_0_0/0.9)] backdrop-blur">
