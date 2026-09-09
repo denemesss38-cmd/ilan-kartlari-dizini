@@ -74,7 +74,7 @@ function ListingCard({ item, intervalSeconds }: { item: Listing; intervalSeconds
           split={3}
           className={
             hasPhotos
-              ? "aspect-[9/4] w-full md:aspect-auto md:h-96"
+              ? "aspect-[16/9] w-full md:aspect-auto md:h-96"
               : "h-32 w-full xs:h-36 md:h-44"
           }
         />
