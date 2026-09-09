@@ -9,6 +9,8 @@ type Props = {
   /** Otomatik geçiş süresi (saniye). 0 = kapalı. */
   intervalSeconds?: number;
   className?: string;
+  /** Aynı anda yan yana gösterilecek fotoğraf sayısı. 1 = tekli carousel, 3 = üçlü kolaj. */
+  split?: number;
 };
 
 /** Kullanıcı hareket azaltmayı tercih ediyor mu? */
@@ -26,27 +28,38 @@ function usePrefersReducedMotion() {
 
 /**
  * İlan fotoğrafları için otomatik geçişli galeri.
+ * - Tekli (split=1) veya üçlü kolaj (split=3) modu.
  * - Mobilde yatay swipe, masaüstünde önce/sonra kontrolleri ve noktalar.
  * - Dokunma/kaydırma/fare ile etkileşimde otomatik geçiş duraklar, sonra devam eder.
  * - Tek fotoğrafta kontroller ve otomatik geçiş gösterilmez; fotoğraf yoksa zarif yer tutucu.
  */
-export function PhotoCarousel({ photos, alt, intervalSeconds = 4, className }: Props) {
+export function PhotoCarousel({
+  photos,
+  alt,
+  intervalSeconds = 4,
+  className,
+  split: splitProp,
+}: Props) {
   const list = (photos ?? []).filter(Boolean);
   const count = list.length;
+  const split = Math.max(1, Math.min(3, splitProp ?? 1));
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
   const reduced = usePrefersReducedMotion();
   const touch = useRef<{ x: number; y: number; horizontal: boolean | null } | null>(null);
   const resume = useRef<number | null>(null);
 
-  const autoplay = count > 1 && intervalSeconds > 0 && !reduced;
+  const canTriptych = count >= split && split > 1;
+  const slideCount = canTriptych ? count : count > 1 ? count : 1;
+  const single = count <= 1;
+  const autoplay = slideCount > 1 && intervalSeconds > 0 && !reduced;
 
   const go = useCallback(
     (next: number) => {
-      if (count < 2) return;
-      setIndex(((next % count) + count) % count);
+      if (slideCount < 2) return;
+      setIndex(((next % slideCount) + slideCount) % slideCount);
     },
-    [count],
+    [slideCount],
   );
 
   /** Etkileşimden sonra otomatik geçişi kısa bir gecikmeyle sürdürür. */
@@ -61,11 +74,11 @@ export function PhotoCarousel({ photos, alt, intervalSeconds = 4, className }: P
   useEffect(() => {
     if (!autoplay || paused) return;
     const id = window.setInterval(
-      () => setIndex((i) => (i + 1) % count),
+      () => setIndex((i) => (i + 1) % slideCount),
       Math.max(1, intervalSeconds) * 1000,
     );
     return () => window.clearInterval(id);
-  }, [autoplay, paused, count, intervalSeconds]);
+  }, [autoplay, paused, slideCount, intervalSeconds]);
 
   if (count === 0) {
     return (
@@ -80,7 +93,14 @@ export function PhotoCarousel({ photos, alt, intervalSeconds = 4, className }: P
     );
   }
 
-  const single = count === 1;
+  /** Üçlü kolajdaki bir slot için görsel indeksi (döngüsel). */
+  const slotIndex = (slide: number, offset: number) => {
+    if (canTriptych) return (slide + offset) % count;
+    // Yetersiz fotoğraf varsa mevcutları tekrarla.
+    return offset % count;
+  };
+
+  const imageWidthPct = canTriptych ? 100 / split : 100;
 
   return (
     <div
@@ -121,15 +141,27 @@ export function PhotoCarousel({ photos, alt, intervalSeconds = 4, className }: P
         className={`flex h-full w-full ${reduced ? "" : "transition-transform duration-500 ease-out"}`}
         style={{ transform: `translateX(-${index * 100}%)` }}
       >
-        {list.map((p, i) => (
-          <img
-            key={`${p}-${i}`}
-            src={photoUrl(p, i)}
-            alt={`${alt} fotoğraf ${i + 1}`}
-            loading="lazy"
-            draggable={false}
-            className="h-full w-full shrink-0 grow-0 basis-full object-cover"
-          />
+        {Array.from({ length: slideCount }).map((_, slide) => (
+          <div
+            key={slide}
+            className="flex h-full w-full shrink-0 grow-0 basis-full"
+          >
+            {Array.from({ length: canTriptych ? split : 1 }).map((__, offset) => {
+              const photoIndex = slotIndex(slide, offset);
+              const src = list[photoIndex];
+              return (
+                <img
+                  key={`${slide}-${offset}-${src}`}
+                  src={photoUrl(src, photoIndex)}
+                  alt={`${alt} fotoğraf ${photoIndex + 1}`}
+                  loading="lazy"
+                  draggable={false}
+                  className="h-full shrink-0 grow-0 object-cover"
+                  style={{ width: `${imageWidthPct}%` }}
+                />
+              );
+            })}
+          </div>
         ))}
       </div>
 
@@ -159,11 +191,11 @@ export function PhotoCarousel({ photos, alt, intervalSeconds = 4, className }: P
           </button>
 
           <div className="absolute inset-x-0 bottom-2 z-10 flex items-center justify-center gap-1.5">
-            {list.map((_, i) => (
+            {Array.from({ length: slideCount }).map((_, i) => (
               <button
                 key={i}
                 type="button"
-                aria-label={`${i + 1}. fotoğrafı göster`}
+                aria-label={`${i + 1}. fotoğraf grubunu göster`}
                 aria-current={i === index}
                 onClick={() => {
                   go(i);
@@ -181,7 +213,7 @@ export function PhotoCarousel({ photos, alt, intervalSeconds = 4, className }: P
           </div>
 
           <div className="pointer-events-none absolute left-2.5 top-2.5 z-10 rounded-full bg-background/75 px-2 py-0.5 text-[10px] font-bold text-foreground ring-1 ring-border">
-            {index + 1}/{count}
+            {index + 1}/{slideCount}
           </div>
         </>
       )}
