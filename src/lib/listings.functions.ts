@@ -5,10 +5,10 @@ import { z } from "zod";
 import type { Database } from "@/integrations/supabase/types";
 import type { Listing } from "@/data/listings";
 
-/** Herkese açık: yayında olan ilanları getirir. */
-export const getPublishedListings = createServerFn({ method: "GET" }).handler(async () => {
+/** Anonim (yayın) erişimi için sunucu tarafı istemci. */
+function publicClient() {
   const key = process.env["SUPABASE_PUBLISHABLE_KEY"]!;
-  const supabasePublic = createClient<Database>(process.env["SUPABASE_URL"]!, key, {
+  return createClient<Database>(process.env["SUPABASE_URL"]!, key, {
     auth: { persistSession: false, autoRefreshToken: false },
     global: {
       fetch: (input, init) => {
@@ -21,8 +21,11 @@ export const getPublishedListings = createServerFn({ method: "GET" }).handler(as
       },
     },
   });
+}
 
-  const { data, error } = await supabasePublic
+/** Herkese açık: yayında olan ilanları getirir. */
+export const getPublishedListings = createServerFn({ method: "GET" }).handler(async () => {
+  const { data, error } = await publicClient()
     .from("listings")
     .select("id, name, location, description, photos, phone, whatsapp, badge, sort_order, is_published")
     .eq("is_published", true)
@@ -32,6 +35,20 @@ export const getPublishedListings = createServerFn({ method: "GET" }).handler(as
   if (error) throw new Error(error.message);
   return (data ?? []) as Listing[];
 });
+
+/** Herkese açık: site ayarları (şu an fotoğraf geçiş hızı). 0 = otomatik geçiş kapalı. */
+export const getSiteSettings = createServerFn({ method: "GET" }).handler(async () => {
+  const { data } = await publicClient()
+    .from("site_settings")
+    .select("key, value")
+    .eq("key", "carousel_interval_seconds")
+    .maybeSingle();
+
+  const raw = Number(data?.value ?? 4);
+  const seconds = Number.isFinite(raw) && raw >= 0 && raw <= 30 ? raw : 4;
+  return { carouselIntervalSeconds: seconds };
+});
+
 
 const setupSchema = z.object({
   email: z.string().trim().email().max(255),
