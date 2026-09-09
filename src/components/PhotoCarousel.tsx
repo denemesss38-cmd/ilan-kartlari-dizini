@@ -1,26 +1,45 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ImageOff } from "lucide-react";
+import { ChevronLeft, ChevronRight, ImageOff } from "lucide-react";
 
 import { photoUrl } from "@/lib/photos";
 
 type Props = {
   photos: string[] | null | undefined;
   alt: string;
-  /** Otomatik geçiş süresi (ms). */
-  interval?: number;
+  /** Otomatik geçiş süresi (saniye). 0 = kapalı. */
+  intervalSeconds?: number;
   className?: string;
 };
 
+/** Kullanıcı hareket azaltmayı tercih ediyor mu? */
+function usePrefersReducedMotion() {
+  const [reduced, setReduced] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setReduced(mq.matches);
+    const onChange = () => setReduced(mq.matches);
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
+  return reduced;
+}
+
 /**
- * İlan fotoğrafları için otomatik geçişli, dokunmatik kaydırmayı destekleyen slider.
- * Fotoğraf yoksa zarif bir yer tutucu, tek fotoğraf varsa sabit görsel gösterir.
+ * İlan fotoğrafları için otomatik geçişli galeri.
+ * - Mobilde yatay swipe, masaüstünde önce/sonra kontrolleri ve noktalar.
+ * - Dokunma/kaydırma/fare ile etkileşimde otomatik geçiş duraklar, sonra devam eder.
+ * - Tek fotoğrafta kontroller ve otomatik geçiş gösterilmez; fotoğraf yoksa zarif yer tutucu.
  */
-export function PhotoCarousel({ photos, alt, interval = 3800, className }: Props) {
+export function PhotoCarousel({ photos, alt, intervalSeconds = 4, className }: Props) {
   const list = (photos ?? []).filter(Boolean);
   const count = list.length;
   const [index, setIndex] = useState(0);
-  const touchStart = useRef<number | null>(null);
-  const paused = useRef(false);
+  const [paused, setPaused] = useState(false);
+  const reduced = usePrefersReducedMotion();
+  const touch = useRef<{ x: number; y: number; horizontal: boolean | null } | null>(null);
+  const resume = useRef<number | null>(null);
+
+  const autoplay = count > 1 && intervalSeconds > 0 && !reduced;
 
   const go = useCallback(
     (next: number) => {
@@ -30,13 +49,23 @@ export function PhotoCarousel({ photos, alt, interval = 3800, className }: Props
     [count],
   );
 
+  /** Etkileşimden sonra otomatik geçişi kısa bir gecikmeyle sürdürür. */
+  const pauseThenResume = useCallback((delay = 2500) => {
+    setPaused(true);
+    if (resume.current) window.clearTimeout(resume.current);
+    resume.current = window.setTimeout(() => setPaused(false), delay);
+  }, []);
+
+  useEffect(() => () => void (resume.current && window.clearTimeout(resume.current)), []);
+
   useEffect(() => {
-    if (count < 2) return;
-    const id = window.setInterval(() => {
-      if (!paused.current) setIndex((i) => (i + 1) % count);
-    }, interval);
+    if (!autoplay || paused) return;
+    const id = window.setInterval(
+      () => setIndex((i) => (i + 1) % count),
+      Math.max(1, intervalSeconds) * 1000,
+    );
     return () => window.clearInterval(id);
-  }, [count, interval]);
+  }, [autoplay, paused, count, intervalSeconds]);
 
   if (count === 0) {
     return (
@@ -51,27 +80,45 @@ export function PhotoCarousel({ photos, alt, interval = 3800, className }: Props
     );
   }
 
+  const single = count === 1;
+
   return (
     <div
-      className={`relative overflow-hidden bg-secondary/70 ${className ?? ""}`}
-      onMouseEnter={() => (paused.current = true)}
-      onMouseLeave={() => (paused.current = false)}
+      className={`group relative overflow-hidden bg-secondary/70 ${className ?? ""}`}
+      onMouseEnter={() => !single && setPaused(true)}
+      onMouseLeave={() => !single && setPaused(false)}
       onTouchStart={(e) => {
-        paused.current = true;
-        touchStart.current = e.touches[0]?.clientX ?? null;
+        if (single) return;
+        const t = e.touches[0];
+        if (!t) return;
+        touch.current = { x: t.clientX, y: t.clientY, horizontal: null };
+        setPaused(true);
+      }}
+      onTouchMove={(e) => {
+        const start = touch.current;
+        const t = e.touches[0];
+        if (!start || !t) return;
+        if (start.horizontal === null) {
+          const dx = Math.abs(t.clientX - start.x);
+          const dy = Math.abs(t.clientY - start.y);
+          if (dx < 8 && dy < 8) return;
+          // Dikey sayfa kaydırmasıyla çakışmayı önlemek için yön kilidi.
+          start.horizontal = dx > dy;
+        }
       }}
       onTouchEnd={(e) => {
-        paused.current = false;
-        const start = touchStart.current;
-        const end = e.changedTouches[0]?.clientX ?? null;
-        touchStart.current = null;
-        if (start == null || end == null) return;
-        const dx = end - start;
+        const start = touch.current;
+        touch.current = null;
+        pauseThenResume();
+        const end = e.changedTouches[0];
+        if (!start || !end || start.horizontal !== true) return;
+        const dx = end.clientX - start.x;
         if (Math.abs(dx) > 40) go(index + (dx < 0 ? 1 : -1));
       }}
+      style={single ? undefined : { touchAction: "pan-y" }}
     >
       <div
-        className="flex h-full w-full transition-transform duration-500 ease-out"
+        className={`flex h-full w-full ${reduced ? "" : "transition-transform duration-500 ease-out"}`}
         style={{ transform: `translateX(-${index * 100}%)` }}
       >
         {list.map((p, i) => (
@@ -86,20 +133,57 @@ export function PhotoCarousel({ photos, alt, interval = 3800, className }: Props
         ))}
       </div>
 
-      {count > 1 && (
-        <div className="absolute inset-x-0 bottom-2 z-10 flex items-center justify-center gap-1.5">
-          {list.map((_, i) => (
-            <button
-              key={i}
-              type="button"
-              aria-label={`${i + 1}. fotoğrafı göster`}
-              onClick={() => go(i)}
-              className={`h-1.5 rounded-full transition-all ${
-                i === index ? "w-5 bg-primary-foreground" : "w-1.5 bg-primary-foreground/50"
-              }`}
-            />
-          ))}
-        </div>
+      {!single && (
+        <>
+          <button
+            type="button"
+            aria-label="Önceki fotoğraf"
+            onClick={() => {
+              go(index - 1);
+              pauseThenResume();
+            }}
+            className="absolute left-1.5 top-1/2 z-10 hidden -translate-y-1/2 place-items-center rounded-full bg-background/70 p-2 text-foreground ring-1 ring-border transition-opacity hover:bg-background md:grid"
+          >
+            <ChevronLeft className="size-5" />
+          </button>
+          <button
+            type="button"
+            aria-label="Sonraki fotoğraf"
+            onClick={() => {
+              go(index + 1);
+              pauseThenResume();
+            }}
+            className="absolute right-1.5 top-1/2 z-10 hidden -translate-y-1/2 place-items-center rounded-full bg-background/70 p-2 text-foreground ring-1 ring-border transition-opacity hover:bg-background md:grid"
+          >
+            <ChevronRight className="size-5" />
+          </button>
+
+          <div className="absolute inset-x-0 bottom-2 z-10 flex items-center justify-center gap-1.5">
+            {list.map((_, i) => (
+              <button
+                key={i}
+                type="button"
+                aria-label={`${i + 1}. fotoğrafı göster`}
+                aria-current={i === index}
+                onClick={() => {
+                  go(i);
+                  pauseThenResume();
+                }}
+                className="grid h-6 w-4 place-items-center"
+              >
+                <span
+                  className={`block h-1.5 rounded-full transition-all ${
+                    i === index ? "w-5 bg-primary-foreground" : "w-1.5 bg-primary-foreground/50"
+                  }`}
+                />
+              </button>
+            ))}
+          </div>
+
+          <div className="pointer-events-none absolute left-2.5 top-2.5 z-10 rounded-full bg-background/75 px-2 py-0.5 text-[10px] font-bold text-foreground ring-1 ring-border">
+            {index + 1}/{count}
+          </div>
+        </>
       )}
     </div>
   );
