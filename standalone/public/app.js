@@ -72,4 +72,26 @@
       }, interval * 1000);
     }
   });
+
+  document.querySelectorAll("[data-toggle-edit]").forEach(function (button) {
+    button.addEventListener("click", function () {
+      var id = button.getAttribute("data-toggle-edit");
+      var panel = id ? document.getElementById(id) : null;
+      if (!panel) return;
+      var opening = panel.hidden;
+      panel.hidden = !opening;
+      button.setAttribute("aria-expanded", String(opening));
+      if (opening) {
+        var first = panel.querySelector("input:not([type=hidden]), textarea, select");
+        if (first) first.focus({ preventScroll: true });
+        panel.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "nearest" });
+      }
+    });
+  });
+
+  document.querySelectorAll("[data-confirm]").forEach(function (button) {
+    button.addEventListener("click", function (event) {
+      if (!window.confirm(button.getAttribute("data-confirm") || "Emin misiniz?")) event.preventDefault();
+    });
+  });
 })();

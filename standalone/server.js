@@ -100,6 +100,7 @@ function requireCsrf(req, res, next) {
   const cookie = String(req.cookies.il_csrf || "");
   const body = String(req.body._csrf || "");
   if (cookie.length === body.length && cookie.length === 64 && crypto.timingSafeEqual(Buffer.from(cookie), Buffer.from(body))) return next();
+  removeUploaded(req.files);
   return res.status(403).type("html").send("<p>Güvenlik doğrulaması başarısız. Sayfayı yenileyip tekrar deneyin.</p>");
 }
 
@@ -228,6 +229,10 @@ app.post("/admin/settings", requireAdmin, requireCsrf, async (req, res, next) =>
 
 app.post("/admin/listings", requireAdmin, upload.array("photos", 12), requireCsrf, async (req, res, next) => {
   try {
+    if (!cleanText(req.body.name, 80)) {
+      removeUploaded(req.files);
+      return res.status(400).type("html").send("<p>İlan adı zorunludur.</p>");
+    }
     const newUrls = (req.files || []).map((f) => `/uploads/${f.filename}`);
     const sortOrder = parseInt(req.body.sort_order, 10);
     await pool.query(
@@ -257,6 +262,10 @@ app.post("/admin/listings", requireAdmin, upload.array("photos", 12), requireCsr
 
 app.post("/admin/listings/:id", requireAdmin, validId, upload.array("photos", 12), requireCsrf, async (req, res, next) => {
   try {
+    if (!cleanText(req.body.name, 80)) {
+      removeUploaded(req.files);
+      return res.status(400).type("html").send("<p>İlan adı zorunludur.</p>");
+    }
     const newUrls = (req.files || []).map((f) => `/uploads/${f.filename}`);
     await pool.query(
       `UPDATE listings SET
