@@ -126,12 +126,11 @@ function ListingCard({ item, intervalSeconds }: { item: Listing; intervalSeconds
 
         <a
           href={`tel:${item.phone}`}
-          className="mt-3 inline-flex items-center gap-1.5 font-black text-foreground underline-offset-2 hover:underline"
+          className="mt-3 inline-flex items-center gap-1.5 whitespace-nowrap font-black text-primary underline-offset-2 hover:underline"
           aria-label={`${item.name} telefon numarası ${item.phone}`}
         >
-          <Phone className="size-5 shrink-0 text-primary md:size-6" />
-          <span className="text-2xl leading-none text-primary md:text-3xl">{prefix}</span>
-          <span className="text-2xl leading-none text-foreground/90 md:text-3xl">{rest}</span>
+          <Phone className="size-5 shrink-0 md:size-6" />
+          <span className="text-xl leading-none md:text-2xl">{formatPhone(item.phone)}</span>
         </a>
       </div>
     </article>
