@@ -211,6 +211,8 @@ function AdminPage() {
 
       <main className="mx-auto max-w-3xl px-3 pb-16 pt-4">
         <CarouselSpeedSetting />
+        <SeoSettings />
+
 
         <button
           onClick={() => setDraft({ ...emptyDraft, sort_order: items.length + 1 })}
