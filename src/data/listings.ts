@@ -4,13 +4,31 @@
  */
 export const siteConfig = {
   title: "İLAN REHBERİ",
-  subtitle: "Güncel ilanlar",
+  city: "İZMİR",
+  subtitle: "Güncel ilanlar ve iletişim",
   banner: {
     title: "DİKKAT!",
     text: "Ödeme öncesi kimlik veya kapora isteyen kişilere karşı dikkatli olun. Tüm ilanlar kullanıcılar tarafından eklenmiştir.",
     ctaLabel: "Reklam vermek için tıklayın",
     ctaHref: "https://wa.me/905551112233",
   },
+  /** Üstteki iki büyük gradyan alan. */
+  promos: [
+    {
+      title: "İLANINIZI ÖNE ÇIKARIN",
+      text: "Vitrinin en üstünde yayınlanmak için hemen yazın.",
+      ctaLabel: "Reklam ver",
+      href: "https://wa.me/905551112233",
+      variant: "primary" as const,
+    },
+    {
+      title: "GÜVENLİ İLETİŞİM",
+      text: "Tüm görüşmeleri telefon veya WhatsApp üzerinden yapın.",
+      ctaLabel: "Bilgi al",
+      href: "https://wa.me/905551112233",
+      variant: "alt" as const,
+    },
+  ],
   footerNote: "Bu site yalnızca ilan yayınlar; hizmet sunmaz ve aracılık yapmaz.",
 };
 
