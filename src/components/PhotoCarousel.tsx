@@ -212,9 +212,6 @@ export function PhotoCarousel({
             ))}
           </div>
 
-          <div className="pointer-events-none absolute left-2.5 top-2.5 z-10 rounded-full bg-background/75 px-2 py-0.5 text-[10px] font-bold text-foreground ring-1 ring-border">
-            {index + 1}/{slideCount}
-          </div>
         </>
       )}
     </div>
