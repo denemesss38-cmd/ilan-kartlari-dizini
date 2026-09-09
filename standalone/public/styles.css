@@ -71,9 +71,8 @@ a { color: inherit; text-decoration: none; }
 }
 .card-media { position: relative; }
 
-.gallery { position: relative; display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; height: 224px; background: oklch(0.11 0.03 300); }
-@media (min-width: 481px) { .gallery { height: 288px; } }
-@media (min-width: 768px) { .gallery { height: 384px; } }
+.gallery { position: relative; display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; aspect-ratio: 9 / 4; background: oklch(0.11 0.03 300); }
+@media (min-width: 768px) { .gallery { aspect-ratio: auto; height: 384px; } }
 .gallery .slot { overflow: hidden; }
 .gallery img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .gallery.empty { display: grid; grid-template-columns: 1fr; place-items: center; height: 128px; color: var(--muted); font-size: 12px; }
