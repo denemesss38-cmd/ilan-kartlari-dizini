@@ -11,6 +11,6 @@
 - [x] Kompakt yatay ilan kartları (mobil/tablet/masaüstü breakpoint'leri)
 - [x] 8 örnek ilan kaydı
 - [x] Mobil QA (320/375/390/414/480) + telefon numarası biçimi
-- [ ] Mor-siyah gradyan tema, büyük başlık, yuvarlak uyarı bandı, iki gradyan CTA, büyük ilan kartları
-- [ ] Fotoğraf galerisi: 4 sn otomatik geçiş, etkileşimde duraklama, mobil swipe, masaüstü ok/nokta kontrolleri, reduced-motion, tek görselde kontrol yok
-- [ ] Admin: site geneli otomatik geçiş hızı ayarı (0 = kapalı)
+- [x] Mor-siyah gradyan tema, büyük başlık, yuvarlak uyarı bandı, iki gradyan CTA, büyük ilan kartları
+- [x] Fotoğraf galerisi: 4 sn otomatik geçiş, etkileşimde duraklama, mobil swipe, masaüstü ok/nokta kontrolleri, reduced-motion, tek görselde kontrol yok
+- [x] Admin: site geneli otomatik geçiş hızı ayarı (0 = kapalı)
