@@ -146,14 +146,6 @@ function Index() {
           <p className="mt-1 text-[11px] text-muted-foreground md:text-xs">{siteConfig.subtitle}</p>
         </header>
 
-        <section className="mt-5 flex items-start gap-2.5 rounded-full border border-border bg-background/70 px-3.5 py-2.5 md:mt-7 md:gap-3 md:px-5 md:py-3">
-          <AlertTriangle className="mt-0.5 size-4 shrink-0 text-accent md:size-5" />
-          <p className="min-w-0 text-[11px] leading-relaxed text-muted-foreground md:text-xs">
-            <span className="font-black text-foreground">{siteConfig.banner.title} </span>
-            {siteConfig.banner.text}
-          </p>
-        </section>
-
         <div className="mt-4 grid gap-3 sm:grid-cols-2 md:mt-6">
           {siteConfig.promos.map((promo) => (
             <a
