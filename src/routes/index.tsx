@@ -225,9 +225,14 @@ function Index() {
           );
         })()}
 
-        <p className="mt-10 text-center text-[11px] leading-relaxed text-muted-foreground md:text-xs">
-          {siteConfig.footerNote}
-        </p>
+        <footer className="mt-10 border-t border-border/60 pt-6 pb-4 text-center">
+          <p className="text-[11px] leading-relaxed text-muted-foreground md:text-xs">
+            {siteConfig.footerNote}
+          </p>
+          <p className="mt-2 text-[11px] text-muted-foreground/80 md:text-xs">
+            © {new Date().getFullYear()} {siteConfig.siteName}. Tüm hakları saklıdır.
+          </p>
+        </footer>
       </main>
     </div>
   );
