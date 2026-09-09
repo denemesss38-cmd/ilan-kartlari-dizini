@@ -5,30 +5,35 @@ import { PhotoCarousel } from "@/components/PhotoCarousel";
 import { siteConfig, type Listing } from "@/data/listings";
 import { getPublishedListings, getSiteSettings } from "@/lib/listings.functions";
 
+const DEFAULT_TITLE = "İlan Rehberi — Güncel İlanlar ve İletişim";
+const DEFAULT_DESCRIPTION =
+  "Güncel ilanları inceleyin, telefon veya WhatsApp üzerinden tek dokunuşla iletişime geçin.";
+
 export const Route = createFileRoute("/")({
-  head: () => ({
-    meta: [
-      { title: "İlan Rehberi — Güncel İlanlar ve İletişim" },
-      {
-        name: "description",
-        content:
-          "Güncel ilanları inceleyin, telefon veya WhatsApp üzerinden tek dokunuşla iletişime geçin.",
-      },
-      { property: "og:title", content: "İlan Rehberi — Güncel İlanlar" },
-      {
-        property: "og:description",
-        content: "Fotoğraflı ilanlar, telefon ve WhatsApp ile hızlı iletişim.",
-      },
-      { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://ilan-kartlari-dizini.lovable.app/" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-    links: [{ rel: "canonical", href: "https://ilan-kartlari-dizini.lovable.app/" }],
-  }),
+  head: ({ loaderData }) => {
+    const title = loaderData?.settings.seoTitle || DEFAULT_TITLE;
+    const description = loaderData?.settings.seoDescription || DEFAULT_DESCRIPTION;
+    const keywords = loaderData?.settings.seoKeywords || "";
+
+    return {
+      meta: [
+        { title },
+        { name: "description", content: description },
+        ...(keywords ? [{ name: "keywords", content: keywords }] : []),
+        { property: "og:title", content: title },
+        { property: "og:description", content: description },
+        { property: "og:type", content: "website" },
+        { property: "og:url", content: "https://ilan-kartlari-dizini.lovable.app/" },
+        { name: "twitter:card", content: "summary_large_image" },
+      ],
+      links: [{ rel: "canonical", href: "https://ilan-kartlari-dizini.lovable.app/" }],
+    };
+  },
   loader: async () => {
     const [listings, settings] = await Promise.all([getPublishedListings(), getSiteSettings()]);
     return { listings, settings };
   },
+
   component: Index,
   errorComponent: () => (
     <div className="flex min-h-screen items-center justify-center bg-background px-6 text-center">

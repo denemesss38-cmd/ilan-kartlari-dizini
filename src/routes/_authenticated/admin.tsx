@@ -211,6 +211,8 @@ function AdminPage() {
 
       <main className="mx-auto max-w-3xl px-3 pb-16 pt-4">
         <CarouselSpeedSetting />
+        <SeoSettings />
+
 
         <button
           onClick={() => setDraft({ ...emptyDraft, sort_order: items.length + 1 })}
@@ -523,7 +525,98 @@ function CarouselSpeedSetting() {
   );
 }
 
+/** Ana sayfa SEO metinleri: sayfa başlığı, açıklama ve anahtar kelimeler. */
+function SeoSettings() {
+  const queryClient = useQueryClient();
+  const [draft, setDraft] = useState<{
+    title: string;
+    description: string;
+    keywords: string;
+  } | null>(null);
+
+  const seoQuery = useQuery({
+    queryKey: ["seo-settings"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("site_settings")
+        .select("key, value")
+        .in("key", ["seo_title", "seo_description", "seo_keywords"]);
+      if (error) throw error;
+      const map = new Map((data ?? []).map((r) => [r.key, r.value]));
+      const str = (k: string) => (typeof map.get(k) === "string" ? String(map.get(k)) : "");
+      return {
+        title: str("seo_title"),
+        description: str("seo_description"),
+        keywords: str("seo_keywords"),
+      };
+    },
+  });
+
+  const saveMutation = useMutation({
+    mutationFn: async (v: { title: string; description: string; keywords: string }) => {
+      const now = new Date().toISOString();
+      const { error } = await supabase.from("site_settings").upsert(
+        [
+          { key: "seo_title", value: v.title.trim(), updated_at: now },
+          { key: "seo_description", value: v.description.trim(), updated_at: now },
+          { key: "seo_keywords", value: v.keywords.trim(), updated_at: now },
+        ],
+        { onConflict: "key" },
+      );
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("SEO ayarları kaydedildi.");
+      queryClient.invalidateQueries({ queryKey: ["seo-settings"] });
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const current =
+    draft ?? seoQuery.data ?? { title: "", description: "", keywords: "" };
+
+  return (
+    <section className="mt-4 rounded-2xl border border-border bg-card p-4">
+      <h2 className="text-sm font-black text-foreground">SEO / arama motoru ayarları</h2>
+      <p className="mt-1 text-[11px] text-muted-foreground">
+        Ana sayfanın arama sonuçlarında görünen başlığı, açıklaması ve anahtar kelimeleri. Boş
+        bırakırsanız varsayılan metinler kullanılır.
+      </p>
+      <div className="mt-3 space-y-3">
+        <Field
+          label="Sayfa başlığı (en çok 60 karakter önerilir)"
+          value={current.title}
+          onChange={(v) => setDraft({ ...current, title: v })}
+          max={70}
+        />
+        <Field
+          label="Açıklama (en çok 160 karakter önerilir)"
+          value={current.description}
+          onChange={(v) => setDraft({ ...current, description: v })}
+          max={180}
+          textarea
+        />
+        <Field
+          label="Anahtar kelimeler (virgülle ayırın)"
+          value={current.keywords}
+          onChange={(v) => setDraft({ ...current, keywords: v })}
+          max={300}
+          textarea
+        />
+      </div>
+      <button
+        onClick={() => saveMutation.mutate(current)}
+        disabled={saveMutation.isPending}
+        className="mt-3 w-full rounded-xl bg-primary px-4 py-3 text-xs font-black text-primary-foreground disabled:opacity-60"
+      >
+        {saveMutation.isPending ? "Kaydediliyor..." : "SEO ayarlarını kaydet"}
+      </button>
+    </section>
+  );
+}
+
 function CenterNote({ text }: { text: string }) {
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-background">
       <p className="text-sm text-muted-foreground">{text}</p>

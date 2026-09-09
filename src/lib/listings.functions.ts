@@ -36,18 +36,29 @@ export const getPublishedListings = createServerFn({ method: "GET" }).handler(as
   return (data ?? []) as Listing[];
 });
 
-/** Herkese açık: site ayarları (şu an fotoğraf geçiş hızı). 0 = otomatik geçiş kapalı. */
+/** Herkese açık: site ayarları (fotoğraf geçiş hızı + SEO metinleri). 0 = otomatik geçiş kapalı. */
 export const getSiteSettings = createServerFn({ method: "GET" }).handler(async () => {
   const { data } = await publicClient()
     .from("site_settings")
     .select("key, value")
-    .eq("key", "carousel_interval_seconds")
-    .maybeSingle();
+    .in("key", ["carousel_interval_seconds", "seo_title", "seo_description", "seo_keywords"]);
 
-  const raw = Number(data?.value ?? 4);
+  const map = new Map((data ?? []).map((r) => [r.key, r.value]));
+  const raw = Number(map.get("carousel_interval_seconds") ?? 4);
   const seconds = Number.isFinite(raw) && raw >= 0 && raw <= 30 ? raw : 4;
-  return { carouselIntervalSeconds: seconds };
+  const str = (k: string) => {
+    const v = map.get(k);
+    return typeof v === "string" ? v.trim() : "";
+  };
+
+  return {
+    carouselIntervalSeconds: seconds,
+    seoTitle: str("seo_title"),
+    seoDescription: str("seo_description"),
+    seoKeywords: str("seo_keywords"),
+  };
 });
+
 
 
 const setupSchema = z.object({
