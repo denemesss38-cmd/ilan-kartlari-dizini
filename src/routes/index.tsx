@@ -20,8 +20,10 @@ export const Route = createFileRoute("/")({
         content: "Fotoğraflı ilanlar, telefon ve WhatsApp ile hızlı iletişim.",
       },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://ilan-kartlari-dizini.lovable.app/" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
+    links: [{ rel: "canonical", href: "https://ilan-kartlari-dizini.lovable.app/" }],
   }),
   loader: async () => {
     const [listings, settings] = await Promise.all([getPublishedListings(), getSiteSettings()]);
