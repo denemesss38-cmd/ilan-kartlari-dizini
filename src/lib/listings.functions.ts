@@ -27,7 +27,7 @@ function publicClient() {
 export const getPublishedListings = createServerFn({ method: "GET" }).handler(async () => {
   const { data, error } = await publicClient()
     .from("listings")
-    .select("id, name, location, description, photos, phone, whatsapp, badge, sort_order, is_published")
+    .select("id, name, location, description, photos, phone, whatsapp, badge, venue, sort_order, is_published")
     .eq("is_published", true)
     .order("sort_order", { ascending: true })
     .order("created_at", { ascending: false });
