@@ -94,14 +94,11 @@ export function PhotoCarousel({
   return (
     <div
       className={`group relative overflow-hidden bg-secondary/70 ${className ?? ""}`}
-      onMouseEnter={() => !single && setPaused(true)}
-      onMouseLeave={() => !single && setPaused(false)}
       onTouchStart={(e) => {
         if (single) return;
         const t = e.touches[0];
         if (!t) return;
         touch.current = { x: t.clientX, y: t.clientY, horizontal: null };
-        setPaused(true);
       }}
       onTouchMove={(e) => {
         const start = touch.current;
@@ -118,7 +115,6 @@ export function PhotoCarousel({
       onTouchEnd={(e) => {
         const start = touch.current;
         touch.current = null;
-        pauseThenResume();
         const end = e.changedTouches[0];
         if (!start || !end || start.horizontal !== true) return;
         const dx = end.clientX - start.x;
