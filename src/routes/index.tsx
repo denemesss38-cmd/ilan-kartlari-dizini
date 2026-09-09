@@ -78,58 +78,61 @@ function ListingCard({ item, intervalSeconds }: { item: Listing; intervalSeconds
         </div>
       </div>
 
-      <div className="grid grid-cols-[minmax(0,1fr)_auto] items-end gap-3 p-3 xs:p-4 md:p-5">
-        <div className="min-w-0">
-          <h2 className="truncate text-lg font-black tracking-tight text-foreground xs:text-xl md:text-2xl">
-            {item.name}
-          </h2>
-          <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
-            {item.location && (
-              <span className="inline-flex max-w-full items-center gap-1 rounded-full bg-secondary px-2.5 py-1 text-[11px] font-semibold text-secondary-foreground ring-1 ring-border md:text-xs">
-                <MapPin className="size-3 shrink-0 text-primary md:size-3.5" />
-                <span className="truncate">{item.location}</span>
-              </span>
-            )}
-            {item.badge && (
-              <span className="max-w-full truncate rounded-full bg-primary/20 px-2.5 py-1 text-[11px] font-bold text-foreground ring-1 ring-primary/50 md:text-xs">
-                {item.badge}
-              </span>
+      <div className="p-3 xs:p-4 md:p-5">
+        <div className="flex items-end justify-between gap-3">
+          <div className="min-w-0">
+            <h2 className="truncate text-lg font-black tracking-tight text-foreground xs:text-xl md:text-2xl">
+              {item.name}
+            </h2>
+            <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
+              {item.location && (
+                <span className="inline-flex max-w-full items-center gap-1 rounded-full bg-secondary px-2.5 py-1 text-[11px] font-semibold text-secondary-foreground ring-1 ring-border md:text-xs">
+                  <MapPin className="size-3 shrink-0 text-primary md:size-3.5" />
+                  <span className="truncate">{item.location}</span>
+                </span>
+              )}
+              {item.badge && (
+                <span className="max-w-full truncate rounded-full bg-primary/20 px-2.5 py-1 text-[11px] font-bold text-foreground ring-1 ring-primary/50 md:text-xs">
+                  {item.badge}
+                </span>
+              )}
+            </div>
+            {item.description && (
+              <p className="mt-2 line-clamp-2 text-xs leading-relaxed text-muted-foreground md:text-sm">
+                {item.description}
+              </p>
             )}
           </div>
-          {item.description && (
-            <p className="mt-2 line-clamp-2 text-xs leading-relaxed text-muted-foreground md:text-sm">
-              {item.description}
-            </p>
-          )}
-          <a
-            href={`tel:${item.phone}`}
-            className="mt-2 inline-flex items-center gap-1.5 font-black text-foreground underline-offset-2 hover:underline"
-            aria-label={`${item.name} telefon numarası ${item.phone}`}
-          >
-            <Phone className="size-5 shrink-0 text-primary md:size-6" />
-            <span className="text-2xl leading-none text-primary md:text-3xl">{prefix}</span>
-            <span className="text-2xl leading-none text-foreground/90 md:text-3xl">{rest}</span>
-          </a>
+
+          <div className="flex shrink-0 items-center gap-2 md:gap-3">
+            <a
+              href={`https://wa.me/${item.whatsapp}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`${item.name} WhatsApp`}
+              className="grid size-12 place-items-center rounded-full bg-cta-alt ring-1 ring-border md:size-14"
+            >
+              <MessageCircle className="size-6 text-primary-foreground md:size-7" />
+            </a>
+            <a
+              href={`tel:${item.phone}`}
+              aria-label={`${item.name} ara`}
+              className="grid size-12 place-items-center rounded-full bg-cta ring-1 ring-border md:size-14"
+            >
+              <Phone className="size-6 text-primary-foreground md:size-7" />
+            </a>
+          </div>
         </div>
 
-        <div className="flex shrink-0 items-center gap-2 md:gap-3">
-          <a
-            href={`https://wa.me/${item.whatsapp}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label={`${item.name} WhatsApp`}
-            className="grid size-12 place-items-center rounded-full bg-cta-alt ring-1 ring-border md:size-14"
-          >
-            <MessageCircle className="size-6 text-primary-foreground md:size-7" />
-          </a>
-          <a
-            href={`tel:${item.phone}`}
-            aria-label={`${item.name} ara`}
-            className="grid size-12 place-items-center rounded-full bg-cta ring-1 ring-border md:size-14"
-          >
-            <Phone className="size-6 text-primary-foreground md:size-7" />
-          </a>
-        </div>
+        <a
+          href={`tel:${item.phone}`}
+          className="mt-3 inline-flex items-center gap-1.5 font-black text-foreground underline-offset-2 hover:underline"
+          aria-label={`${item.name} telefon numarası ${item.phone}`}
+        >
+          <Phone className="size-5 shrink-0 text-primary md:size-6" />
+          <span className="text-2xl leading-none text-primary md:text-3xl">{prefix}</span>
+          <span className="text-2xl leading-none text-foreground/90 md:text-3xl">{rest}</span>
+        </a>
       </div>
     </article>
   );
