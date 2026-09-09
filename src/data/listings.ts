@@ -4,7 +4,7 @@
  */
 export const siteConfig = {
   title: "İLAN REHBERİ",
-  city: "İZMİR",
+  city: "DİYARBAKIR",
   subtitle: "Güncel ilanlar ve iletişim",
   banner: {
     title: "DİKKAT!",

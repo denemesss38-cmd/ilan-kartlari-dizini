@@ -150,14 +150,14 @@ function Index() {
           <p className="mt-1 text-[11px] text-muted-foreground md:text-xs">{siteConfig.subtitle}</p>
         </header>
 
-        <div className="mt-4 grid gap-3 sm:grid-cols-2 md:mt-6">
+        <div className="mx-auto mt-4 grid w-full max-w-2xl gap-3 sm:grid-cols-2 md:mt-6">
           {siteConfig.promos.map((promo) => (
             <a
               key={promo.title}
               href={promo.href}
               target="_blank"
               rel="noopener noreferrer"
-              className={`block rounded-3xl p-4 ring-1 ring-border md:p-5 ${
+              className={`flex flex-col items-center justify-center rounded-3xl p-4 text-center ring-1 ring-border md:p-5 ${
                 promo.variant === "primary" ? "bg-cta" : "bg-cta-alt"
               }`}
             >
@@ -167,7 +167,7 @@ function Index() {
               <p className="mt-1 text-[11px] leading-relaxed text-primary-foreground/90 md:text-xs">
                 {promo.text}
               </p>
-              <span className="mt-3 inline-flex rounded-full bg-background/25 px-3 py-1.5 text-[11px] font-bold text-primary-foreground md:text-xs">
+              <span className="mt-3 inline-flex min-h-11 items-center rounded-full bg-background/25 px-4 py-2 text-[11px] font-bold text-primary-foreground md:text-xs">
                 {promo.ctaLabel}
               </span>
             </a>
