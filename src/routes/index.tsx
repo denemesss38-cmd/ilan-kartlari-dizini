@@ -42,12 +42,14 @@ export const Route = createFileRoute("/")({
 /** 905543344455 gibi ham numarayı +90 554 334 44 55 biçiminde gösterir. */
 function formatPhone(raw: string) {
   const digits = raw.replace(/\D/g, "");
-  const d = digits.startsWith("0") ? digits.slice(1) : digits;
-  if (d.length === 11 && d.startsWith("90")) {
+  let d = digits.startsWith("0") ? digits.slice(1) : digits;
+  if (d.length === 10) d = `90${d}`;
+  if (d.length === 12 && d.startsWith("90")) {
     return `+${d.slice(0, 2)} ${d.slice(2, 5)} ${d.slice(5, 8)} ${d.slice(8, 10)} ${d.slice(10)}`;
   }
   return raw;
 }
+
 
 /** Tam genişlikte fotoğraf kolajı; üst/alt düz turuncu ayraç, isim etiketi ve yuvarlak iletişim ikonları. */
 function ListingCard({ item }: { item: Listing }) {
