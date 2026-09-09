@@ -155,10 +155,7 @@ export function PhotoCarousel({
           <button
             type="button"
             aria-label="Önceki fotoğraf"
-            onClick={() => {
-              go(index - 1);
-              pauseThenResume();
-            }}
+            onClick={() => go(index - 1)}
             className="absolute left-1.5 top-1/2 z-10 hidden -translate-y-1/2 place-items-center rounded-full bg-background/70 p-2 text-foreground ring-1 ring-border transition-opacity hover:bg-background md:grid"
           >
             <ChevronLeft className="size-5" />
@@ -166,10 +163,7 @@ export function PhotoCarousel({
           <button
             type="button"
             aria-label="Sonraki fotoğraf"
-            onClick={() => {
-              go(index + 1);
-              pauseThenResume();
-            }}
+            onClick={() => go(index + 1)}
             className="absolute right-1.5 top-1/2 z-10 hidden -translate-y-1/2 place-items-center rounded-full bg-background/70 p-2 text-foreground ring-1 ring-border transition-opacity hover:bg-background md:grid"
           >
             <ChevronRight className="size-5" />
@@ -182,10 +176,7 @@ export function PhotoCarousel({
                 type="button"
                 aria-label={`${i + 1}. fotoğraf grubunu göster`}
                 aria-current={i === index}
-                onClick={() => {
-                  go(i);
-                  pauseThenResume();
-                }}
+                onClick={() => go(i)}
                 className="grid h-6 w-4 place-items-center"
               >
                 <span
