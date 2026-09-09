@@ -340,7 +340,7 @@ app.post("/admin/listings/:id/move", requireAdmin, validId, requireCsrf, async (
   }
 });
 
-app.post("/admin/listings/:id/photo/delete", requireAdmin, validId, requireCsrf, async (req, res, next) => {
+app.post("/admin/listings/:id/photo/delete", requireAdmin, validId, upload.none(), requireCsrf, async (req, res, next) => {
   try {
     const url = String(req.body.url || "");
     await pool.query("UPDATE listings SET photos = array_remove(photos, $1), updated_at = now() WHERE id = $2", [
@@ -358,7 +358,7 @@ app.post("/admin/listings/:id/photo/delete", requireAdmin, validId, requireCsrf,
 });
 
 /** Fotoğrafı sırada sola/sağa taşır veya kapak yapar. */
-app.post("/admin/listings/:id/photo/move", requireAdmin, validId, requireCsrf, async (req, res, next) => {
+app.post("/admin/listings/:id/photo/move", requireAdmin, validId, upload.none(), requireCsrf, async (req, res, next) => {
   try {
     const [dir, ...urlParts] = String(req.body.move || "left|").split("|");
     const url = urlParts.join("|");
@@ -382,7 +382,7 @@ app.post("/admin/listings/:id/photo/move", requireAdmin, validId, requireCsrf, a
 });
 
 
-app.post("/admin/listings/:id/delete", requireAdmin, validId, requireCsrf, async (req, res, next) => {
+app.post("/admin/listings/:id/delete", requireAdmin, validId, upload.none(), requireCsrf, async (req, res, next) => {
   try {
     const { rows } = await pool.query("DELETE FROM listings WHERE id = $1 RETURNING photos", [req.params.id]);
     (rows[0]?.photos || []).forEach((url) => {
