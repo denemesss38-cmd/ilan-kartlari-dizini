@@ -8,7 +8,8 @@ if (!process.env.DATABASE_URL) {
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: process.env.DATABASE_SSL === "true" ? { rejectUnauthorized: false } : undefined,
+  // Aynı sunucudaki PostgreSQL için SSL kapalıdır; uzak sunucu için DATABASE_SSL=true yapın.
+  ssl: process.env.DATABASE_SSL === "true" ? { rejectUnauthorized: false } : false,
 });
 
 module.exports = { pool };
