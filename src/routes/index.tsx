@@ -39,6 +39,16 @@ export const Route = createFileRoute("/")({
   ),
 });
 
+/** 905543344455 gibi ham numarayı +90 554 334 44 55 biçiminde gösterir. */
+function formatPhone(raw: string) {
+  const digits = raw.replace(/\D/g, "");
+  const d = digits.startsWith("0") ? digits.slice(1) : digits;
+  if (d.length === 11 && d.startsWith("90")) {
+    return `+${d.slice(0, 2)} ${d.slice(2, 5)} ${d.slice(5, 8)} ${d.slice(8, 10)} ${d.slice(10)}`;
+  }
+  return raw;
+}
+
 /** Tam genişlikte fotoğraf kolajı, üstüne isim etiketi ve yuvarlak iletişim ikonları. */
 function ListingCard({ item }: { item: Listing }) {
   const photos = photoTrio(item.photos);
@@ -70,6 +80,14 @@ function ListingCard({ item }: { item: Listing }) {
         <p className="truncate text-xs font-semibold text-primary-foreground/90 md:text-base">
           {item.location || item.badge || "Hepsi"}
         </p>
+        <a
+          href={`tel:${item.phone}`}
+          className="mt-0.5 flex items-center gap-1 truncate text-xs font-black text-primary-foreground underline-offset-2 hover:underline md:text-base"
+          aria-label={`${item.name} telefon numarası ${item.phone}`}
+        >
+          <Phone className="size-3 shrink-0 md:size-4" />
+          {formatPhone(item.phone)}
+        </a>
       </div>
 
       {/* iletişim ikonları */}
