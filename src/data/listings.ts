@@ -29,6 +29,7 @@ export const siteConfig = {
       variant: "alt" as const,
     },
   ],
+  siteName: "Diyarbakır İlan Rehberi",
   footerNote: "Bu site yalnızca ilan yayınlar; hizmet sunmaz ve aracılık yapmaz.",
 };
 
