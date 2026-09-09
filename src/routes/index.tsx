@@ -55,6 +55,8 @@ function formatPhone(raw: string) {
 
 /** Büyük, çerçeveli ilan kartı: fotoğraf slider'ı, rozetler ve iletişim aksiyonları. */
 function ListingCard({ item, intervalSeconds }: { item: Listing; intervalSeconds: number }) {
+  const hasPhotos = (item.photos ?? []).filter(Boolean).length > 0;
+
   return (
     <article className="overflow-hidden rounded-3xl border border-border/80 bg-card/80 shadow-[0_18px_40px_-24px_oklch(0_0_0/0.9)] backdrop-blur">
       <div className="relative">
@@ -62,7 +64,9 @@ function ListingCard({ item, intervalSeconds }: { item: Listing; intervalSeconds
           photos={item.photos}
           alt={item.name}
           intervalSeconds={intervalSeconds}
-          className="h-56 w-full xs:h-72 md:h-96"
+          className={
+            hasPhotos ? "h-56 w-full xs:h-72 md:h-96" : "h-32 w-full xs:h-36 md:h-44"
+          }
         />
         <div className="pointer-events-none absolute right-2.5 top-2.5 z-10 flex items-center gap-1 rounded-full bg-background/80 px-2.5 py-1 text-[11px] font-bold text-primary-foreground ring-1 ring-border md:right-4 md:top-4 md:text-xs">
           <BadgeCheck className="size-3.5 shrink-0 text-primary md:size-4" />

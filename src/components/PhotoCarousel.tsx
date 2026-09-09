@@ -70,7 +70,7 @@ export function PhotoCarousel({ photos, alt, intervalSeconds = 4, className }: P
   if (count === 0) {
     return (
       <div
-        className={`grid place-items-center bg-secondary/70 text-muted-foreground ${className ?? ""}`}
+        className={`grid place-items-center bg-secondary/60 text-muted-foreground ring-1 ring-inset ring-border/60 ${className ?? ""}`}
       >
         <div className="flex flex-col items-center gap-1.5 px-4 text-center">
           <ImageOff className="size-7 opacity-70" />
