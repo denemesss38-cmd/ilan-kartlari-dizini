@@ -3,7 +3,7 @@ import { AlertTriangle, BadgeCheck, MapPin, MessageCircle, Phone } from "lucide-
 
 import { PhotoCarousel } from "@/components/PhotoCarousel";
 import { siteConfig, type Listing } from "@/data/listings";
-import { getPublishedListings } from "@/lib/listings.functions";
+import { getPublishedListings, getSiteSettings } from "@/lib/listings.functions";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -23,7 +23,10 @@ export const Route = createFileRoute("/")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
-  loader: () => getPublishedListings(),
+  loader: async () => {
+    const [listings, settings] = await Promise.all([getPublishedListings(), getSiteSettings()]);
+    return { listings, settings };
+  },
   component: Index,
   errorComponent: () => (
     <div className="flex min-h-screen items-center justify-center bg-background px-6 text-center">
@@ -51,13 +54,14 @@ function formatPhone(raw: string) {
 }
 
 /** Büyük, çerçeveli ilan kartı: fotoğraf slider'ı, rozetler ve iletişim aksiyonları. */
-function ListingCard({ item }: { item: Listing }) {
+function ListingCard({ item, intervalSeconds }: { item: Listing; intervalSeconds: number }) {
   return (
     <article className="overflow-hidden rounded-3xl border border-border/80 bg-card/80 shadow-[0_18px_40px_-24px_oklch(0_0_0/0.9)] backdrop-blur">
       <div className="relative">
         <PhotoCarousel
           photos={item.photos}
           alt={item.name}
+          intervalSeconds={intervalSeconds}
           className="h-56 w-full xs:h-72 md:h-96"
         />
         <div className="pointer-events-none absolute right-2.5 top-2.5 z-10 flex items-center gap-1 rounded-full bg-background/80 px-2.5 py-1 text-[11px] font-bold text-primary-foreground ring-1 ring-border md:right-4 md:top-4 md:text-xs">
@@ -123,7 +127,7 @@ function ListingCard({ item }: { item: Listing }) {
 }
 
 function Index() {
-  const listings = Route.useLoaderData();
+  const { listings, settings } = Route.useLoaderData();
 
   return (
     <div className="min-h-screen">
@@ -177,7 +181,11 @@ function Index() {
         ) : (
           <div className="mt-5 space-y-4 md:mt-8 md:space-y-6">
             {listings.map((item) => (
-              <ListingCard key={item.id} item={item} />
+              <ListingCard
+                key={item.id}
+                item={item}
+                intervalSeconds={settings.carouselIntervalSeconds}
+              />
             ))}
           </div>
         )}

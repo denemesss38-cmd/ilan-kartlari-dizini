@@ -208,13 +208,16 @@ function AdminPage() {
       </header>
 
       <main className="mx-auto max-w-3xl px-3 pb-16 pt-4">
+        <CarouselSpeedSetting />
+
         <button
           onClick={() => setDraft({ ...emptyDraft, sort_order: items.length + 1 })}
-          className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-black text-primary-foreground"
+          className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-black text-primary-foreground"
         >
           <Plus className="size-4" />
           Yeni ilan ekle
         </button>
+
 
         {draft ? (
           <section className="mt-4 rounded-2xl border border-primary/40 bg-card p-4">
