@@ -37,7 +37,6 @@ ${admin ? '<meta name="robots" content="noindex,nofollow" />' : ""}
 </head>
 <body>
 ${body}
-${admin && csrf ? `<script>window.__CSRF__=${JSON.stringify(csrf)};</script>` : ""}
 <script src="/static/app.js" defer></script>
 </body>
 </html>`;
