@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { AlertTriangle, MessageCircle, Phone } from "lucide-react";
 
 import { siteConfig, type Listing } from "@/data/listings";
@@ -176,11 +176,6 @@ function Index() {
 
         <p className="mt-8 text-center text-[11px] leading-relaxed text-muted-foreground md:text-xs">
           {siteConfig.footerNote}
-        </p>
-        <p className="mt-3 text-center text-[11px] text-muted-foreground md:text-xs">
-          <Link to="/admin" className="underline">
-            Yönetim paneli
-          </Link>
         </p>
       </main>
     </div>
