@@ -149,7 +149,7 @@ function Index() {
             Şu anda yayınlanmış ilan bulunmuyor.
           </p>
         ) : (
-          <div className="mt-4 space-y-2 xs:space-y-2.5 md:mt-6 md:space-y-3">
+          <div className="-mx-3 mt-4 space-y-3 xs:-mx-4 md:mx-0 md:mt-6 md:space-y-4">
             {listings.map((item) => (
               <ListingCard key={item.id} item={item} />
             ))}
