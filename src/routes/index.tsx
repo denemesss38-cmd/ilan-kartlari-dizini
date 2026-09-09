@@ -159,27 +159,29 @@ function Index() {
         </header>
 
         <div className="mx-auto mt-4 grid w-full max-w-2xl gap-3 sm:grid-cols-2 md:mt-6">
-          {siteConfig.promos.map((promo) => (
-            <a
-              key={promo.title}
-              href={promo.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`flex flex-col items-center justify-center rounded-3xl p-4 text-center ring-1 ring-border md:p-5 ${
-                promo.variant === "primary" ? "bg-cta" : "bg-cta-alt"
-              }`}
-            >
-              <h2 className="text-sm font-black tracking-wide text-primary-foreground md:text-base">
-                {promo.title}
-              </h2>
-              <p className="mt-1 text-[11px] leading-relaxed text-primary-foreground/90 md:text-xs">
-                {promo.text}
-              </p>
-              <span className="mt-3 inline-flex min-h-11 items-center rounded-full bg-background/25 px-4 py-2 text-[11px] font-bold text-primary-foreground md:text-xs">
-                {promo.ctaLabel}
-              </span>
-            </a>
-          ))}
+          {siteConfig.promos
+            .filter((promo) => promo.title !== "GÜVENLİ İLETİŞİM")
+            .map((promo) => (
+              <a
+                key={promo.title}
+                href={promo.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`flex flex-col items-center justify-center rounded-3xl p-4 text-center ring-1 ring-border md:p-5 ${
+                  promo.variant === "primary" ? "bg-cta" : "bg-cta-alt"
+                }`}
+              >
+                <h2 className="text-sm font-black tracking-wide text-primary-foreground md:text-base">
+                  {promo.title}
+                </h2>
+                <p className="mt-1 text-[11px] leading-relaxed text-primary-foreground/90 md:text-xs">
+                  {promo.text}
+                </p>
+                <span className="mt-3 inline-flex min-h-11 items-center rounded-full bg-background/25 px-4 py-2 text-[11px] font-bold text-primary-foreground md:text-xs">
+                  {promo.ctaLabel}
+                </span>
+              </a>
+            ))}
         </div>
 
         {listings.length === 0 ? (
@@ -197,6 +199,31 @@ function Index() {
             ))}
           </div>
         )}
+
+        {(() => {
+          const safePromo = siteConfig.promos.find((p) => p.title === "GÜVENLİ İLETİŞİM");
+          if (!safePromo) return null;
+          return (
+            <a
+              href={safePromo.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`mx-auto mt-6 flex w-full max-w-2xl flex-col items-center justify-center rounded-3xl p-4 text-center ring-1 ring-border md:mt-8 md:p-5 ${
+                safePromo.variant === "primary" ? "bg-cta" : "bg-cta-alt"
+              }`}
+            >
+              <h2 className="text-sm font-black tracking-wide text-primary-foreground md:text-base">
+                {safePromo.title}
+              </h2>
+              <p className="mt-1 text-[11px] leading-relaxed text-primary-foreground/90 md:text-xs">
+                {safePromo.text}
+              </p>
+              <span className="mt-3 inline-flex min-h-11 items-center rounded-full bg-background/25 px-4 py-2 text-[11px] font-bold text-primary-foreground md:text-xs">
+                {safePromo.ctaLabel}
+              </span>
+            </a>
+          );
+        })()}
 
         <p className="mt-10 text-center text-[11px] leading-relaxed text-muted-foreground md:text-xs">
           {siteConfig.footerNote}
