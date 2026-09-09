@@ -188,3 +188,22 @@ input[type="checkbox"] { width: 22px; min-height: 22px; }
 .admin-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
 .admin-row strong { font-size: 15px; }
 .btn.small { min-height: 36px; padding: 6px 12px; font-size: 12px; }
+
+/* Sayfa ve etkileşim geçişleri */
+@keyframes pageFade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+body { animation: pageFade 0.28s ease-out both; }
+a, button, .btn, .badge, .listing, .thumb-tools a, input, select, textarea {
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+}
+.btn:hover, .thumb-tools a:hover { filter: brightness(1.08); }
+.btn:active, .thumb-tools a:active { transform: scale(0.97); }
+.listing:hover { border-color: color-mix(in oklab, var(--primary) 55%, transparent); }
+a:focus-visible, button:focus-visible, .btn:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+  outline: 2px solid var(--primary); outline-offset: 2px;
+}
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) {
+  body { animation: none; }
+  html { scroll-behavior: auto; }
+  a, button, .btn, .badge, .listing, .thumb-tools a, input, select, textarea { transition: none; }
+}
