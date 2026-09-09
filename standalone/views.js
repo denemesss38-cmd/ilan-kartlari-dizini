@@ -214,12 +214,20 @@ function adminPage({ listings, settings }) {
   <div class="thumbs">
     ${(l.photos || [])
       .map(
-        (p) =>
-          `<span class="thumb"><img src="${esc(p)}" alt="" /><a href="/admin/listings/${l.id}/photo/delete?url=${encodeURIComponent(p)}" title="Kaldır">×</a></span>`,
+        (p, i) =>
+          `<span class="thumb"><img src="${esc(p)}" alt="" />
+            <a href="/admin/listings/${l.id}/photo/delete?url=${encodeURIComponent(p)}" title="Kaldır">×</a>
+            <span class="thumb-tools">
+              <a href="/admin/listings/${l.id}/photo/move?dir=left&url=${encodeURIComponent(p)}" title="Sola taşı">‹</a>
+              <a href="/admin/listings/${l.id}/photo/move?dir=cover&url=${encodeURIComponent(p)}" title="Kapak yap">${i === 0 ? "Kapak" : "★"}</a>
+              <a href="/admin/listings/${l.id}/photo/move?dir=right&url=${encodeURIComponent(p)}" title="Sağa taşı">›</a>
+            </span>
+          </span>`,
       )
       .join("")}
   </div>
   <label>Fotoğraf ekle (birden çok seçebilirsiniz)<input type="file" name="photos" accept="image/*" multiple /></label>
+
   <div class="row">
     <button class="btn" type="submit">Kaydet</button>
     <a class="btn ghost" href="/admin/listings/${l.id}/delete" onclick="return confirm('İlan silinsin mi?')">Sil</a>

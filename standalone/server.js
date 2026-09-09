@@ -301,6 +301,31 @@ app.get("/admin/listings/:id/photo/delete", requireAdmin, async (req, res, next)
   }
 });
 
+/** Fotoğrafı sırada sola/sağa taşır veya kapak yapar. */
+app.get("/admin/listings/:id/photo/move", requireAdmin, async (req, res, next) => {
+  try {
+    const url = String(req.query.url || "");
+    const dir = String(req.query.dir || "left");
+    const { rows } = await pool.query("SELECT photos FROM listings WHERE id = $1", [req.params.id]);
+    const photos = rows[0]?.photos || [];
+    const index = photos.indexOf(url);
+    if (index !== -1) {
+      const next = photos.slice();
+      next.splice(index, 1);
+      const target = dir === "cover" ? 0 : dir === "left" ? Math.max(0, index - 1) : Math.min(next.length, index + 1);
+      next.splice(target, 0, url);
+      await pool.query("UPDATE listings SET photos = $1::text[], updated_at = now() WHERE id = $2", [
+        next,
+        req.params.id,
+      ]);
+    }
+    res.redirect("/admin");
+  } catch (err) {
+    next(err);
+  }
+});
+
+
 app.get("/admin/listings/:id/delete", requireAdmin, async (req, res, next) => {
   try {
     const { rows } = await pool.query("DELETE FROM listings WHERE id = $1 RETURNING photos", [req.params.id]);
