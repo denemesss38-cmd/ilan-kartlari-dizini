@@ -180,6 +180,15 @@ function loginPage(error) {
 
 function adminPage({ listings, settings }) {
   const row = (l) => `<form class="panel listing" method="post" action="/admin/listings/${l.id}" enctype="multipart/form-data">
+  <div class="admin-row">
+    <strong>${esc(l.name)}</strong>
+    <span class="row">
+      <a class="btn ghost small" href="/admin/listings/${l.id}/move?dir=up" title="Yukarı taşı">↑</a>
+      <a class="btn ghost small" href="/admin/listings/${l.id}/move?dir=down" title="Aşağı taşı">↓</a>
+      <a class="btn ghost small" href="/admin/listings/${l.id}/toggle">${l.is_published ? "Yayında" : "Kapalı"}</a>
+    </span>
+  </div>
+
   <div class="grid2">
     <label>İlan adı<input name="name" value="${esc(l.name)}" required /></label>
     <label>Konum<input name="location" value="${esc(l.location)}" /></label>
