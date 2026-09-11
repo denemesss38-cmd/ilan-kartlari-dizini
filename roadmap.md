@@ -6,3 +6,7 @@
 - [x] Bağımsız oturum, yükleme ve yönetim işlemlerini güvenli hale getir
 - [x] Mobil/masaüstü ve uçtan uca işlevleri doğrula
 - [x] Eksiksiz yeni ZIP paketini hazırla
+- [ ] Akıcı fotoğraf şeridini ve duraklatma etkileşimlerini ekle
+- [ ] Tam ekran kaydırılabilir galeriyi ekle
+- [ ] Aktif rozeti ve kart hover görünümünü ekle
+- [ ] Mobil/masaüstü etkileşimlerini ve build durumunu doğrula

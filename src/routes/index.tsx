@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { BadgeCheck, Home, MapPin, MessageCircle, Phone } from "lucide-react";
 
@@ -63,21 +64,38 @@ function formatPhone(raw: string) {
 /** Büyük, çerçeveli ilan kartı: üçlü fotoğraf kolajı, rozetler ve iletişim aksiyonları. */
 function ListingCard({ item, intervalSeconds }: { item: Listing; intervalSeconds: number }) {
   const hasPhotos = (item.photos ?? []).filter(Boolean).length > 0;
+  const [lightboxOpen, setLightboxOpen] = useState(false);
 
   return (
-    <article className="overflow-hidden rounded-3xl border border-border/80 bg-card/80 shadow-[0_18px_40px_-24px_oklch(0_0_0/0.9)] backdrop-blur">
+    <article
+      className="listing-showcase-card overflow-hidden rounded-2xl border border-border/80 bg-card/80 shadow-xl backdrop-blur"
+      onClick={(event) => {
+        if (!hasPhotos) return;
+        const target = event.target;
+        if (!(target instanceof Element) || target.closest("a, button")) return;
+        setLightboxOpen(true);
+      }}
+    >
       <div className="relative">
         <PhotoCarousel
           photos={item.photos}
           alt={item.name}
           intervalSeconds={intervalSeconds}
           split={3}
+          lightboxOpen={lightboxOpen}
+          onLightboxOpenChange={setLightboxOpen}
           className={
             hasPhotos
               ? "aspect-[16/9] w-full md:aspect-auto md:h-96"
               : "h-32 w-full xs:h-36 md:h-44"
           }
         />
+        <div className="pointer-events-none absolute left-2.5 top-2.5 z-20 md:left-4 md:top-4">
+          <span className="flex items-center gap-2 rounded-full bg-background/85 px-2.5 py-1 text-[11px] font-bold text-foreground ring-1 ring-border backdrop-blur md:text-xs">
+            <span className="active-status-dot relative size-2 shrink-0 rounded-full" />
+            Aktif / Müsait
+          </span>
+        </div>
         <div className="pointer-events-none absolute right-2.5 top-2.5 z-10 flex flex-col items-end gap-1.5 md:right-4 md:top-4">
           <span className="flex items-center gap-1 rounded-full bg-background/80 px-2.5 py-1 text-[11px] font-bold text-primary-foreground ring-1 ring-border md:text-xs">
             <BadgeCheck className="size-3.5 shrink-0 text-primary md:size-4" />
