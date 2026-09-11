@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { BadgeCheck, Home, MapPin, MessageCircle, Phone } from "lucide-react";
+import { BadgeCheck, BellRing, Eye, Home, MapPin, MessageCircle, Phone, Radio, Send } from "lucide-react";
 
 import { PhotoCarousel } from "@/components/PhotoCarousel";
 import { siteConfig, type Listing } from "@/data/listings";
@@ -68,7 +68,7 @@ function ListingCard({ item, intervalSeconds }: { item: Listing; intervalSeconds
 
   return (
     <article
-      className="listing-showcase-card overflow-hidden rounded-2xl border border-border/80 bg-card/80 shadow-xl backdrop-blur"
+      className="listing-showcase-card overflow-hidden rounded-2xl border border-border bg-showcase-card shadow-xl"
       onClick={(event) => {
         if (!hasPhotos) return;
         const target = event.target;
@@ -142,7 +142,7 @@ function ListingCard({ item, intervalSeconds }: { item: Listing; intervalSeconds
               target="_blank"
               rel="noopener noreferrer"
               aria-label={`${item.name} WhatsApp`}
-              className="grid size-12 place-items-center rounded-full bg-cta-alt ring-1 ring-border md:size-14"
+               className="whatsapp-shake grid size-12 place-items-center rounded-full bg-whatsapp ring-1 ring-border md:size-14"
             >
               <MessageCircle className="size-6 text-primary-foreground md:size-7" />
             </a>
@@ -174,7 +174,31 @@ function Index() {
 
   return (
     <div className="min-h-screen">
-      <main className="mx-auto max-w-3xl px-3 pb-14 pt-6 xs:px-4 md:px-6 md:pt-10">
+      <div className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur-xl">
+        <div className="mx-auto grid max-w-3xl grid-cols-[minmax(0,1fr)_auto] items-center gap-2 px-3 py-2.5 xs:px-4 md:px-6">
+          <div className="flex min-w-0 items-center gap-2.5">
+            <div className="grid size-10 shrink-0 place-items-center rounded-full border border-primary bg-secondary text-sm font-black text-primary shadow-[0_0_18px_var(--card-glow)]">
+              DR
+            </div>
+            <div className="min-w-0">
+              <p className="truncate text-sm font-black text-foreground">{siteConfig.siteName}</p>
+              <p className="truncate text-[10px] text-muted-foreground">Güncel ilan vitrini</p>
+            </div>
+          </div>
+          <div className="flex shrink-0 items-center gap-1.5">
+            <div className="bg-online flex h-9 items-center gap-1.5 rounded-full px-2.5 text-[10px] font-bold text-foreground shadow-lg">
+              <span className="active-status-dot relative size-2 rounded-full" />
+              <span className="hidden xs:inline">Canlı</span>
+            </div>
+            <div className="bg-visitors flex h-9 items-center gap-1.5 rounded-full px-2.5 text-[10px] font-bold text-foreground shadow-lg">
+              <Eye className="size-3.5 shrink-0" />
+              <span>{listings.length} ilan</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <main className="mx-auto max-w-3xl px-3 pb-14 pt-5 xs:px-4 md:px-6 md:pt-8">
         <header className="text-center">
           <h1 className="text-3xl font-black leading-none tracking-tight text-foreground xs:text-4xl md:text-6xl">
             {siteConfig.city}
@@ -185,7 +209,28 @@ function Index() {
           <p className="mt-1 text-[11px] text-muted-foreground md:text-xs">{siteConfig.subtitle}</p>
         </header>
 
-        <div className="mx-auto mt-4 grid w-full max-w-2xl gap-3 sm:grid-cols-2 md:mt-6">
+        <section className="mt-4 grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 rounded-2xl border border-primary/40 bg-showcase-card p-3 shadow-[0_14px_34px_-24px_var(--card-glow)] md:mt-6 md:p-4">
+          <div className="grid size-10 shrink-0 place-items-center rounded-full bg-primary/10 text-primary">
+            <BellRing className="size-5" />
+          </div>
+          <div className="min-w-0">
+            <h2 className="text-xs font-black text-primary">{siteConfig.banner.title}</h2>
+            <p className="mt-0.5 line-clamp-2 text-[10px] leading-relaxed text-muted-foreground md:text-xs">
+              {siteConfig.banner.text}
+            </p>
+          </div>
+          <a
+            href={siteConfig.banner.ctaHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={siteConfig.banner.ctaLabel}
+            className="grid size-10 shrink-0 place-items-center rounded-full bg-primary text-primary-foreground transition-transform hover:scale-105"
+          >
+            <Send className="size-4" />
+          </a>
+        </section>
+
+        <div className="mx-auto mt-4 grid w-full max-w-2xl gap-3 sm:grid-cols-2 md:mt-5">
           {siteConfig.promos
             .filter((promo) => promo.title !== "GÜVENLİ İLETİŞİM")
             .map((promo) => (
