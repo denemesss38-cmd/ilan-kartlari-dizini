@@ -1,73 +1,89 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import { ChevronLeft, ChevronRight, ImageOff } from "lucide-react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { ChevronLeft, ChevronRight, ImageOff, X } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { photoUrl } from "@/lib/photos";
 
 type Props = {
   photos: string[] | null | undefined;
   alt: string;
-  /** Otomatik geçiş süresi (saniye). 0 = kapalı. */
+  /** 0 ise otomatik akış kapalıdır. */
   intervalSeconds?: number;
   className?: string;
-  /** Aynı anda yan yana gösterilecek fotoğraf sayısı. 1 = tekli carousel, 3 = üçlü kolaj. */
+  /** Aynı anda yan yana gösterilecek fotoğraf sayısı. */
   split?: number;
+  lightboxOpen?: boolean;
+  onLightboxOpenChange?: (open: boolean) => void;
 };
 
-/** Kullanıcı hareket azaltmayı tercih ediyor mu? */
 function usePrefersReducedMotion() {
   const [reduced, setReduced] = useState(false);
+
   useEffect(() => {
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    setReduced(mq.matches);
-    const onChange = () => setReduced(mq.matches);
-    mq.addEventListener("change", onChange);
-    return () => mq.removeEventListener("change", onChange);
+    const query = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setReduced(query.matches);
+    const onChange = () => setReduced(query.matches);
+    query.addEventListener("change", onChange);
+    return () => query.removeEventListener("change", onChange);
   }, []);
+
   return reduced;
 }
 
-/**
- * İlan fotoğrafları için otomatik geçişli galeri.
- * - Tekli (split=1) veya üçlü kolaj (split=3) modu.
- * - Mobilde yatay swipe, masaüstünde önce/sonra kontrolleri ve noktalar.
- * - Otomatik geçiş sürekli döner; kullanıcı müdahalesi durdurmaz.
- * - Tek fotoğrafta kontroller ve otomatik geçiş gösterilmez; fotoğraf yoksa zarif yer tutucu.
- */
+/** Kesintisiz kayan fotoğraf şeridi ve tam ekran görsel inceleyici. */
 export function PhotoCarousel({
   photos,
   alt,
   intervalSeconds = 4,
   className,
   split: splitProp,
+  lightboxOpen,
+  onLightboxOpenChange,
 }: Props) {
-  const list = (photos ?? []).filter(Boolean);
+  const list = useMemo(() => (photos ?? []).filter(Boolean), [photos]);
   const count = list.length;
   const split = Math.max(1, Math.min(3, splitProp ?? 1));
-  const [index, setIndex] = useState(0);
   const reduced = usePrefersReducedMotion();
-  const touch = useRef<{ x: number; y: number; horizontal: boolean | null } | null>(null);
+  const [internalOpen, setInternalOpen] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [pressed, setPressed] = useState(false);
+  const lightboxTouch = useRef<{ x: number; y: number } | null>(null);
+  const open = lightboxOpen ?? internalOpen;
+  const setOpen = onLightboxOpenChange ?? setInternalOpen;
 
-  const canTriptych = count >= split && split > 1;
-  const slideCount = canTriptych ? count : count > 1 ? count : 1;
-  const single = count <= 1;
-  const autoplay = slideCount > 1 && intervalSeconds > 0 && !reduced;
+  const displayList = useMemo(() => {
+    if (count === 0) return [];
+    return Array.from({ length: Math.max(split, count) }, (_, index) => list[index % count] ?? list[0]);
+  }, [count, list, split]);
 
   const go = useCallback(
     (next: number) => {
-      if (slideCount < 2) return;
-      setIndex(((next % slideCount) + slideCount) % slideCount);
+      if (count < 2) return;
+      setActiveIndex(((next % count) + count) % count);
     },
-    [slideCount],
+    [count],
   );
 
   useEffect(() => {
-    if (!autoplay) return;
-    const id = window.setInterval(
-      () => setIndex((i) => (i + 1) % slideCount),
-      Math.max(1, intervalSeconds) * 1000,
-    );
-    return () => window.clearInterval(id);
-  }, [autoplay, slideCount, intervalSeconds]);
+    if (!open) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "ArrowLeft") go(activeIndex - 1);
+      if (event.key === "ArrowRight") go(activeIndex + 1);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [activeIndex, go, open]);
+
+  const openAt = (index: number) => {
+    setActiveIndex(index % count);
+    setOpen(true);
+  };
 
   if (count === 0) {
     return (
@@ -82,114 +98,134 @@ export function PhotoCarousel({
     );
   }
 
-  /** Üçlü kolajdaki bir slot için görsel indeksi (döngüsel). */
-  const slotIndex = (slide: number, offset: number) => {
-    if (canTriptych) return (slide + offset) % count;
-    // Yetersiz fotoğraf varsa mevcutları tekrarla.
-    return offset % count;
-  };
-
-  const imageWidthPct = canTriptych ? 100 / split : 100;
+  const animationPaused = reduced || intervalSeconds === 0 || pressed;
 
   return (
-    <div
-      className={`group relative overflow-hidden bg-secondary/70 ${className ?? ""}`}
-      onTouchStart={(e) => {
-        if (single) return;
-        const t = e.touches[0];
-        if (!t) return;
-        touch.current = { x: t.clientX, y: t.clientY, horizontal: null };
-      }}
-      onTouchMove={(e) => {
-        const start = touch.current;
-        const t = e.touches[0];
-        if (!start || !t) return;
-        if (start.horizontal === null) {
-          const dx = Math.abs(t.clientX - start.x);
-          const dy = Math.abs(t.clientY - start.y);
-          if (dx < 8 && dy < 8) return;
-          // Dikey sayfa kaydırmasıyla çakışmayı önlemek için yön kilidi.
-          start.horizontal = dx > dy;
-        }
-      }}
-      onTouchEnd={(e) => {
-        const start = touch.current;
-        touch.current = null;
-        const end = e.changedTouches[0];
-        if (!start || !end || start.horizontal !== true) return;
-        const dx = end.clientX - start.x;
-        if (Math.abs(dx) > 40) go(index + (dx < 0 ? 1 : -1));
-      }}
-      style={single ? undefined : { touchAction: "pan-y" }}
-    >
+    <>
       <div
-        className={`flex h-full w-full ${reduced ? "" : "transition-transform duration-500 ease-out"}`}
-        style={{ transform: `translateX(-${index * 100}%)` }}
+        className={`photo-marquee group relative overflow-hidden bg-secondary/70 ${className ?? ""}`}
+        onPointerDown={() => setPressed(true)}
+        onPointerUp={() => setPressed(false)}
+        onPointerCancel={() => setPressed(false)}
+        onPointerLeave={() => setPressed(false)}
       >
-        {Array.from({ length: slideCount }).map((_, slide) => (
-          <div
-            key={slide}
-            className="flex h-full w-full shrink-0 grow-0 basis-full"
-          >
-            {Array.from({ length: canTriptych ? split : 1 }).map((__, offset) => {
-              const photoIndex = slotIndex(slide, offset);
-              const src = list[photoIndex];
-              return (
-                <img
-                  key={`${slide}-${offset}-${src}`}
-                  src={photoUrl(src, photoIndex)}
-                  alt={`${alt} fotoğraf ${photoIndex + 1}`}
-                  loading="lazy"
-                  draggable={false}
-                  className="h-full shrink-0 grow-0 object-cover"
-                  style={{ width: `${imageWidthPct}%` }}
-                />
-              );
-            })}
-          </div>
-        ))}
+        <div
+          className={`photo-marquee-track flex h-full w-max ${animationPaused ? "is-paused" : ""}`}
+          aria-label={`${alt} fotoğraf galerisi`}
+        >
+          {[0, 1].map((copy) => (
+            <div key={copy} className="flex h-full shrink-0" aria-hidden={copy === 1}>
+              {displayList.map((src, index) => {
+                const originalIndex = index % count;
+                return (
+                  <Button
+                    key={`${copy}-${index}-${src}`}
+                    type="button"
+                    variant="ghost"
+                    aria-label={`${alt} fotoğraf ${originalIndex + 1} tam ekran göster`}
+                    tabIndex={copy === 1 ? -1 : 0}
+                    onClick={() => openAt(originalIndex)}
+                    className="photo-marquee-item h-full shrink-0 overflow-hidden rounded-none p-0 hover:bg-transparent"
+                  >
+                    <img
+                      src={photoUrl(src, originalIndex)}
+                      alt={`${alt} fotoğraf ${originalIndex + 1}`}
+                      loading="lazy"
+                      draggable={false}
+                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+                    />
+                  </Button>
+                );
+              })}
+            </div>
+          ))}
+        </div>
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-2/5 bg-gradient-to-t from-background/90 via-background/30 to-transparent" />
       </div>
 
-      {!single && (
-        <>
-          <button
-            type="button"
-            aria-label="Önceki fotoğraf"
-            onClick={() => go(index - 1)}
-            className="absolute left-1.5 top-1/2 z-10 hidden -translate-y-1/2 place-items-center rounded-full bg-background/70 p-2 text-foreground ring-1 ring-border transition-opacity hover:bg-background md:grid"
-          >
-            <ChevronLeft className="size-5" />
-          </button>
-          <button
-            type="button"
-            aria-label="Sonraki fotoğraf"
-            onClick={() => go(index + 1)}
-            className="absolute right-1.5 top-1/2 z-10 hidden -translate-y-1/2 place-items-center rounded-full bg-background/70 p-2 text-foreground ring-1 ring-border transition-opacity hover:bg-background md:grid"
-          >
-            <ChevronRight className="size-5" />
-          </button>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent
+          className="h-[100dvh] max-h-none w-screen max-w-none border-0 bg-background/95 p-0 shadow-none sm:rounded-none [&>button]:hidden"
+          onOpenAutoFocus={(event) => event.preventDefault()}
+        >
+          <DialogTitle className="sr-only">{alt} fotoğrafları</DialogTitle>
+          <DialogDescription className="sr-only">
+            Fotoğraflar arasında önceki ve sonraki düğmeleriyle gezinin.
+          </DialogDescription>
 
-          <div className="absolute inset-x-0 bottom-2 z-10 flex items-center justify-center gap-1.5">
-            {Array.from({ length: slideCount }).map((_, i) => (
-              <button
-                key={i}
-                type="button"
-                aria-label={`${i + 1}. fotoğraf grubunu göster`}
-                aria-current={i === index}
-                onClick={() => go(i)}
-                className="grid h-6 w-4 place-items-center"
-              >
-                <span
-                  className={`block h-1.5 rounded-full transition-all ${
-                    i === index ? "w-5 bg-primary-foreground" : "w-1.5 bg-primary-foreground/50"
-                  }`}
-                />
-              </button>
-            ))}
+          <div
+            className="relative flex h-full w-full items-center justify-center overflow-hidden"
+            onTouchStart={(event) => {
+              const touch = event.touches[0];
+              if (touch) lightboxTouch.current = { x: touch.clientX, y: touch.clientY };
+            }}
+            onTouchEnd={(event) => {
+              const start = lightboxTouch.current;
+              const end = event.changedTouches[0];
+              lightboxTouch.current = null;
+              if (!start || !end) return;
+              const dx = end.clientX - start.x;
+              const dy = end.clientY - start.y;
+              if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy)) {
+                go(activeIndex + (dx < 0 ? 1 : -1));
+              }
+            }}
+            style={{ touchAction: "pan-y" }}
+          >
+            <img
+              src={photoUrl(list[activeIndex], activeIndex)}
+              alt={`${alt} fotoğraf ${activeIndex + 1}`}
+              className="max-h-[100dvh] w-full object-contain"
+            />
+
+            <Button
+              type="button"
+              size="icon"
+              variant="secondary"
+              aria-label="Galeriyi kapat"
+              onClick={() => setOpen(false)}
+              className="absolute right-3 top-3 z-20 size-11 rounded-full bg-background/80 text-foreground backdrop-blur md:right-6 md:top-6"
+            >
+              <X className="size-5" />
+            </Button>
+
+            {count > 1 && (
+              <>
+                <Button
+                  type="button"
+                  size="icon"
+                  variant="secondary"
+                  aria-label="Önceki fotoğraf"
+                  onClick={() => go(activeIndex - 1)}
+                  className="absolute left-3 top-1/2 size-11 -translate-y-1/2 rounded-full bg-background/80 text-foreground backdrop-blur md:left-6 md:size-12"
+                >
+                  <ChevronLeft className="size-6" />
+                </Button>
+                <Button
+                  type="button"
+                  size="icon"
+                  variant="secondary"
+                  aria-label="Sonraki fotoğraf"
+                  onClick={() => go(activeIndex + 1)}
+                  className="absolute right-3 top-1/2 size-11 -translate-y-1/2 rounded-full bg-background/80 text-foreground backdrop-blur md:right-6 md:size-12"
+                >
+                  <ChevronRight className="size-6" />
+                </Button>
+                <div className="absolute bottom-5 left-1/2 flex -translate-x-1/2 gap-2" aria-hidden="true">
+                  {list.map((_, index) => (
+                    <span
+                      key={index}
+                      className={`h-1.5 rounded-full transition-all ${
+                        index === activeIndex ? "w-6 bg-primary" : "w-1.5 bg-foreground/45"
+                      }`}
+                    />
+                  ))}
+                </div>
+              </>
+            )}
           </div>
-
-        </>
-      )}
-    </div>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
