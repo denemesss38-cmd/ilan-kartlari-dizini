@@ -47,6 +47,7 @@ export function PhotoCarousel({
   split: splitProp,
   lightboxOpen,
   onLightboxOpenChange,
+  interactive = true,
 }: Props) {
   const list = useMemo(() => (photos ?? []).filter(Boolean), [photos]);
   const count = list.length;
