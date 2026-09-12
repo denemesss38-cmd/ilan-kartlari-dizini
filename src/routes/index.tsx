@@ -1,6 +1,5 @@
-import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { BadgeCheck, BellRing, Eye, Home, MapPin, MessageCircle, Phone, Radio, Send } from "lucide-react";
+import { BadgeCheck, BellRing, Eye, Home, MapPin, MessageCircle, Phone, Send } from "lucide-react";
 
 import { PhotoCarousel } from "@/components/PhotoCarousel";
 import { siteConfig, type Listing } from "@/data/listings";
