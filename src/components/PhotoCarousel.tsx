@@ -20,6 +20,8 @@ type Props = {
   split?: number;
   lightboxOpen?: boolean;
   onLightboxOpenChange?: (open: boolean) => void;
+  /** false ise fotoğraflar tıklanamaz (kartın tamamı bağlantı olduğunda). */
+  interactive?: boolean;
 };
 
 function usePrefersReducedMotion() {
