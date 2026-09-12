@@ -6,11 +6,11 @@
 - [x] Bağımsız oturum, yükleme ve yönetim işlemlerini güvenli hale getir
 - [x] Mobil/masaüstü ve uçtan uca işlevleri doğrula
 - [x] Eksiksiz yeni ZIP paketini hazırla
-- [ ] Akıcı fotoğraf şeridini ve duraklatma etkileşimlerini ekle
-- [ ] Tam ekran kaydırılabilir galeriyi ekle
-- [ ] Aktif rozeti ve kart hover görünümünü ekle
-- [ ] Mobil/masaüstü etkileşimlerini ve build durumunu doğrula
-- [ ] Oxymovie koyu-altın temasını ana sayfa geneline uygula
-- [ ] Sticky cam başlık, marka alanı ve sayaç rozetlerini ekle
-- [ ] Altın kenarlıklı duyuru ve Telegram/destek alanını ekle
-- [ ] WhatsApp düğmesini yeşil degrade ve hareketle öne çıkar
+- [x] Akıcı fotoğraf şeridini ve duraklatma etkileşimlerini ekle
+- [x] Aktif rozeti ve kart hover görünümünü ekle
+- [x] Oxymovie koyu-altın temasını ana sayfa geneline uygula
+- [x] Sticky cam başlık, marka alanı ve sayaç rozetlerini ekle
+- [x] Altın kenarlıklı duyuru alanını ekle
+- [x] WhatsApp düğmesini yeşil degrade ve hareketle öne çıkar
+- [x] Kartları tek kompakt görsel kutusuna indir, tamamı WhatsApp bağlantısı olsun
+- [x] Mobil görünümü ve build durumunu doğrula

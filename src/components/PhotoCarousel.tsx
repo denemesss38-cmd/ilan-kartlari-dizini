@@ -20,6 +20,8 @@ type Props = {
   split?: number;
   lightboxOpen?: boolean;
   onLightboxOpenChange?: (open: boolean) => void;
+  /** false ise fotoğraflar tıklanamaz (kartın tamamı bağlantı olduğunda). */
+  interactive?: boolean;
 };
 
 function usePrefersReducedMotion() {
@@ -45,6 +47,7 @@ export function PhotoCarousel({
   split: splitProp,
   lightboxOpen,
   onLightboxOpenChange,
+  interactive = true,
 }: Props) {
   const list = useMemo(() => (photos ?? []).filter(Boolean), [photos]);
   const count = list.length;
@@ -117,6 +120,22 @@ export function PhotoCarousel({
             <div key={copy} className="flex h-full shrink-0" aria-hidden={copy === 1}>
               {displayList.map((src, index) => {
                 const originalIndex = index % count;
+                if (!interactive) {
+                  return (
+                    <div
+                      key={`${copy}-${index}-${src}`}
+                      className="photo-marquee-item h-full shrink-0 overflow-hidden"
+                    >
+                      <img
+                        src={photoUrl(src, originalIndex)}
+                        alt={`${alt} fotoğraf ${originalIndex + 1}`}
+                        loading="lazy"
+                        draggable={false}
+                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                      />
+                    </div>
+                  );
+                }
                 return (
                   <Button
                     key={`${copy}-${index}-${src}`}
