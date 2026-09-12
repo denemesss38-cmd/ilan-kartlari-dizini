@@ -61,111 +61,77 @@ function formatPhone(raw: string) {
   return raw;
 }
 
-/** Büyük, çerçeveli ilan kartı: üçlü fotoğraf kolajı, rozetler ve iletişim aksiyonları. */
+/** Kompakt vitrin kartı: tamamı WhatsApp bağlantısı olan akıcı fotoğraf şeridi. */
 function ListingCard({ item, intervalSeconds }: { item: Listing; intervalSeconds: number }) {
   const hasPhotos = (item.photos ?? []).filter(Boolean).length > 0;
-  const [lightboxOpen, setLightboxOpen] = useState(false);
 
   return (
-    <article
-      className="listing-showcase-card overflow-hidden rounded-2xl border border-border bg-showcase-card shadow-xl"
-      onClick={(event) => {
-        if (!hasPhotos) return;
-        const target = event.target;
-        if (!(target instanceof Element) || target.closest("a, button")) return;
-        setLightboxOpen(true);
-      }}
+    <a
+      href={`https://wa.me/${item.whatsapp.replace(/\D/g, "")}`}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={`${item.name} WhatsApp ile yaz`}
+      className="listing-showcase-card ngy-resim group relative block overflow-hidden rounded-2xl border border-border bg-showcase-card shadow-xl"
     >
-      <div className="relative">
-        <PhotoCarousel
-          photos={item.photos}
-          alt={item.name}
-          intervalSeconds={intervalSeconds}
-          split={3}
-          lightboxOpen={lightboxOpen}
-          onLightboxOpenChange={setLightboxOpen}
-          className={
-            hasPhotos
-              ? "aspect-[16/9] w-full md:aspect-auto md:h-96"
-              : "h-32 w-full xs:h-36 md:h-44"
-          }
-        />
-        <div className="pointer-events-none absolute left-2.5 top-2.5 z-20 md:left-4 md:top-4">
-          <span className="flex items-center gap-2 rounded-full bg-background/85 px-2.5 py-1 text-[11px] font-bold text-foreground ring-1 ring-border backdrop-blur md:text-xs">
-            <span className="active-status-dot relative size-2 shrink-0 rounded-full" />
-            Aktif / Müsait
-          </span>
-        </div>
-        <div className="pointer-events-none absolute right-2.5 top-2.5 z-10 flex flex-col items-end gap-1.5 md:right-4 md:top-4">
-          <span className="flex items-center gap-1 rounded-full bg-background/80 px-2.5 py-1 text-[11px] font-bold text-primary-foreground ring-1 ring-border md:text-xs">
-            <BadgeCheck className="size-3.5 shrink-0 text-primary md:size-4" />
-            <span className="text-foreground">Onaylı ilan</span>
-          </span>
-          {item.venue && (
-            <span className="flex items-center gap-1 rounded-full bg-background/80 px-2.5 py-1 text-[11px] font-bold ring-1 ring-border md:text-xs">
-              <Home className="size-3.5 shrink-0 text-primary md:size-4" />
-              <span className="text-foreground">{item.venue}</span>
-            </span>
-          )}
-        </div>
-      </div>
+      <PhotoCarousel
+        photos={item.photos}
+        alt={item.name}
+        intervalSeconds={intervalSeconds}
+        split={3}
+        interactive={false}
+        className={hasPhotos ? "aspect-[16/10] w-full md:aspect-[21/9]" : "h-32 w-full xs:h-36 md:h-44"}
+      />
 
-      <div className="p-3 xs:p-4 md:p-5">
-        <div className="flex items-end justify-between gap-3">
-          <div className="min-w-0">
-            <h2 className="truncate text-lg font-black tracking-tight text-foreground xs:text-xl md:text-2xl">
-              {item.name}
-            </h2>
-            <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
-              {item.location && (
-                <span className="inline-flex max-w-full items-center gap-1 rounded-full bg-secondary px-2.5 py-1 text-[11px] font-semibold text-secondary-foreground ring-1 ring-border md:text-xs">
-                  <MapPin className="size-3 shrink-0 text-primary md:size-3.5" />
-                  <span className="truncate">{item.location}</span>
-                </span>
-              )}
-              {item.badge && (
-                <span className="max-w-full truncate rounded-full bg-primary/20 px-2.5 py-1 text-[11px] font-bold text-foreground ring-1 ring-primary/50 md:text-xs">
-                  {item.badge}
-                </span>
-              )}
-            </div>
-            {item.description && (
-              <p className="mt-2 line-clamp-2 text-xs leading-relaxed text-muted-foreground md:text-sm">
-                {item.description}
-              </p>
+      <div className="pointer-events-none absolute inset-0 z-10 bg-gradient-to-t from-background via-background/40 to-transparent" />
+
+      <span className="pointer-events-none absolute left-2.5 top-2.5 z-20 flex items-center gap-1.5 rounded-full bg-background/85 px-2.5 py-1 text-[11px] font-bold text-foreground ring-1 ring-border backdrop-blur md:left-4 md:top-4">
+        <span className="active-status-dot relative size-2 shrink-0 rounded-full" />
+        Aktif / Müsait
+      </span>
+
+      <span className="pointer-events-none absolute right-2.5 top-2.5 z-20 flex items-center gap-1 rounded-full bg-background/80 px-2.5 py-1 text-[11px] font-bold ring-1 ring-border backdrop-blur md:right-4 md:top-4">
+        <BadgeCheck className="size-3.5 shrink-0 text-primary md:size-4" />
+        <span className="text-foreground">Onaylı ilan</span>
+      </span>
+
+      <div className="pointer-events-none absolute inset-x-2.5 bottom-2.5 z-20 flex items-end justify-between gap-2 md:inset-x-4 md:bottom-4">
+        <div className="min-w-0">
+          <h2 className="truncate text-base font-black tracking-tight text-foreground xs:text-lg md:text-2xl">
+            {item.name}
+          </h2>
+          <div className="mt-1 flex flex-wrap items-center gap-1.5">
+            {item.location && (
+              <span className="inline-flex max-w-full items-center gap-1 rounded-full bg-background/70 px-2 py-0.5 text-[10px] font-semibold text-foreground ring-1 ring-border backdrop-blur md:text-xs">
+                <MapPin className="size-3 shrink-0 text-primary" />
+                <span className="truncate">{item.location}</span>
+              </span>
+            )}
+            {item.venue && (
+              <span className="inline-flex max-w-full items-center gap-1 rounded-full bg-background/70 px-2 py-0.5 text-[10px] font-semibold text-foreground ring-1 ring-border backdrop-blur md:text-xs">
+                <Home className="size-3 shrink-0 text-primary" />
+                <span className="truncate">{item.venue}</span>
+              </span>
+            )}
+            {item.badge && (
+              <span className="max-w-full truncate rounded-full bg-primary/25 px-2 py-0.5 text-[10px] font-bold text-foreground ring-1 ring-primary/50 backdrop-blur md:text-xs">
+                {item.badge}
+              </span>
             )}
           </div>
-
-          <div className="flex shrink-0 items-center gap-2 md:gap-3">
-            <a
-              href={`https://wa.me/${item.whatsapp}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={`${item.name} WhatsApp`}
-               className="whatsapp-shake grid size-12 place-items-center rounded-full bg-whatsapp ring-1 ring-border md:size-14"
-            >
-              <MessageCircle className="size-6 text-primary-foreground md:size-7" />
-            </a>
-            <a
-              href={`tel:${item.phone}`}
-              aria-label={`${item.name} ara`}
-              className="grid size-12 place-items-center rounded-full bg-cta ring-1 ring-border md:size-14"
-            >
-              <Phone className="size-6 text-primary-foreground md:size-7" />
-            </a>
-          </div>
+          <span className="mt-1 flex items-center gap-1 whitespace-nowrap font-black text-primary">
+            <Phone className="size-4 shrink-0 md:size-5" />
+            <span className="text-sm leading-none xs:text-base md:text-xl">
+              {formatPhone(item.phone)}
+            </span>
+          </span>
         </div>
 
-        <a
-          href={`tel:${item.phone}`}
-          className="mt-3 inline-flex items-center gap-1.5 whitespace-nowrap font-black text-primary underline-offset-2 hover:underline"
-          aria-label={`${item.name} telefon numarası ${item.phone}`}
-        >
-          <Phone className="size-5 shrink-0 md:size-6" />
-          <span className="text-xl leading-none md:text-2xl">{formatPhone(item.phone)}</span>
-        </a>
+        <span className="wa-action whatsapp-shake flex shrink-0 items-center gap-1.5 rounded-full bg-whatsapp px-3 py-2 text-xs font-black text-primary-foreground ring-1 ring-border md:px-4 md:py-2.5 md:text-sm">
+          <MessageCircle className="size-5 md:size-6" />
+          Yaz
+        </span>
       </div>
-    </article>
+    </a>
   );
 }
 
