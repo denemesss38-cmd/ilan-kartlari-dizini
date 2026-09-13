@@ -381,10 +381,9 @@ function AdminPage() {
               className="rounded-xl border border-border bg-card p-2.5 xs:p-3 md:rounded-2xl md:p-4"
             >
               <div className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-2.5 xs:gap-3 md:gap-4">
-                <img
-                  src={photoUrl(item.photos?.[0])}
-                  alt={item.name}
-                  loading="lazy"
+                <Thumb
+                  path={item.photos?.[0]}
+                  index={0}
                   className="size-12 shrink-0 rounded-lg object-cover xs:size-14 md:size-16"
                 />
                 <div className="min-w-0">
