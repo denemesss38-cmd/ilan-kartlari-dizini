@@ -43,6 +43,7 @@ function AdminPage() {
   const queryClient = useQueryClient();
   const [draft, setDraft] = useState<Draft | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [progress, setProgress] = useState({ done: 0, total: 0 });
 
   const roleQuery = useQuery({
     queryKey: ["my-admin-role"],
@@ -128,10 +129,12 @@ function AdminPage() {
 
   async function handleUpload(files: FileList | null) {
     if (!files?.length || !draft) return;
+    const all = Array.from(files);
     setUploading(true);
+    setProgress({ done: 0, total: all.length });
     try {
       const paths: string[] = [];
-      for (const file of Array.from(files)) {
+      for (const file of all) {
         const ext = file.name.split(".").pop()?.toLowerCase().replace(/[^a-z0-9]/g, "") || "jpg";
         const path = `${crypto.randomUUID()}.${ext}`;
         const { error } = await supabase.storage
@@ -139,13 +142,15 @@ function AdminPage() {
           .upload(path, file, { contentType: file.type || "image/jpeg" });
         if (error) throw error;
         paths.push(path);
+        setProgress({ done: paths.length, total: all.length });
       }
       setDraft({ ...draft, photos: [...draft.photos, ...paths] });
-      toast.success(`${paths.length} fotoğraf yüklendi.`);
+      toast.success(`${paths.length} fotoğraf yüklendi. Şimdi "Kaydet" düğmesine basın.`);
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Yükleme başarısız.");
     } finally {
       setUploading(false);
+      setProgress({ done: 0, total: 0 });
     }
   }
 
