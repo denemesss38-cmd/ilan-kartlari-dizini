@@ -1,39 +1,30 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { BadgeCheck, BellRing, Eye, Home, MapPin, MessageCircle, Phone, Send } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { BellRing, MessageCircle, Phone, Send } from "lucide-react";
 
 import { PhotoCarousel } from "@/components/PhotoCarousel";
+import { supabase } from "@/integrations/supabase/client";
+import { resolvePhotoUrls } from "@/lib/photos";
 import { siteConfig, type Listing } from "@/data/listings";
-import { getPublishedListings, getSiteSettings } from "@/lib/listings.functions";
 
-const DEFAULT_TITLE = "İlan Rehberi — Güncel İlanlar ve İletişim";
+const DEFAULT_TITLE = "Diyarbakır İlan Rehberi — Güncel İlanlar ve İletişim";
 const DEFAULT_DESCRIPTION =
-  "Güncel ilanları inceleyin, telefon veya WhatsApp üzerinden tek dokunuşla iletişime geçin.";
+  "Diyarbakır'daki güncel ilanları inceleyin, telefon veya WhatsApp üzerinden tek dokunuşla iletişime geçin.";
+const DEFAULT_WA_MESSAGE = "Merhaba, Nova'dan geldim bilgi alabilir miyim?";
 
 export const Route = createFileRoute("/")({
-  head: ({ loaderData }) => {
-    const title = loaderData?.settings.seoTitle || DEFAULT_TITLE;
-    const description = loaderData?.settings.seoDescription || DEFAULT_DESCRIPTION;
-    const keywords = loaderData?.settings.seoKeywords || "";
-
-    return {
-      meta: [
-        { title },
-        { name: "description", content: description },
-        ...(keywords ? [{ name: "keywords", content: keywords }] : []),
-        { property: "og:title", content: title },
-        { property: "og:description", content: description },
-        { property: "og:type", content: "website" },
-        { property: "og:url", content: "https://ilan-kartlari-dizini.lovable.app/" },
-        { name: "twitter:card", content: "summary_large_image" },
-      ],
-      links: [{ rel: "canonical", href: "https://ilan-kartlari-dizini.lovable.app/" }],
-    };
-  },
-  loader: async () => {
-    const [listings, settings] = await Promise.all([getPublishedListings(), getSiteSettings()]);
-    return { listings, settings };
-  },
-
+  head: () => ({
+    meta: [
+      { title: DEFAULT_TITLE },
+      { name: "description", content: DEFAULT_DESCRIPTION },
+      { property: "og:title", content: DEFAULT_TITLE },
+      { property: "og:description", content: DEFAULT_DESCRIPTION },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://ilan-kartlari-dizini.lovable.app/" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+    links: [{ rel: "canonical", href: "https://ilan-kartlari-dizini.lovable.app/" }],
+  }),
   component: Index,
   errorComponent: () => (
     <div className="flex min-h-screen items-center justify-center bg-background px-6 text-center">
@@ -60,17 +51,29 @@ function formatPhone(raw: string) {
   return raw;
 }
 
-/** Kompakt vitrin kartı: tamamı WhatsApp bağlantısı olan akıcı fotoğraf şeridi. */
-function ListingCard({ item, intervalSeconds }: { item: Listing; intervalSeconds: number }) {
-  const hasPhotos = (item.photos ?? []).filter(Boolean).length > 0;
+/** Hazır mesajlı WhatsApp bağlantısı. */
+function waLink(number: string, message: string) {
+  const digits = (number || "").replace(/\D/g, "");
+  return `https://wa.me/${digits}?text=${encodeURIComponent(message || DEFAULT_WA_MESSAGE)}`;
+}
 
+/** Tam genişlikte, kesintisiz kayan fotoğraf şeridi ve üzerine binen bilgiler. */
+function ListingStrip({
+  item,
+  intervalSeconds,
+  message,
+}: {
+  item: Listing;
+  intervalSeconds: number;
+  message: string;
+}) {
   return (
     <a
-      href={`https://wa.me/${item.whatsapp.replace(/\D/g, "")}`}
+      href={waLink(item.whatsapp || item.phone, message)}
       target="_blank"
       rel="noopener noreferrer"
       aria-label={`${item.name} WhatsApp ile yaz`}
-      className="listing-showcase-card ngy-resim group relative block overflow-hidden rounded-2xl border border-border bg-showcase-card shadow-xl"
+      className="group relative block w-full overflow-hidden"
     >
       <PhotoCarousel
         photos={item.photos}
@@ -78,45 +81,16 @@ function ListingCard({ item, intervalSeconds }: { item: Listing; intervalSeconds
         intervalSeconds={intervalSeconds}
         split={3}
         interactive={false}
-        className={hasPhotos ? "aspect-[16/10] w-full md:aspect-[21/9]" : "h-32 w-full xs:h-36 md:h-44"}
+        className="h-[180px] w-full md:h-56"
       />
 
-      <div className="pointer-events-none absolute inset-0 z-10 bg-gradient-to-t from-background via-background/40 to-transparent" />
+      <div className="pointer-events-none absolute inset-0 z-10 bg-gradient-to-t from-background via-background/35 to-transparent" />
 
-      <span className="pointer-events-none absolute left-2.5 top-2.5 z-20 flex items-center gap-1.5 rounded-full bg-background/85 px-2.5 py-1 text-[11px] font-bold text-foreground ring-1 ring-border backdrop-blur md:left-4 md:top-4">
-        <span className="active-status-dot relative size-2 shrink-0 rounded-full" />
-        Aktif / Müsait
-      </span>
-
-      <span className="pointer-events-none absolute right-2.5 top-2.5 z-20 flex items-center gap-1 rounded-full bg-background/80 px-2.5 py-1 text-[11px] font-bold ring-1 ring-border backdrop-blur md:right-4 md:top-4">
-        <BadgeCheck className="size-3.5 shrink-0 text-primary md:size-4" />
-        <span className="text-foreground">Onaylı ilan</span>
-      </span>
-
-      <div className="pointer-events-none absolute inset-x-2.5 bottom-2.5 z-20 flex items-end justify-between gap-2 md:inset-x-4 md:bottom-4">
+      <div className="pointer-events-none absolute inset-x-3 bottom-3 z-20 flex items-end justify-between gap-2 md:inset-x-6 md:bottom-5">
         <div className="min-w-0">
           <h2 className="truncate text-base font-black tracking-tight text-foreground xs:text-lg md:text-2xl">
             {item.name}
           </h2>
-          <div className="mt-1 flex flex-wrap items-center gap-1.5">
-            {item.location && (
-              <span className="inline-flex max-w-full items-center gap-1 rounded-full bg-background/70 px-2 py-0.5 text-[10px] font-semibold text-foreground ring-1 ring-border backdrop-blur md:text-xs">
-                <MapPin className="size-3 shrink-0 text-primary" />
-                <span className="truncate">{item.location}</span>
-              </span>
-            )}
-            {item.venue && (
-              <span className="inline-flex max-w-full items-center gap-1 rounded-full bg-background/70 px-2 py-0.5 text-[10px] font-semibold text-foreground ring-1 ring-border backdrop-blur md:text-xs">
-                <Home className="size-3 shrink-0 text-primary" />
-                <span className="truncate">{item.venue}</span>
-              </span>
-            )}
-            {item.badge && (
-              <span className="max-w-full truncate rounded-full bg-primary/25 px-2 py-0.5 text-[10px] font-bold text-foreground ring-1 ring-primary/50 backdrop-blur md:text-xs">
-                {item.badge}
-              </span>
-            )}
-          </div>
           <span className="mt-1 flex items-center gap-1 whitespace-nowrap font-black text-primary">
             <Phone className="size-4 shrink-0 md:size-5" />
             <span className="text-sm leading-none xs:text-base md:text-xl">
@@ -125,7 +99,7 @@ function ListingCard({ item, intervalSeconds }: { item: Listing; intervalSeconds
           </span>
         </div>
 
-        <span className="wa-action whatsapp-shake flex shrink-0 items-center gap-1.5 rounded-full bg-whatsapp px-3 py-2 text-xs font-black text-primary-foreground ring-1 ring-border md:px-4 md:py-2.5 md:text-sm">
+        <span className="whatsapp-shake flex shrink-0 items-center gap-1.5 rounded-full bg-whatsapp px-3 py-2 text-xs font-black text-primary-foreground ring-1 ring-border md:px-4 md:py-2.5 md:text-sm">
           <MessageCircle className="size-5 md:size-6" />
           Yaz
         </span>
@@ -135,46 +109,75 @@ function ListingCard({ item, intervalSeconds }: { item: Listing; intervalSeconds
 }
 
 function Index() {
-  const { listings, settings } = Route.useLoaderData();
+  const listingsQuery = useQuery({
+    queryKey: ["public-listings"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("listings")
+        .select("id, name, location, description, photos, phone, whatsapp, badge, venue, sort_order, is_published")
+        .eq("is_published", true)
+        .order("sort_order", { ascending: true })
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+
+      const rows = (data ?? []) as Listing[];
+      return Promise.all(
+        rows.map(async (row) => ({ ...row, photos: await resolvePhotoUrls(row.photos ?? []) })),
+      );
+    },
+  });
+
+  const settingsQuery = useQuery({
+    queryKey: ["public-settings"],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("site_settings")
+        .select("key, value")
+        .in("key", ["carousel_interval_seconds", "whatsapp_number", "whatsapp_message"]);
+      const map = new Map((data ?? []).map((r) => [r.key, r.value]));
+      const raw = Number(map.get("carousel_interval_seconds") ?? 4);
+      const str = (k: string, fallback: string) => {
+        const v = map.get(k);
+        return typeof v === "string" && v.trim() ? v.trim() : fallback;
+      };
+      return {
+        carouselIntervalSeconds: Number.isFinite(raw) && raw >= 0 && raw <= 30 ? raw : 4,
+        whatsappNumber: str("whatsapp_number", "905551112233"),
+        whatsappMessage: str("whatsapp_message", DEFAULT_WA_MESSAGE),
+      };
+    },
+  });
+
+  const listings = listingsQuery.data ?? [];
+  const settings = settingsQuery.data ?? {
+    carouselIntervalSeconds: 4,
+    whatsappNumber: "905551112233",
+    whatsappMessage: DEFAULT_WA_MESSAGE,
+  };
+  const contactHref = waLink(settings.whatsappNumber, settings.whatsappMessage);
 
   return (
     <div className="min-h-screen">
       <div className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur-xl">
-        <div className="mx-auto grid max-w-3xl grid-cols-[minmax(0,1fr)_auto] items-center gap-2 px-3 py-2.5 xs:px-4 md:px-6">
-          <div className="flex min-w-0 items-center gap-2.5">
-            <div className="grid size-10 shrink-0 place-items-center rounded-full border border-primary bg-secondary text-sm font-black text-primary shadow-[0_0_18px_var(--card-glow)]">
-              DR
-            </div>
-            <div className="min-w-0">
-              <p className="truncate text-sm font-black text-foreground">{siteConfig.siteName}</p>
-              <p className="truncate text-[10px] text-muted-foreground">Güncel ilan vitrini</p>
-            </div>
+        <div className="mx-auto flex max-w-3xl items-center gap-2.5 px-3 py-2.5 xs:px-4 md:px-6">
+          <div className="grid size-10 shrink-0 place-items-center rounded-full border border-primary bg-secondary text-sm font-black text-primary shadow-[0_0_18px_var(--card-glow)]">
+            DR
           </div>
-          <div className="flex shrink-0 items-center gap-1.5">
-            <div className="bg-online flex h-9 items-center gap-1.5 rounded-full px-2.5 text-[10px] font-bold text-foreground shadow-lg">
-              <span className="active-status-dot relative size-2 rounded-full" />
-              <span className="hidden xs:inline">Canlı</span>
-            </div>
-            <div className="bg-visitors flex h-9 items-center gap-1.5 rounded-full px-2.5 text-[10px] font-bold text-foreground shadow-lg">
-              <Eye className="size-3.5 shrink-0" />
-              <span>{listings.length} ilan</span>
-            </div>
-          </div>
+          <p className="truncate text-sm font-black text-foreground">{siteConfig.siteName}</p>
         </div>
       </div>
 
-      <main className="mx-auto max-w-3xl px-3 pb-14 pt-5 xs:px-4 md:px-6 md:pt-8">
-        <header className="text-center">
+      <main className="mx-auto max-w-3xl pb-14 pt-5 md:pt-8">
+        <header className="px-3 text-center xs:px-4 md:px-6">
           <h1 className="text-3xl font-black leading-none tracking-tight text-foreground xs:text-4xl md:text-6xl">
             {siteConfig.city}
           </h1>
           <p className="mt-1.5 text-xs font-bold uppercase tracking-[0.3em] text-primary xs:text-sm">
             {siteConfig.title}
           </p>
-          <p className="mt-1 text-[11px] text-muted-foreground md:text-xs">{siteConfig.subtitle}</p>
         </header>
 
-        <section className="mt-4 grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 rounded-2xl border border-primary/40 bg-showcase-card p-3 shadow-[0_14px_34px_-24px_var(--card-glow)] md:mt-6 md:p-4">
+        <section className="mx-3 mt-4 grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 rounded-2xl border border-primary/40 bg-showcase-card p-3 shadow-[0_14px_34px_-24px_var(--card-glow)] xs:mx-4 md:mx-6 md:mt-6 md:p-4">
           <div className="grid size-10 shrink-0 place-items-center rounded-full bg-primary/10 text-primary">
             <BellRing className="size-5" />
           </div>
@@ -185,7 +188,7 @@ function Index() {
             </p>
           </div>
           <a
-            href={siteConfig.banner.ctaHref}
+            href={contactHref}
             target="_blank"
             rel="noopener noreferrer"
             aria-label={siteConfig.banner.ctaLabel}
@@ -195,43 +198,46 @@ function Index() {
           </a>
         </section>
 
-        <div className="mx-auto mt-4 grid w-full max-w-2xl gap-3 sm:grid-cols-2 md:mt-5">
+        <div className="mx-auto mt-4 grid w-full max-w-2xl gap-3 px-3 xs:px-4 sm:grid-cols-2 md:mt-5 md:px-6">
           {siteConfig.promos
             .filter((promo) => promo.title !== "GÜVENLİ İLETİŞİM")
             .map((promo) => (
               <a
                 key={promo.title}
-                href={promo.href}
+                href={contactHref}
                 target="_blank"
                 rel="noopener noreferrer"
-              className={`flex flex-col items-center justify-center rounded-3xl p-3 text-center ring-1 ring-border md:p-4 ${
-                promo.variant === "primary" ? "bg-cta" : "bg-cta-alt"
-              }`}
-            >
-              <h2 className="text-xs font-black tracking-wide text-primary-foreground md:text-sm">
-                {promo.title}
-              </h2>
-              <p className="mt-1 text-[10px] leading-relaxed text-primary-foreground/90 md:text-[11px]">
-                {promo.text}
-              </p>
-              <span className="mt-2 inline-flex min-h-9 items-center rounded-full bg-background/25 px-3 py-1.5 text-[10px] font-bold text-primary-foreground md:text-xs">
-                {promo.ctaLabel}
-              </span>
-            </a>
+                className={`flex flex-col items-center justify-center rounded-3xl p-3 text-center ring-1 ring-border md:p-4 ${
+                  promo.variant === "primary" ? "bg-cta" : "bg-cta-alt"
+                }`}
+              >
+                <h2 className="text-xs font-black tracking-wide text-primary-foreground md:text-sm">
+                  {promo.title}
+                </h2>
+                <p className="mt-1 text-[10px] leading-relaxed text-primary-foreground/90 md:text-[11px]">
+                  {promo.text}
+                </p>
+                <span className="mt-2 inline-flex min-h-9 items-center rounded-full bg-background/25 px-3 py-1.5 text-[10px] font-bold text-primary-foreground md:text-xs">
+                  {promo.ctaLabel}
+                </span>
+              </a>
             ))}
         </div>
 
-        {listings.length === 0 ? (
+        {listingsQuery.isLoading ? (
+          <p className="mt-10 text-center text-sm text-muted-foreground">İlanlar yükleniyor...</p>
+        ) : listings.length === 0 ? (
           <p className="mt-10 text-center text-sm text-muted-foreground">
             Şu anda yayınlanmış ilan bulunmuyor.
           </p>
         ) : (
-          <div className="mt-5 space-y-4 md:mt-8 md:space-y-6">
+          <div className="mt-5 md:mt-8">
             {listings.map((item) => (
-              <ListingCard
+              <ListingStrip
                 key={item.id}
                 item={item}
                 intervalSeconds={settings.carouselIntervalSeconds}
+                message={settings.whatsappMessage}
               />
             ))}
           </div>
@@ -242,7 +248,7 @@ function Index() {
           if (!safePromo) return null;
           return (
             <a
-              href={safePromo.href}
+              href={contactHref}
               target="_blank"
               rel="noopener noreferrer"
               className={`mx-auto mt-6 flex w-full max-w-2xl flex-col items-center justify-center rounded-3xl p-4 text-center ring-1 ring-border md:mt-8 md:p-5 ${
@@ -262,7 +268,7 @@ function Index() {
           );
         })()}
 
-        <footer className="mt-10 border-t border-border/60 pt-6 pb-4 text-center">
+        <footer className="mt-10 border-t border-border/60 px-3 pb-4 pt-6 text-center xs:px-4 md:px-6">
           <p className="text-[11px] leading-relaxed text-muted-foreground md:text-xs">
             {siteConfig.footerNote}
           </p>
