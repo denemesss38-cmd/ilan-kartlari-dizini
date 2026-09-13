@@ -677,3 +677,100 @@ function Field({
     </label>
   );
 }
+
+/** Depodaki fotoğrafı imzalı adresle gösterir. */
+function Thumb({
+  path,
+  index = 0,
+  className,
+}: {
+  path?: string | null;
+  index?: number;
+  className?: string;
+}) {
+  const [src, setSrc] = useState(() => photoUrl(null, index));
+
+  useEffect(() => {
+    let active = true;
+    resolvePhotoUrl(path, index).then((url) => {
+      if (active) setSrc(url);
+    });
+    return () => {
+      active = false;
+    };
+  }, [path, index]);
+
+  return <img src={src} alt="Fotoğraf" loading="lazy" className={className} />;
+}
+
+/** WhatsApp numarası ve butonlara tıklanınca gidecek hazır mesaj. */
+function WhatsAppSettings() {
+  const queryClient = useQueryClient();
+  const [draft, setDraft] = useState<{ number: string; message: string } | null>(null);
+
+  const waQuery = useQuery({
+    queryKey: ["whatsapp-settings"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("site_settings")
+        .select("key, value")
+        .in("key", ["whatsapp_number", "whatsapp_message"]);
+      if (error) throw error;
+      const map = new Map((data ?? []).map((r) => [r.key, r.value]));
+      const str = (k: string) => (typeof map.get(k) === "string" ? String(map.get(k)) : "");
+      return { number: str("whatsapp_number"), message: str("whatsapp_message") };
+    },
+  });
+
+  const saveMutation = useMutation({
+    mutationFn: async (v: { number: string; message: string }) => {
+      const now = new Date().toISOString();
+      const { error } = await supabase.from("site_settings").upsert(
+        [
+          { key: "whatsapp_number", value: v.number.replace(/\D/g, ""), updated_at: now },
+          { key: "whatsapp_message", value: v.message.trim(), updated_at: now },
+        ],
+        { onConflict: "key" },
+      );
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("WhatsApp ayarları kaydedildi.");
+      queryClient.invalidateQueries({ queryKey: ["whatsapp-settings"] });
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const current = draft ?? waQuery.data ?? { number: "", message: "" };
+
+  return (
+    <section className="mt-4 rounded-2xl border border-border bg-card p-4">
+      <h2 className="text-sm font-black text-foreground">WhatsApp / reklam iletişimi</h2>
+      <p className="mt-1 text-[11px] text-muted-foreground">
+        Reklam ve bilgi butonlarının açacağı numara ile otomatik yazılacak mesaj.
+      </p>
+      <div className="mt-3 space-y-3">
+        <Field
+          label="WhatsApp numarası (örn. 905551112233)"
+          value={current.number}
+          onChange={(v) => setDraft({ ...current, number: v })}
+          max={20}
+        />
+        <Field
+          label="Hazır mesaj"
+          value={current.message}
+          onChange={(v) => setDraft({ ...current, message: v })}
+          max={200}
+          textarea
+        />
+      </div>
+      <button
+        onClick={() => saveMutation.mutate(current)}
+        disabled={saveMutation.isPending}
+        className="mt-3 w-full rounded-xl bg-primary px-4 py-3 text-xs font-black text-primary-foreground disabled:opacity-60"
+      >
+        {saveMutation.isPending ? "Kaydediliyor..." : "WhatsApp ayarlarını kaydet"}
+      </button>
+    </section>
+  );
+}
