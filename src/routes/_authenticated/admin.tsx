@@ -382,7 +382,7 @@ function AdminPage() {
             >
               <div className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-2.5 xs:gap-3 md:gap-4">
                 <Thumb
-                  path={item.photos?.[0]}
+                  path={item.photos?.[0] ?? null}
                   index={0}
                   className="size-12 shrink-0 rounded-lg object-cover xs:size-14 md:size-16"
                 />
