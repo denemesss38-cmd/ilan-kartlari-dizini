@@ -216,6 +216,7 @@ function AdminPage() {
 
       <main className="mx-auto max-w-3xl px-3 pb-16 pt-4">
         <CarouselSpeedSetting />
+        <WhatsAppSettings />
         <SeoSettings />
 
 
@@ -316,12 +317,7 @@ function AdminPage() {
                 <div className="mt-2 flex flex-wrap gap-2">
                   {draft.photos.map((p, i) => (
                     <div key={p + i} className="relative">
-                      <img
-                        src={photoUrl(p)}
-                        alt={`Fotoğraf ${i + 1}`}
-                        loading="lazy"
-                        className="size-20 rounded-lg object-cover"
-                      />
+                      <Thumb path={p} index={i} className="size-20 rounded-lg object-cover" />
                       <button
                         onClick={() =>
                           setDraft({ ...draft, photos: draft.photos.filter((_, idx) => idx !== i) })
@@ -343,18 +339,34 @@ function AdminPage() {
                   className="mt-3 block w-full text-xs text-muted-foreground"
                 />
                 {uploading ? (
-                  <p className="mt-1 text-xs text-primary">Yükleniyor...</p>
+                  <div className="mt-2">
+                    <p className="flex items-center gap-1.5 text-xs font-bold text-primary">
+                      <Loader2 className="size-3.5 animate-spin" />
+                      Yükleniyor... {progress.done}/{progress.total} (
+                      {progress.total ? Math.round((progress.done / progress.total) * 100) : 0}%)
+                    </p>
+                    <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-muted">
+                      <div
+                        className="h-full rounded-full bg-primary transition-all"
+                        style={{
+                          width: `${progress.total ? (progress.done / progress.total) * 100 : 0}%`,
+                        }}
+                      />
+                    </div>
+                  </div>
                 ) : (
                   <p className="mt-1 text-[11px] text-muted-foreground">
-                    İlk fotoğraf kartta büyük gösterilir. Tek dosya en fazla 10 MB.
+                    İlk fotoğraf kartta büyük gösterilir. Tek dosya en fazla 10 MB. Fotoğrafları
+                    ekledikten sonra aşağıdaki <strong className="text-foreground">Kaydet</strong>{" "}
+                    düğmesine basın.
                   </p>
                 )}
               </div>
 
               <button
                 onClick={() => saveMutation.mutate(draft)}
-                disabled={saveMutation.isPending || !draft.name.trim()}
-                className="w-full rounded-xl bg-primary px-4 py-2.5 text-sm font-black text-primary-foreground disabled:opacity-60"
+                disabled={saveMutation.isPending || uploading || !draft.name.trim()}
+                className="sticky bottom-3 w-full rounded-xl bg-primary px-4 py-3.5 text-sm font-black text-primary-foreground shadow-lg disabled:opacity-60"
               >
                 {saveMutation.isPending ? "Kaydediliyor..." : "Kaydet"}
               </button>
