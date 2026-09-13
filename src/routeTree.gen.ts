@@ -15,7 +15,6 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as KurulumRouteImport } from './routes/kurulum'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
-import { Route as ApiPublicFotoRouteImport } from './routes/api/public/foto'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -46,11 +45,6 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const ApiPublicFotoRoute = ApiPublicFotoRouteImport.update({
-  id: '/api/public/foto',
-  path: '/api/public/foto',
-  getParentRoute: () => rootRouteImport,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -58,7 +52,6 @@ export interface FileRoutesByFullPath {
   '/kurulum': typeof KurulumRoute
   '/reset-password': typeof ResetPasswordRoute
   '/admin': typeof AuthenticatedAdminRoute
-  '/api/public/foto': typeof ApiPublicFotoRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -66,7 +59,6 @@ export interface FileRoutesByTo {
   '/kurulum': typeof KurulumRoute
   '/reset-password': typeof ResetPasswordRoute
   '/admin': typeof AuthenticatedAdminRoute
-  '/api/public/foto': typeof ApiPublicFotoRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -76,25 +68,12 @@ export interface FileRoutesById {
   '/kurulum': typeof KurulumRoute
   '/reset-password': typeof ResetPasswordRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
-  '/api/public/foto': typeof ApiPublicFotoRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths:
-    | '/'
-    | '/auth'
-    | '/kurulum'
-    | '/reset-password'
-    | '/admin'
-    | '/api/public/foto'
+  fullPaths: '/' | '/auth' | '/kurulum' | '/reset-password' | '/admin'
   fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/'
-    | '/auth'
-    | '/kurulum'
-    | '/reset-password'
-    | '/admin'
-    | '/api/public/foto'
+  to: '/' | '/auth' | '/kurulum' | '/reset-password' | '/admin'
   id:
     | '__root__'
     | '/'
@@ -103,7 +82,6 @@ export interface FileRouteTypes {
     | '/kurulum'
     | '/reset-password'
     | '/_authenticated/admin'
-    | '/api/public/foto'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -112,7 +90,6 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   KurulumRoute: typeof KurulumRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
-  ApiPublicFotoRoute: typeof ApiPublicFotoRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -159,13 +136,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/api/public/foto': {
-      id: '/api/public/foto'
-      path: '/api/public/foto'
-      fullPath: '/api/public/foto'
-      preLoaderRoute: typeof ApiPublicFotoRouteImport
-      parentRoute: typeof rootRouteImport
-    }
   }
 }
 
@@ -186,7 +156,6 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   KurulumRoute: KurulumRoute,
   ResetPasswordRoute: ResetPasswordRoute,
-  ApiPublicFotoRoute: ApiPublicFotoRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

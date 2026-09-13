@@ -1,10 +1,9 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
 
-import { adminExists, setupFirstAdmin } from "@/lib/listings.functions";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/kurulum")({
   head: () => ({
@@ -23,11 +22,13 @@ export const Route = createFileRoute("/kurulum")({
 
 function Kurulum() {
   const navigate = useNavigate();
-  const checkAdmin = useServerFn(adminExists);
-  const createAdmin = useServerFn(setupFirstAdmin);
   const { data, isLoading, refetch } = useQuery({
     queryKey: ["admin-exists"],
-    queryFn: () => checkAdmin(),
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc("admin_exists");
+      if (error) throw error;
+      return { exists: data === true };
+    },
   });
 
   const [email, setEmail] = useState("");
@@ -38,11 +39,18 @@ function Kurulum() {
     e.preventDefault();
     setBusy(true);
     try {
-      const res = await createAdmin({ data: { email: email.trim(), password } });
-      if (!res.ok) {
-        toast.error(res.message);
+      const { data: signUpData, error } = await supabase.auth.signUp({
+        email: email.trim(),
+        password,
+        options: { emailRedirectTo: `${window.location.origin}/auth` },
+      });
+      if (error) throw error;
+
+      if (signUpData.session) {
+        toast.success("Yönetici hesabı oluşturuldu.");
+        navigate({ to: "/admin", replace: true });
       } else {
-        toast.success(res.message);
+        toast.success("Hesap oluşturuldu. E-postanızdaki doğrulama bağlantısına tıklayın.");
         navigate({ to: "/auth" });
       }
       await refetch();

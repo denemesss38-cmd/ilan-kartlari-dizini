@@ -1,11 +1,11 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { ArrowDown, ArrowUp, LogOut, Plus, Trash2, X } from "lucide-react";
+import { ArrowDown, ArrowUp, Loader2, LogOut, Plus, Trash2, X } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
-import { photoUrl } from "@/lib/photos";
+import { photoUrl, resolvePhotoUrl } from "@/lib/photos";
 import type { Listing } from "@/data/listings";
 
 export const Route = createFileRoute("/_authenticated/admin")({
@@ -43,6 +43,7 @@ function AdminPage() {
   const queryClient = useQueryClient();
   const [draft, setDraft] = useState<Draft | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [progress, setProgress] = useState({ done: 0, total: 0 });
 
   const roleQuery = useQuery({
     queryKey: ["my-admin-role"],
@@ -128,10 +129,12 @@ function AdminPage() {
 
   async function handleUpload(files: FileList | null) {
     if (!files?.length || !draft) return;
+    const all = Array.from(files);
     setUploading(true);
+    setProgress({ done: 0, total: all.length });
     try {
       const paths: string[] = [];
-      for (const file of Array.from(files)) {
+      for (const file of all) {
         const ext = file.name.split(".").pop()?.toLowerCase().replace(/[^a-z0-9]/g, "") || "jpg";
         const path = `${crypto.randomUUID()}.${ext}`;
         const { error } = await supabase.storage
@@ -139,13 +142,15 @@ function AdminPage() {
           .upload(path, file, { contentType: file.type || "image/jpeg" });
         if (error) throw error;
         paths.push(path);
+        setProgress({ done: paths.length, total: all.length });
       }
       setDraft({ ...draft, photos: [...draft.photos, ...paths] });
-      toast.success(`${paths.length} fotoğraf yüklendi.`);
+      toast.success(`${paths.length} fotoğraf yüklendi. Şimdi "Kaydet" düğmesine basın.`);
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Yükleme başarısız.");
     } finally {
       setUploading(false);
+      setProgress({ done: 0, total: 0 });
     }
   }
 
@@ -211,6 +216,7 @@ function AdminPage() {
 
       <main className="mx-auto max-w-3xl px-3 pb-16 pt-4">
         <CarouselSpeedSetting />
+        <WhatsAppSettings />
         <SeoSettings />
 
 
@@ -311,12 +317,7 @@ function AdminPage() {
                 <div className="mt-2 flex flex-wrap gap-2">
                   {draft.photos.map((p, i) => (
                     <div key={p + i} className="relative">
-                      <img
-                        src={photoUrl(p)}
-                        alt={`Fotoğraf ${i + 1}`}
-                        loading="lazy"
-                        className="size-20 rounded-lg object-cover"
-                      />
+                      <Thumb path={p} index={i} className="size-20 rounded-lg object-cover" />
                       <button
                         onClick={() =>
                           setDraft({ ...draft, photos: draft.photos.filter((_, idx) => idx !== i) })
@@ -338,18 +339,34 @@ function AdminPage() {
                   className="mt-3 block w-full text-xs text-muted-foreground"
                 />
                 {uploading ? (
-                  <p className="mt-1 text-xs text-primary">Yükleniyor...</p>
+                  <div className="mt-2">
+                    <p className="flex items-center gap-1.5 text-xs font-bold text-primary">
+                      <Loader2 className="size-3.5 animate-spin" />
+                      Yükleniyor... {progress.done}/{progress.total} (
+                      {progress.total ? Math.round((progress.done / progress.total) * 100) : 0}%)
+                    </p>
+                    <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-muted">
+                      <div
+                        className="h-full rounded-full bg-primary transition-all"
+                        style={{
+                          width: `${progress.total ? (progress.done / progress.total) * 100 : 0}%`,
+                        }}
+                      />
+                    </div>
+                  </div>
                 ) : (
                   <p className="mt-1 text-[11px] text-muted-foreground">
-                    İlk fotoğraf kartta büyük gösterilir. Tek dosya en fazla 10 MB.
+                    İlk fotoğraf kartta büyük gösterilir. Tek dosya en fazla 10 MB. Fotoğrafları
+                    ekledikten sonra aşağıdaki <strong className="text-foreground">Kaydet</strong>{" "}
+                    düğmesine basın.
                   </p>
                 )}
               </div>
 
               <button
                 onClick={() => saveMutation.mutate(draft)}
-                disabled={saveMutation.isPending || !draft.name.trim()}
-                className="w-full rounded-xl bg-primary px-4 py-2.5 text-sm font-black text-primary-foreground disabled:opacity-60"
+                disabled={saveMutation.isPending || uploading || !draft.name.trim()}
+                className="sticky bottom-3 w-full rounded-xl bg-primary px-4 py-3.5 text-sm font-black text-primary-foreground shadow-lg disabled:opacity-60"
               >
                 {saveMutation.isPending ? "Kaydediliyor..." : "Kaydet"}
               </button>
@@ -364,10 +381,9 @@ function AdminPage() {
               className="rounded-xl border border-border bg-card p-2.5 xs:p-3 md:rounded-2xl md:p-4"
             >
               <div className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-2.5 xs:gap-3 md:gap-4">
-                <img
-                  src={photoUrl(item.photos?.[0])}
-                  alt={item.name}
-                  loading="lazy"
+                <Thumb
+                  path={item.photos?.[0] ?? null}
+                  index={0}
                   className="size-12 shrink-0 rounded-lg object-cover xs:size-14 md:size-16"
                 />
                 <div className="min-w-0">
@@ -659,5 +675,102 @@ function Field({
         />
       )}
     </label>
+  );
+}
+
+/** Depodaki fotoğrafı imzalı adresle gösterir. */
+function Thumb({
+  path,
+  index = 0,
+  className,
+}: {
+  path?: string | null;
+  index?: number;
+  className?: string;
+}) {
+  const [src, setSrc] = useState(() => photoUrl(null, index));
+
+  useEffect(() => {
+    let active = true;
+    resolvePhotoUrl(path, index).then((url) => {
+      if (active) setSrc(url);
+    });
+    return () => {
+      active = false;
+    };
+  }, [path, index]);
+
+  return <img src={src} alt="Fotoğraf" loading="lazy" className={className} />;
+}
+
+/** WhatsApp numarası ve butonlara tıklanınca gidecek hazır mesaj. */
+function WhatsAppSettings() {
+  const queryClient = useQueryClient();
+  const [draft, setDraft] = useState<{ number: string; message: string } | null>(null);
+
+  const waQuery = useQuery({
+    queryKey: ["whatsapp-settings"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("site_settings")
+        .select("key, value")
+        .in("key", ["whatsapp_number", "whatsapp_message"]);
+      if (error) throw error;
+      const map = new Map((data ?? []).map((r) => [r.key, r.value]));
+      const str = (k: string) => (typeof map.get(k) === "string" ? String(map.get(k)) : "");
+      return { number: str("whatsapp_number"), message: str("whatsapp_message") };
+    },
+  });
+
+  const saveMutation = useMutation({
+    mutationFn: async (v: { number: string; message: string }) => {
+      const now = new Date().toISOString();
+      const { error } = await supabase.from("site_settings").upsert(
+        [
+          { key: "whatsapp_number", value: v.number.replace(/\D/g, ""), updated_at: now },
+          { key: "whatsapp_message", value: v.message.trim(), updated_at: now },
+        ],
+        { onConflict: "key" },
+      );
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("WhatsApp ayarları kaydedildi.");
+      queryClient.invalidateQueries({ queryKey: ["whatsapp-settings"] });
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const current = draft ?? waQuery.data ?? { number: "", message: "" };
+
+  return (
+    <section className="mt-4 rounded-2xl border border-border bg-card p-4">
+      <h2 className="text-sm font-black text-foreground">WhatsApp / reklam iletişimi</h2>
+      <p className="mt-1 text-[11px] text-muted-foreground">
+        Reklam ve bilgi butonlarının açacağı numara ile otomatik yazılacak mesaj.
+      </p>
+      <div className="mt-3 space-y-3">
+        <Field
+          label="WhatsApp numarası (örn. 905551112233)"
+          value={current.number}
+          onChange={(v) => setDraft({ ...current, number: v })}
+          max={20}
+        />
+        <Field
+          label="Hazır mesaj"
+          value={current.message}
+          onChange={(v) => setDraft({ ...current, message: v })}
+          max={200}
+          textarea
+        />
+      </div>
+      <button
+        onClick={() => saveMutation.mutate(current)}
+        disabled={saveMutation.isPending}
+        className="mt-3 w-full rounded-xl bg-primary px-4 py-3 text-xs font-black text-primary-foreground disabled:opacity-60"
+      >
+        {saveMutation.isPending ? "Kaydediliyor..." : "WhatsApp ayarlarını kaydet"}
+      </button>
+    </section>
   );
 }
