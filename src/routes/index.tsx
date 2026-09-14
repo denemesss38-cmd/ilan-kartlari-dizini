@@ -175,6 +175,9 @@ function Index() {
             DR
           </div>
           <p className="truncate text-sm font-black text-foreground">{siteConfig.siteName}</p>
+          <span className="ml-auto shrink-0 rounded-full border border-primary/40 bg-secondary px-2.5 py-1 text-[11px] font-black text-primary">
+            {listings.length} İlan
+          </span>
         </div>
       </div>
 
@@ -187,6 +190,7 @@ function Index() {
             {siteConfig.title}
           </p>
         </header>
+
 
         <section className="mx-3 mt-4 grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 rounded-2xl border border-primary/40 bg-showcase-card p-3 shadow-[0_14px_34px_-24px_var(--card-glow)] xs:mx-4 md:mx-6 md:mt-6 md:p-4">
           <div className="grid size-10 shrink-0 place-items-center rounded-full bg-primary/10 text-primary">
