@@ -12,7 +12,67 @@ const DEFAULT_DESCRIPTION =
   "Diyarbakır'daki güncel ilanları inceleyin, telefon veya WhatsApp üzerinden tek dokunuşla iletişime geçin.";
 const DEFAULT_WA_MESSAGE = "Merhaba, Nova'dan geldim bilgi alabilir miyim?";
 
+const QUERY_STALE = 5 * 60 * 1000;
+const QUERY_GC = 30 * 60 * 1000;
+
+const listingsQueryOptions = {
+  queryKey: ["public-listings"],
+  staleTime: QUERY_STALE,
+  gcTime: QUERY_GC,
+  refetchOnWindowFocus: false,
+  queryFn: async () => {
+    const { data, error } = await supabase
+      .from("listings")
+      .select("id, name, location, description, photos, phone, whatsapp, badge, venue, sort_order, is_published")
+      .eq("is_published", true)
+      .order("sort_order", { ascending: true })
+      .order("created_at", { ascending: false });
+    if (error) throw error;
+
+    const rows = (data ?? []) as Listing[];
+    // Tüm fotoğrafları TEK istekte imzala; ilan başına ayrı istek açılışı yavaşlatıyordu.
+    const allPaths = rows.flatMap((r) => r.photos ?? []);
+    const resolved = await resolvePhotoUrls(allPaths);
+    let cursor = 0;
+    return rows.map((row) => {
+      const count = (row.photos ?? []).filter(Boolean).length;
+      const photos = resolved.slice(cursor, cursor + count);
+      cursor += count;
+      return { ...row, photos };
+    });
+  },
+};
+
+const settingsQueryOptions = {
+  queryKey: ["public-settings"],
+  staleTime: QUERY_STALE,
+  gcTime: QUERY_GC,
+  refetchOnWindowFocus: false,
+  queryFn: async () => {
+    const { data } = await supabase
+      .from("site_settings")
+      .select("key, value")
+      .in("key", ["carousel_interval_seconds", "whatsapp_number", "whatsapp_message"]);
+    const map = new Map((data ?? []).map((r) => [r.key, r.value]));
+    const raw = Number(map.get("carousel_interval_seconds") ?? 4);
+    const str = (k: string, fallback: string) => {
+      const v = map.get(k);
+      return typeof v === "string" && v.trim() ? v.trim() : fallback;
+    };
+    return {
+      carouselIntervalSeconds: Number.isFinite(raw) && raw >= 0 && raw <= 30 ? raw : 4,
+      whatsappNumber: str("whatsapp_number", "905551112233"),
+      whatsappMessage: str("whatsapp_message", DEFAULT_WA_MESSAGE),
+    };
+  },
+};
+
 export const Route = createFileRoute("/")({
+  loader: ({ context }) =>
+    Promise.all([
+      context.queryClient.ensureQueryData(listingsQueryOptions),
+      context.queryClient.ensureQueryData(settingsQueryOptions),
+    ]),
   head: () => ({
     meta: [
       { title: DEFAULT_TITLE },
