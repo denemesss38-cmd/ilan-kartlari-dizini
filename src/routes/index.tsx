@@ -86,7 +86,14 @@ function ListingStrip({
 
       <div className="pointer-events-none absolute inset-0 z-10 bg-gradient-to-t from-background via-background/35 to-transparent" />
 
+      {item.venue?.trim() ? (
+        <span className="pointer-events-none absolute right-3 top-3 z-20 rounded-full border border-primary/50 bg-background/80 px-2.5 py-1 text-[10px] font-black uppercase tracking-wide text-primary backdrop-blur-sm md:right-6 md:top-5 md:text-xs">
+          {item.venue}
+        </span>
+      ) : null}
+
       <div className="pointer-events-none absolute inset-x-3 bottom-3 z-20 flex items-end justify-between gap-2 md:inset-x-6 md:bottom-5">
+
         <div className="min-w-0">
           <h2 className="truncate text-base font-black tracking-tight text-foreground xs:text-lg md:text-2xl">
             {item.name}
@@ -111,7 +118,11 @@ function ListingStrip({
 function Index() {
   const listingsQuery = useQuery({
     queryKey: ["public-listings"],
+    staleTime: 5 * 60 * 1000,
+    gcTime: 30 * 60 * 1000,
+    refetchOnWindowFocus: false,
     queryFn: async () => {
+
       const { data, error } = await supabase
         .from("listings")
         .select("id, name, location, description, photos, phone, whatsapp, badge, venue, sort_order, is_published")
@@ -129,7 +140,11 @@ function Index() {
 
   const settingsQuery = useQuery({
     queryKey: ["public-settings"],
+    staleTime: 5 * 60 * 1000,
+    gcTime: 30 * 60 * 1000,
+    refetchOnWindowFocus: false,
     queryFn: async () => {
+
       const { data } = await supabase
         .from("site_settings")
         .select("key, value")
@@ -164,6 +179,9 @@ function Index() {
             DR
           </div>
           <p className="truncate text-sm font-black text-foreground">{siteConfig.siteName}</p>
+          <span className="ml-auto shrink-0 rounded-full border border-primary/40 bg-secondary px-2.5 py-1 text-[11px] font-black text-primary">
+            {listings.length} İlan
+          </span>
         </div>
       </div>
 
@@ -176,6 +194,7 @@ function Index() {
             {siteConfig.title}
           </p>
         </header>
+
 
         <section className="mx-3 mt-4 grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 rounded-2xl border border-primary/40 bg-showcase-card p-3 shadow-[0_14px_34px_-24px_var(--card-glow)] xs:mx-4 md:mx-6 md:mt-6 md:p-4">
           <div className="grid size-10 shrink-0 place-items-center rounded-full bg-primary/10 text-primary">
@@ -225,8 +244,13 @@ function Index() {
         </div>
 
         {listingsQuery.isLoading ? (
-          <p className="mt-10 text-center text-sm text-muted-foreground">İlanlar yükleniyor...</p>
+          <div className="mt-5 md:mt-8">
+            {[0, 1, 2, 3].map((i) => (
+              <div key={i} className="h-[180px] w-full animate-pulse bg-secondary/60 md:h-56" />
+            ))}
+          </div>
         ) : listings.length === 0 ? (
+
           <p className="mt-10 text-center text-sm text-muted-foreground">
             Şu anda yayınlanmış ilan bulunmuyor.
           </p>
