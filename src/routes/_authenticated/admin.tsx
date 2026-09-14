@@ -684,7 +684,7 @@ function Thumb({
   index = 0,
   className,
 }: {
-  path?: string | null;
+  path: string | null | undefined;
   index?: number;
   className?: string;
 }) {
