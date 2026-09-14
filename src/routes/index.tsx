@@ -183,30 +183,7 @@ function ListingStrip({
 function Index() {
   const listingsQuery = useQuery(listingsQueryOptions);
 
-  const settingsQuery = useQuery({
-    queryKey: ["public-settings"],
-    staleTime: 5 * 60 * 1000,
-    gcTime: 30 * 60 * 1000,
-    refetchOnWindowFocus: false,
-    queryFn: async () => {
-
-      const { data } = await supabase
-        .from("site_settings")
-        .select("key, value")
-        .in("key", ["carousel_interval_seconds", "whatsapp_number", "whatsapp_message"]);
-      const map = new Map((data ?? []).map((r) => [r.key, r.value]));
-      const raw = Number(map.get("carousel_interval_seconds") ?? 4);
-      const str = (k: string, fallback: string) => {
-        const v = map.get(k);
-        return typeof v === "string" && v.trim() ? v.trim() : fallback;
-      };
-      return {
-        carouselIntervalSeconds: Number.isFinite(raw) && raw >= 0 && raw <= 30 ? raw : 4,
-        whatsappNumber: str("whatsapp_number", "905551112233"),
-        whatsappMessage: str("whatsapp_message", DEFAULT_WA_MESSAGE),
-      };
-    },
-  });
+  const settingsQuery = useQuery(settingsQueryOptions);
 
   const listings = listingsQuery.data ?? [];
   const settings = settingsQuery.data ?? {
