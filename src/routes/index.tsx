@@ -147,7 +147,7 @@ function ListingStrip({
       <div className="pointer-events-none absolute inset-0 z-10 bg-gradient-to-t from-background via-background/35 to-transparent" />
 
       <span className="pointer-events-none absolute right-3 top-3 z-20 rounded-full border border-amber-400/70 bg-amber-500/90 px-2 py-1 text-[10px] font-black uppercase tracking-wide text-amber-950 shadow-md backdrop-blur-sm md:right-6 md:top-5 md:text-xs">
-        VIP Onaylı İlan
+        Onaylı İlan
       </span>
 
       {item.venue?.trim() ? (
