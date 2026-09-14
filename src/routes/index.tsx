@@ -247,7 +247,6 @@ function Index() {
           </div>
         ) : listings.length === 0 ? (
 
-        ) : listings.length === 0 ? (
           <p className="mt-10 text-center text-sm text-muted-foreground">
             Şu anda yayınlanmış ilan bulunmuyor.
           </p>
