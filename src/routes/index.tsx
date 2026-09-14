@@ -86,7 +86,14 @@ function ListingStrip({
 
       <div className="pointer-events-none absolute inset-0 z-10 bg-gradient-to-t from-background via-background/35 to-transparent" />
 
+      {item.venue?.trim() ? (
+        <span className="pointer-events-none absolute right-3 top-3 z-20 rounded-full border border-primary/50 bg-background/80 px-2.5 py-1 text-[10px] font-black uppercase tracking-wide text-primary backdrop-blur-sm md:right-6 md:top-5 md:text-xs">
+          {item.venue}
+        </span>
+      ) : null}
+
       <div className="pointer-events-none absolute inset-x-3 bottom-3 z-20 flex items-end justify-between gap-2 md:inset-x-6 md:bottom-5">
+
         <div className="min-w-0">
           <h2 className="truncate text-base font-black tracking-tight text-foreground xs:text-lg md:text-2xl">
             {item.name}
