@@ -118,7 +118,11 @@ function ListingStrip({
 function Index() {
   const listingsQuery = useQuery({
     queryKey: ["public-listings"],
+    staleTime: 5 * 60 * 1000,
+    gcTime: 30 * 60 * 1000,
+    refetchOnWindowFocus: false,
     queryFn: async () => {
+
       const { data, error } = await supabase
         .from("listings")
         .select("id, name, location, description, photos, phone, whatsapp, badge, venue, sort_order, is_published")
