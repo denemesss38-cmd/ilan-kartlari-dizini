@@ -12,7 +12,67 @@ const DEFAULT_DESCRIPTION =
   "Diyarbakır'daki güncel ilanları inceleyin, telefon veya WhatsApp üzerinden tek dokunuşla iletişime geçin.";
 const DEFAULT_WA_MESSAGE = "Merhaba, Nova'dan geldim bilgi alabilir miyim?";
 
+const QUERY_STALE = 5 * 60 * 1000;
+const QUERY_GC = 30 * 60 * 1000;
+
+const listingsQueryOptions = {
+  queryKey: ["public-listings"],
+  staleTime: QUERY_STALE,
+  gcTime: QUERY_GC,
+  refetchOnWindowFocus: false,
+  queryFn: async () => {
+    const { data, error } = await supabase
+      .from("listings")
+      .select("id, name, location, description, photos, phone, whatsapp, badge, venue, sort_order, is_published")
+      .eq("is_published", true)
+      .order("sort_order", { ascending: true })
+      .order("created_at", { ascending: false });
+    if (error) throw error;
+
+    const rows = (data ?? []) as Listing[];
+    // Tüm fotoğrafları TEK istekte imzala; ilan başına ayrı istek açılışı yavaşlatıyordu.
+    const allPaths = rows.flatMap((r) => r.photos ?? []);
+    const resolved = await resolvePhotoUrls(allPaths);
+    let cursor = 0;
+    return rows.map((row) => {
+      const count = (row.photos ?? []).filter(Boolean).length;
+      const photos = resolved.slice(cursor, cursor + count);
+      cursor += count;
+      return { ...row, photos };
+    });
+  },
+};
+
+const settingsQueryOptions = {
+  queryKey: ["public-settings"],
+  staleTime: QUERY_STALE,
+  gcTime: QUERY_GC,
+  refetchOnWindowFocus: false,
+  queryFn: async () => {
+    const { data } = await supabase
+      .from("site_settings")
+      .select("key, value")
+      .in("key", ["carousel_interval_seconds", "whatsapp_number", "whatsapp_message"]);
+    const map = new Map((data ?? []).map((r) => [r.key, r.value]));
+    const raw = Number(map.get("carousel_interval_seconds") ?? 4);
+    const str = (k: string, fallback: string) => {
+      const v = map.get(k);
+      return typeof v === "string" && v.trim() ? v.trim() : fallback;
+    };
+    return {
+      carouselIntervalSeconds: Number.isFinite(raw) && raw >= 0 && raw <= 30 ? raw : 4,
+      whatsappNumber: str("whatsapp_number", "905551112233"),
+      whatsappMessage: str("whatsapp_message", DEFAULT_WA_MESSAGE),
+    };
+  },
+};
+
 export const Route = createFileRoute("/")({
+  loader: ({ context }) =>
+    Promise.all([
+      context.queryClient.ensureQueryData(listingsQueryOptions),
+      context.queryClient.ensureQueryData(settingsQueryOptions),
+    ]),
   head: () => ({
     meta: [
       { title: DEFAULT_TITLE },
@@ -87,7 +147,7 @@ function ListingStrip({
       <div className="pointer-events-none absolute inset-0 z-10 bg-gradient-to-t from-background via-background/35 to-transparent" />
 
       <span className="pointer-events-none absolute right-3 top-3 z-20 rounded-full border border-amber-400/70 bg-amber-500/90 px-2 py-1 text-[10px] font-black uppercase tracking-wide text-amber-950 shadow-md backdrop-blur-sm md:right-6 md:top-5 md:text-xs">
-        VIP Onaylı İlan
+        Onaylı İlan
       </span>
 
       {item.venue?.trim() ? (
@@ -121,52 +181,9 @@ function ListingStrip({
 }
 
 function Index() {
-  const listingsQuery = useQuery({
-    queryKey: ["public-listings"],
-    staleTime: 5 * 60 * 1000,
-    gcTime: 30 * 60 * 1000,
-    refetchOnWindowFocus: false,
-    queryFn: async () => {
+  const listingsQuery = useQuery(listingsQueryOptions);
 
-      const { data, error } = await supabase
-        .from("listings")
-        .select("id, name, location, description, photos, phone, whatsapp, badge, venue, sort_order, is_published")
-        .eq("is_published", true)
-        .order("sort_order", { ascending: true })
-        .order("created_at", { ascending: false });
-      if (error) throw error;
-
-      const rows = (data ?? []) as Listing[];
-      return Promise.all(
-        rows.map(async (row) => ({ ...row, photos: await resolvePhotoUrls(row.photos ?? []) })),
-      );
-    },
-  });
-
-  const settingsQuery = useQuery({
-    queryKey: ["public-settings"],
-    staleTime: 5 * 60 * 1000,
-    gcTime: 30 * 60 * 1000,
-    refetchOnWindowFocus: false,
-    queryFn: async () => {
-
-      const { data } = await supabase
-        .from("site_settings")
-        .select("key, value")
-        .in("key", ["carousel_interval_seconds", "whatsapp_number", "whatsapp_message"]);
-      const map = new Map((data ?? []).map((r) => [r.key, r.value]));
-      const raw = Number(map.get("carousel_interval_seconds") ?? 4);
-      const str = (k: string, fallback: string) => {
-        const v = map.get(k);
-        return typeof v === "string" && v.trim() ? v.trim() : fallback;
-      };
-      return {
-        carouselIntervalSeconds: Number.isFinite(raw) && raw >= 0 && raw <= 30 ? raw : 4,
-        whatsappNumber: str("whatsapp_number", "905551112233"),
-        whatsappMessage: str("whatsapp_message", DEFAULT_WA_MESSAGE),
-      };
-    },
-  });
+  const settingsQuery = useQuery(settingsQueryOptions);
 
   const listings = listingsQuery.data ?? [];
   const settings = settingsQuery.data ?? {
