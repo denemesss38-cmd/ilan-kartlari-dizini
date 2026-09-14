@@ -140,7 +140,11 @@ function Index() {
 
   const settingsQuery = useQuery({
     queryKey: ["public-settings"],
+    staleTime: 5 * 60 * 1000,
+    gcTime: 30 * 60 * 1000,
+    refetchOnWindowFocus: false,
     queryFn: async () => {
+
       const { data } = await supabase
         .from("site_settings")
         .select("key, value")
