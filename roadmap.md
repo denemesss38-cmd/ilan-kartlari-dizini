@@ -14,3 +14,8 @@
 - [x] WhatsApp düğmesini yeşil degrade ve hareketle öne çıkar
 - [x] Kartları tek kompakt görsel kutusuna indir, tamamı WhatsApp bağlantısı olsun
 - [x] Mobil görünümü ve build durumunu doğrula
+- [x] Fotoğrafları doğrudan imzalı URL ile göster, eski `/api/public/foto` rotasını kaldır
+- [x] Ana sayfa ve kurulumu tarayıcı tarafı Supabase istemcisiyle çalışır hale getir
+- [x] WhatsApp hazır mesajı ve hedef numarayı site ayarlarına bağla
+- [x] Admin paneline yükleme ilerleme çubuğu, belirgin Kaydet butonu ve WhatsApp ayarları ekle
+- [x] Header sayaçlarını ve alt başlık metnini kaldır; tam genişlik kenarlıksız şerit düzeni uygula
