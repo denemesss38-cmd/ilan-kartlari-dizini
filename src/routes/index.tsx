@@ -240,7 +240,13 @@ function Index() {
         </div>
 
         {listingsQuery.isLoading ? (
-          <p className="mt-10 text-center text-sm text-muted-foreground">İlanlar yükleniyor...</p>
+          <div className="mt-5 md:mt-8">
+            {[0, 1, 2, 3].map((i) => (
+              <div key={i} className="h-[180px] w-full animate-pulse bg-secondary/60 md:h-56" />
+            ))}
+          </div>
+        ) : listings.length === 0 ? (
+
         ) : listings.length === 0 ? (
           <p className="mt-10 text-center text-sm text-muted-foreground">
             Şu anda yayınlanmış ilan bulunmuyor.
