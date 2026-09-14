@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { BellRing, MessageCircle, Phone, Send } from "lucide-react";
+import { BellRing, Home, MessageCircle, Phone, Send } from "lucide-react";
 
 import { PhotoCarousel } from "@/components/PhotoCarousel";
 import { supabase } from "@/integrations/supabase/client";
@@ -86,8 +86,13 @@ function ListingStrip({
 
       <div className="pointer-events-none absolute inset-0 z-10 bg-gradient-to-t from-background via-background/35 to-transparent" />
 
+      <span className="pointer-events-none absolute right-3 top-3 z-20 rounded-full border border-amber-400/70 bg-amber-500/90 px-2 py-1 text-[10px] font-black uppercase tracking-wide text-amber-950 shadow-md backdrop-blur-sm md:right-6 md:top-5 md:text-xs">
+        VIP Onaylı İlan
+      </span>
+
       {item.venue?.trim() ? (
-        <span className="pointer-events-none absolute right-3 top-3 z-20 rounded-full border border-primary/50 bg-background/80 px-2.5 py-1 text-[10px] font-black uppercase tracking-wide text-primary backdrop-blur-sm md:right-6 md:top-5 md:text-xs">
+        <span className="pointer-events-none absolute right-3 top-[34px] z-20 flex items-center gap-1 rounded-full border border-primary/50 bg-background/85 px-2 py-1 text-[10px] font-black uppercase tracking-wide text-primary backdrop-blur-sm md:right-6 md:top-11 md:text-xs">
+          <Home className="size-3 md:size-3.5" />
           {item.venue}
         </span>
       ) : null}
@@ -186,14 +191,6 @@ function Index() {
       </div>
 
       <main className="mx-auto max-w-3xl pb-14 pt-5 md:pt-8">
-        <header className="px-3 text-center xs:px-4 md:px-6">
-          <h1 className="text-3xl font-black leading-none tracking-tight text-foreground xs:text-4xl md:text-6xl">
-            {siteConfig.city}
-          </h1>
-          <p className="mt-1.5 text-xs font-bold uppercase tracking-[0.3em] text-primary xs:text-sm">
-            {siteConfig.title}
-          </p>
-        </header>
 
 
         <section className="mx-3 mt-4 grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 rounded-2xl border border-primary/40 bg-showcase-card p-3 shadow-[0_14px_34px_-24px_var(--card-glow)] xs:mx-4 md:mx-6 md:mt-6 md:p-4">
