@@ -161,10 +161,10 @@ function ListingStrip({
       <div className="pointer-events-none absolute inset-x-3 bottom-3 z-20 flex items-end justify-between gap-2 md:inset-x-6 md:bottom-5">
 
         <div className="min-w-0">
-          <h2 className="truncate text-base font-black tracking-tight text-foreground xs:text-lg md:text-2xl">
+          <h2 className="truncate text-sm font-black tracking-tight text-foreground xs:text-base md:text-xl">
             {item.name}
           </h2>
-          <span className="mt-1.5 inline-flex animate-pulse items-center gap-1.5 rounded-full border border-border/60 bg-background/60 py-1 pl-1.5 pr-3 shadow-md backdrop-blur-md md:gap-2 md:py-1.5 md:pl-2 md:pr-4">
+          <span className="phone-sway mt-1.5 inline-flex items-center gap-1.5 rounded-full border border-border/60 bg-background/60 py-1 pl-1.5 pr-3 shadow-md backdrop-blur-md md:gap-2 md:py-1.5 md:pl-2 md:pr-4">
             <span className="grid size-5 shrink-0 place-items-center rounded-full bg-primary text-primary-foreground md:size-6">
               <Phone className="size-3 md:size-3.5" />
             </span>
