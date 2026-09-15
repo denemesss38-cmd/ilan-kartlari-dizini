@@ -255,6 +255,10 @@
   animation: whatsapp-shake 2.5s ease-in-out infinite;
 }
 
+.phone-sway {
+  animation: phone-sway 2.2s ease-in-out infinite;
+}
+
 .active-status-dot {
   background: var(--active-status);
   box-shadow: 0 0 0 3px color-mix(in oklab, var(--active-status) 18%, transparent);
