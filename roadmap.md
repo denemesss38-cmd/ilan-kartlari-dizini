@@ -19,3 +19,6 @@
 - [x] WhatsApp hazır mesajı ve hedef numarayı site ayarlarına bağla
 - [x] Admin paneline yükleme ilerleme çubuğu, belirgin Kaydet butonu ve WhatsApp ayarları ekle
 - [x] Header sayaçlarını ve alt başlık metnini kaldır; tam genişlik kenarlıksız şerit düzeni uygula
+- [x] Onaylı İlan rozeti: tık ikonlu kompakt rozet (VIP yazısı yok)
+- [x] Görseller anında yüklensin: imzalı URL önbelleği (localStorage), tek toplu istek
+- [x] En alttaki "Bilgi Al" alanını kaldır

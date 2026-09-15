@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { BellRing, Home, MessageCircle, Phone, Send } from "lucide-react";
+import { BadgeCheck, BellRing, Home, MessageCircle, Phone, Send } from "lucide-react";
 
 import { PhotoCarousel } from "@/components/PhotoCarousel";
 import { supabase } from "@/integrations/supabase/client";
@@ -146,7 +146,8 @@ function ListingStrip({
 
       <div className="pointer-events-none absolute inset-0 z-10 bg-gradient-to-t from-background via-background/35 to-transparent" />
 
-      <span className="pointer-events-none absolute right-3 top-3 z-20 rounded-full border border-amber-400/70 bg-amber-500/90 px-2 py-1 text-[10px] font-black uppercase tracking-wide text-amber-950 shadow-md backdrop-blur-sm md:right-6 md:top-5 md:text-xs">
+      <span className="pointer-events-none absolute right-3 top-3 z-20 flex items-center gap-1 rounded-full border border-primary/50 bg-background/85 px-2 py-1 text-[10px] font-black uppercase tracking-wide text-primary shadow-md backdrop-blur-sm md:right-6 md:top-5 md:text-xs">
+        <BadgeCheck className="size-3 md:size-3.5" />
         Onaylı İlan
       </span>
 
@@ -280,31 +281,6 @@ function Index() {
             ))}
           </div>
         )}
-
-        {(() => {
-          const safePromo = siteConfig.promos.find((p) => p.title === "GÜVENLİ İLETİŞİM");
-          if (!safePromo) return null;
-          return (
-            <a
-              href={contactHref}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`mx-auto mt-6 flex w-full max-w-2xl flex-col items-center justify-center rounded-3xl p-4 text-center ring-1 ring-border md:mt-8 md:p-5 ${
-                safePromo.variant === "primary" ? "bg-cta" : "bg-cta-alt"
-              }`}
-            >
-              <h2 className="text-sm font-black tracking-wide text-primary-foreground md:text-base">
-                {safePromo.title}
-              </h2>
-              <p className="mt-1 text-[11px] leading-relaxed text-primary-foreground/90 md:text-xs">
-                {safePromo.text}
-              </p>
-              <span className="mt-3 inline-flex min-h-11 items-center rounded-full bg-background/25 px-4 py-2 text-[11px] font-bold text-primary-foreground md:text-xs">
-                {safePromo.ctaLabel}
-              </span>
-            </a>
-          );
-        })()}
 
         <footer className="mt-10 border-t border-border/60 px-3 pb-4 pt-6 text-center xs:px-4 md:px-6">
           <p className="text-[11px] leading-relaxed text-muted-foreground md:text-xs">
