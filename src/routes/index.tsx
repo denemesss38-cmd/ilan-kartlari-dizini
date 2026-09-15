@@ -282,31 +282,6 @@ function Index() {
           </div>
         )}
 
-        {(() => {
-          const safePromo = siteConfig.promos.find((p) => p.title === "GÜVENLİ İLETİŞİM");
-          if (!safePromo) return null;
-          return (
-            <a
-              href={contactHref}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`mx-auto mt-6 flex w-full max-w-2xl flex-col items-center justify-center rounded-3xl p-4 text-center ring-1 ring-border md:mt-8 md:p-5 ${
-                safePromo.variant === "primary" ? "bg-cta" : "bg-cta-alt"
-              }`}
-            >
-              <h2 className="text-sm font-black tracking-wide text-primary-foreground md:text-base">
-                {safePromo.title}
-              </h2>
-              <p className="mt-1 text-[11px] leading-relaxed text-primary-foreground/90 md:text-xs">
-                {safePromo.text}
-              </p>
-              <span className="mt-3 inline-flex min-h-11 items-center rounded-full bg-background/25 px-4 py-2 text-[11px] font-bold text-primary-foreground md:text-xs">
-                {safePromo.ctaLabel}
-              </span>
-            </a>
-          );
-        })()}
-
         <footer className="mt-10 border-t border-border/60 px-3 pb-4 pt-6 text-center xs:px-4 md:px-6">
           <p className="text-[11px] leading-relaxed text-muted-foreground md:text-xs">
             {siteConfig.footerNote}
