@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { BellRing, Home, MessageCircle, Phone, Send } from "lucide-react";
+import { BadgeCheck, BellRing, Home, MessageCircle, Phone, Send } from "lucide-react";
 
 import { PhotoCarousel } from "@/components/PhotoCarousel";
 import { supabase } from "@/integrations/supabase/client";
@@ -146,7 +146,8 @@ function ListingStrip({
 
       <div className="pointer-events-none absolute inset-0 z-10 bg-gradient-to-t from-background via-background/35 to-transparent" />
 
-      <span className="pointer-events-none absolute right-3 top-3 z-20 rounded-full border border-amber-400/70 bg-amber-500/90 px-2 py-1 text-[10px] font-black uppercase tracking-wide text-amber-950 shadow-md backdrop-blur-sm md:right-6 md:top-5 md:text-xs">
+      <span className="pointer-events-none absolute right-3 top-3 z-20 flex items-center gap-1 rounded-full border border-primary/50 bg-background/85 px-2 py-1 text-[10px] font-black uppercase tracking-wide text-primary shadow-md backdrop-blur-sm md:right-6 md:top-5 md:text-xs">
+        <BadgeCheck className="size-3 md:size-3.5" />
         Onaylı İlan
       </span>
 
