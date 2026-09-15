@@ -254,13 +254,6 @@ function AdminPage() {
                 max={80}
               />
               <Field
-                label="Kısa açıklama"
-                value={draft.description}
-                onChange={(v) => setDraft({ ...draft, description: v })}
-                max={300}
-                textarea
-              />
-              <Field
                 label="Telefon (örn. +905551112233)"
                 value={draft.phone}
                 onChange={(v) => setDraft({ ...draft, phone: v })}
@@ -271,12 +264,6 @@ function AdminPage() {
                 value={draft.whatsapp}
                 onChange={(v) => setDraft({ ...draft, whatsapp: v })}
                 max={20}
-              />
-              <Field
-                label="Etiket (isteğe bağlı)"
-                value={draft.badge ?? ""}
-                onChange={(v) => setDraft({ ...draft, badge: v })}
-                max={12}
               />
               <div>
                 <label className="text-xs font-bold text-muted-foreground">
