@@ -146,14 +146,14 @@ function ListingStrip({
 
       <div className="pointer-events-none absolute inset-0 z-10 bg-gradient-to-t from-background via-background/35 to-transparent" />
 
-      <span className="pointer-events-none absolute right-3 top-3 z-20 flex items-center gap-1 rounded-full border border-primary/50 bg-background/85 px-2 py-1 text-[10px] font-black uppercase tracking-wide text-primary shadow-md backdrop-blur-sm md:right-6 md:top-5 md:text-xs">
-        <BadgeCheck className="size-3 md:size-3.5" />
+      <span className="pointer-events-none absolute right-3 top-3 z-20 flex items-center gap-1 rounded-full border border-primary/30 bg-background/70 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-primary shadow-sm backdrop-blur-md md:right-6 md:top-5 md:text-[10px]">
+        <BadgeCheck className="size-3" />
         Onaylı İlan
       </span>
 
       {item.venue?.trim() ? (
-        <span className="pointer-events-none absolute right-3 top-[34px] z-20 flex items-center gap-1 rounded-full border border-primary/50 bg-background/85 px-2 py-1 text-[10px] font-black uppercase tracking-wide text-primary backdrop-blur-sm md:right-6 md:top-11 md:text-xs">
-          <Home className="size-3 md:size-3.5" />
+        <span className="pointer-events-none absolute right-3 top-[30px] z-20 flex items-center gap-1 rounded-full border border-border/60 bg-background/70 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-foreground/90 shadow-sm backdrop-blur-md md:right-6 md:top-[38px] md:text-[10px]">
+          <Home className="size-3" />
           {item.venue}
         </span>
       ) : null}
@@ -164,9 +164,11 @@ function ListingStrip({
           <h2 className="truncate text-base font-black tracking-tight text-foreground xs:text-lg md:text-2xl">
             {item.name}
           </h2>
-          <span className="mt-1 flex items-center gap-1 whitespace-nowrap font-black text-primary">
-            <Phone className="size-4 shrink-0 md:size-5" />
-            <span className="text-sm leading-none xs:text-base md:text-xl">
+          <span className="mt-1.5 inline-flex items-center gap-1.5 rounded-full border border-border/60 bg-background/60 py-1 pl-1.5 pr-3 shadow-md backdrop-blur-md md:gap-2 md:py-1.5 md:pl-2 md:pr-4">
+            <span className="grid size-5 shrink-0 place-items-center rounded-full bg-primary text-primary-foreground md:size-6">
+              <Phone className="size-3 md:size-3.5" />
+            </span>
+            <span className="text-xs font-bold tracking-wide text-foreground xs:text-sm md:text-base">
               {formatPhone(item.phone)}
             </span>
           </span>
