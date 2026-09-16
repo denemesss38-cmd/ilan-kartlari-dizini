@@ -74,7 +74,12 @@ function AdminPage() {
     },
   });
 
-  const invalidate = () => queryClient.invalidateQueries({ queryKey: ["admin-listings"] });
+  const invalidate = () => {
+    queryClient.invalidateQueries({ queryKey: ["admin-listings"] });
+    // Vitrin anında güncellensin.
+    queryClient.invalidateQueries({ queryKey: ["public-listings"] });
+    queryClient.invalidateQueries({ queryKey: ["public-settings"] });
+  };
 
   const saveMutation = useMutation({
     mutationFn: async (item: Draft) => {
