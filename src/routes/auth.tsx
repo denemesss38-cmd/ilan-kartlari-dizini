@@ -59,34 +59,25 @@ function AuthPage() {
             placeholder="E-posta"
             className="w-full rounded-xl border border-border bg-secondary px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary"
           />
-          {mode === "login" ? (
-            <input
-              type="password"
-              required
-              maxLength={72}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Şifre"
-              className="w-full rounded-xl border border-border bg-secondary px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary"
-            />
-          ) : null}
+          <input
+            type="password"
+            required
+            maxLength={72}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Şifre"
+            className="w-full rounded-xl border border-border bg-secondary px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary"
+          />
           <button
             type="submit"
             disabled={busy}
             className="w-full rounded-xl bg-primary px-4 py-2.5 text-sm font-black text-primary-foreground disabled:opacity-60"
           >
-            {busy ? "Lütfen bekleyin..." : mode === "login" ? "Giriş yap" : "Bağlantı gönder"}
+            {busy ? "Lütfen bekleyin..." : "Giriş yap"}
           </button>
         </form>
 
-        <div className="mt-4 flex items-center justify-between text-xs">
-          <button
-            type="button"
-            onClick={() => setMode(mode === "login" ? "forgot" : "login")}
-            className="text-primary underline"
-          >
-            {mode === "login" ? "Şifremi unuttum" : "Girişe dön"}
-          </button>
+        <div className="mt-4 flex items-center justify-end text-xs">
           <Link to="/" className="text-muted-foreground underline">
             Ana sayfa
           </Link>
