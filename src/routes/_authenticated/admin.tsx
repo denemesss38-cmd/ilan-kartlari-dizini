@@ -223,8 +223,6 @@ function AdminPage() {
         <CarouselSpeedSetting />
         <WhatsAppSettings />
         <SeoSettings />
-        <PasswordSettings />
-
 
         <button
           onClick={() => setDraft({ ...emptyDraft, sort_order: items.length + 1 })}
@@ -763,60 +761,6 @@ function WhatsAppSettings() {
         className="mt-3 w-full rounded-xl bg-primary px-4 py-3 text-xs font-black text-primary-foreground disabled:opacity-60"
       >
         {saveMutation.isPending ? "Kaydediliyor..." : "WhatsApp ayarlarını kaydet"}
-      </button>
-    </section>
-  );
-}
-
-/** Yönetici şifresini yalnızca panel içinden güncellemeyi sağlar. */
-function PasswordSettings() {
-  const [password, setPassword] = useState("");
-  const [confirm, setConfirm] = useState("");
-
-  const saveMutation = useMutation({
-    mutationFn: async () => {
-      if (password !== confirm) throw new Error("Şifreler aynı değil.");
-      const { error } = await supabase.auth.updateUser({ password });
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      toast.success("Şifreniz güncellendi.");
-      setPassword("");
-      setConfirm("");
-    },
-    onError: (e: Error) => toast.error(e.message),
-  });
-
-  return (
-    <section className="mt-4 rounded-2xl border border-border bg-card p-4">
-      <h2 className="text-sm font-black text-foreground">Şifre değiştir</h2>
-      <p className="mt-1 text-[11px] text-muted-foreground">En az 8 karakter kullanın.</p>
-      <div className="mt-3 grid gap-2 sm:grid-cols-2">
-        <input
-          type="password"
-          minLength={8}
-          maxLength={72}
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="Yeni şifre"
-          className="w-full rounded-xl border border-border bg-secondary px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary"
-        />
-        <input
-          type="password"
-          minLength={8}
-          maxLength={72}
-          value={confirm}
-          onChange={(e) => setConfirm(e.target.value)}
-          placeholder="Yeni şifre (tekrar)"
-          className="w-full rounded-xl border border-border bg-secondary px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary"
-        />
-      </div>
-      <button
-        onClick={() => saveMutation.mutate()}
-        disabled={saveMutation.isPending || password.length < 8}
-        className="mt-3 w-full rounded-xl bg-primary px-4 py-2.5 text-sm font-black text-primary-foreground disabled:opacity-60"
-      >
-        {saveMutation.isPending ? "Kaydediliyor..." : "Şifreyi kaydet"}
       </button>
     </section>
   );
