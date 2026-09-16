@@ -223,6 +223,7 @@ function AdminPage() {
         <CarouselSpeedSetting />
         <WhatsAppSettings />
         <SeoSettings />
+        <PasswordSettings />
 
 
         <button
