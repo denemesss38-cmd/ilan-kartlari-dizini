@@ -47,11 +47,7 @@ function AuthPage() {
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="w-full max-w-sm rounded-2xl border border-border bg-card p-6 shadow-xl">
         <h1 className="text-lg font-black tracking-widest text-primary">YÖNETİCİ GİRİŞİ</h1>
-        <p className="mt-1 text-xs text-muted-foreground">
-          {mode === "login"
-            ? "E-posta ve şifrenizle giriş yapın."
-            : "Şifre sıfırlama bağlantısı için e-postanızı girin."}
-        </p>
+        <p className="mt-1 text-xs text-muted-foreground">E-posta ve şifrenizle giriş yapın.</p>
 
         <form onSubmit={onSubmit} className="mt-5 space-y-3">
           <input
