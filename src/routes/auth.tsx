@@ -24,28 +24,18 @@ function AuthPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
-  const [mode, setMode] = useState<"login" | "forgot">("login");
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setBusy(true);
     try {
-      if (mode === "forgot") {
-        const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
-          redirectTo: `${window.location.origin}/reset-password`,
-        });
-        if (error) throw error;
-        toast.success("Şifre sıfırlama bağlantısı e-postanıza gönderildi.");
-        setMode("login");
-      } else {
-        const { error } = await supabase.auth.signInWithPassword({
-          email: email.trim(),
-          password,
-        });
-        if (error) throw error;
-        toast.success("Giriş yapıldı.");
-        navigate({ to: "/admin", replace: true });
-      }
+      const { error } = await supabase.auth.signInWithPassword({
+        email: email.trim(),
+        password,
+      });
+      if (error) throw error;
+      toast.success("Giriş yapıldı.");
+      navigate({ to: "/admin", replace: true });
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "İşlem başarısız.");
     } finally {
@@ -57,11 +47,7 @@ function AuthPage() {
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="w-full max-w-sm rounded-2xl border border-border bg-card p-6 shadow-xl">
         <h1 className="text-lg font-black tracking-widest text-primary">YÖNETİCİ GİRİŞİ</h1>
-        <p className="mt-1 text-xs text-muted-foreground">
-          {mode === "login"
-            ? "E-posta ve şifrenizle giriş yapın."
-            : "Şifre sıfırlama bağlantısı için e-postanızı girin."}
-        </p>
+        <p className="mt-1 text-xs text-muted-foreground">E-posta ve şifrenizle giriş yapın.</p>
 
         <form onSubmit={onSubmit} className="mt-5 space-y-3">
           <input
@@ -73,34 +59,25 @@ function AuthPage() {
             placeholder="E-posta"
             className="w-full rounded-xl border border-border bg-secondary px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary"
           />
-          {mode === "login" ? (
-            <input
-              type="password"
-              required
-              maxLength={72}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Şifre"
-              className="w-full rounded-xl border border-border bg-secondary px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary"
-            />
-          ) : null}
+          <input
+            type="password"
+            required
+            maxLength={72}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Şifre"
+            className="w-full rounded-xl border border-border bg-secondary px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary"
+          />
           <button
             type="submit"
             disabled={busy}
             className="w-full rounded-xl bg-primary px-4 py-2.5 text-sm font-black text-primary-foreground disabled:opacity-60"
           >
-            {busy ? "Lütfen bekleyin..." : mode === "login" ? "Giriş yap" : "Bağlantı gönder"}
+            {busy ? "Lütfen bekleyin..." : "Giriş yap"}
           </button>
         </form>
 
-        <div className="mt-4 flex items-center justify-between text-xs">
-          <button
-            type="button"
-            onClick={() => setMode(mode === "login" ? "forgot" : "login")}
-            className="text-primary underline"
-          >
-            {mode === "login" ? "Şifremi unuttum" : "Girişe dön"}
-          </button>
+        <div className="mt-4 flex items-center justify-end text-xs">
           <Link to="/" className="text-muted-foreground underline">
             Ana sayfa
           </Link>

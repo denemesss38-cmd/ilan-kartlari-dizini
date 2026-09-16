@@ -141,7 +141,7 @@ function ListingStrip({
         intervalSeconds={intervalSeconds}
         split={3}
         interactive={false}
-        className="h-[180px] w-full md:h-56"
+        className="h-[220px] w-full md:h-64"
       />
 
       <div className="pointer-events-none absolute inset-0 z-10 bg-gradient-to-t from-background via-background/35 to-transparent" />
@@ -263,7 +263,7 @@ function Index() {
         {listingsQuery.isLoading ? (
           <div className="mt-5 md:mt-8">
             {[0, 1, 2, 3].map((i) => (
-              <div key={i} className="h-[180px] w-full animate-pulse bg-secondary/60 md:h-56" />
+              <div key={i} className="h-[220px] w-full animate-pulse bg-secondary/60 md:h-64" />
             ))}
           </div>
         ) : listings.length === 0 ? (
