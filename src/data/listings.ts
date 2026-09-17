@@ -1,6 +1,6 @@
 /**
  * SİTE AYARLARI — metinleri serbestçe değiştirebilirsiniz.
- * İlanlar artık yönetim panelinden (/admin) yönetilir.
+ * İlanlar artık yönetim panelinden (/panel-k72m) yönetilir.
  */
 export const siteConfig = {
   title: "İLAN REHBERİ",
