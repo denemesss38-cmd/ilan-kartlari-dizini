@@ -52,7 +52,13 @@ const settingsQueryOptions = {
     const { data } = await supabase
       .from("site_settings")
       .select("key, value")
-      .in("key", ["carousel_interval_seconds", "whatsapp_number", "whatsapp_message"]);
+      .in("key", [
+        "carousel_interval_seconds",
+        "whatsapp_number",
+        "whatsapp_message",
+        "seo_title",
+        "seo_description",
+      ]);
     const map = new Map((data ?? []).map((r) => [r.key, r.value]));
     const raw = Number(map.get("carousel_interval_seconds") ?? 4);
     const str = (k: string, fallback: string) => {
@@ -63,28 +69,37 @@ const settingsQueryOptions = {
       carouselIntervalSeconds: Number.isFinite(raw) && raw >= 0 && raw <= 30 ? raw : 4,
       whatsappNumber: str("whatsapp_number", "905551112233"),
       whatsappMessage: str("whatsapp_message", DEFAULT_WA_MESSAGE),
+      seoTitle: str("seo_title", DEFAULT_TITLE),
+      seoDescription: str("seo_description", DEFAULT_DESCRIPTION),
     };
   },
 };
 
 export const Route = createFileRoute("/")({
-  loader: ({ context }) =>
-    Promise.all([
+  loader: async ({ context }) => {
+    const [listings, settings] = await Promise.all([
       context.queryClient.ensureQueryData(listingsQueryOptions),
       context.queryClient.ensureQueryData(settingsQueryOptions),
-    ]),
-  head: () => ({
-    meta: [
-      { title: DEFAULT_TITLE },
-      { name: "description", content: DEFAULT_DESCRIPTION },
-      { property: "og:title", content: DEFAULT_TITLE },
-      { property: "og:description", content: DEFAULT_DESCRIPTION },
-      { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://ilan-kartlari-dizini.lovable.app/" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-    links: [{ rel: "canonical", href: "https://ilan-kartlari-dizini.lovable.app/" }],
-  }),
+    ]);
+    return { listings, settings };
+  },
+  head: ({ loaderData }) => {
+    const settings = loaderData?.settings;
+    const title = settings?.seoTitle || DEFAULT_TITLE;
+    const description = settings?.seoDescription || DEFAULT_DESCRIPTION;
+    return {
+      meta: [
+        { title },
+        { name: "description", content: description },
+        { property: "og:title", content: title },
+        { property: "og:description", content: description },
+        { property: "og:type", content: "website" },
+        { property: "og:url", content: "https://ilan-kartlari-dizini.lovable.app/" },
+        { name: "twitter:card", content: "summary_large_image" },
+      ],
+      links: [{ rel: "canonical", href: "https://ilan-kartlari-dizini.lovable.app/" }],
+    };
+  },
   component: Index,
   errorComponent: () => (
     <div className="flex min-h-screen items-center justify-center bg-background px-6 text-center">
