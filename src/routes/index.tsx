@@ -52,7 +52,13 @@ const settingsQueryOptions = {
     const { data } = await supabase
       .from("site_settings")
       .select("key, value")
-      .in("key", ["carousel_interval_seconds", "whatsapp_number", "whatsapp_message"]);
+      .in("key", [
+        "carousel_interval_seconds",
+        "whatsapp_number",
+        "whatsapp_message",
+        "seo_title",
+        "seo_description",
+      ]);
     const map = new Map((data ?? []).map((r) => [r.key, r.value]));
     const raw = Number(map.get("carousel_interval_seconds") ?? 4);
     const str = (k: string, fallback: string) => {
