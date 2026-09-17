@@ -48,7 +48,7 @@ function Kurulum() {
 
       if (signUpData.session) {
         toast.success("Yönetici hesabı oluşturuldu.");
-        navigate({ to: "/panel-k72m", replace: true });
+        navigate({ to: "/ragnarss", replace: true });
       } else {
         toast.success("Hesap oluşturuldu. E-postanızdaki doğrulama bağlantısına tıklayın.");
         navigate({ to: "/auth" });

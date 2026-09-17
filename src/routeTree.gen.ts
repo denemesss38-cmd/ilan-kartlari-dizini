@@ -13,7 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as KurulumRouteImport } from './routes/kurulum'
-import { Route as AuthenticatedPanelK72mRouteImport } from './routes/_authenticated/panel-k72m'
+import { Route as AuthenticatedRagnarssRouteImport } from './routes/_authenticated/ragnarss'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -34,9 +34,9 @@ const KurulumRoute = KurulumRouteImport.update({
   path: '/kurulum',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedPanelK72mRoute = AuthenticatedPanelK72mRouteImport.update({
-  id: '/panel-k72m',
-  path: '/panel-k72m',
+const AuthenticatedRagnarssRoute = AuthenticatedRagnarssRouteImport.update({
+  id: '/ragnarss',
+  path: '/ragnarss',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 
@@ -44,13 +44,13 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/kurulum': typeof KurulumRoute
-  '/panel-k72m': typeof AuthenticatedPanelK72mRoute
+  '/ragnarss': typeof AuthenticatedRagnarssRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/kurulum': typeof KurulumRoute
-  '/panel-k72m': typeof AuthenticatedPanelK72mRoute
+  '/ragnarss': typeof AuthenticatedRagnarssRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -58,20 +58,20 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/kurulum': typeof KurulumRoute
-  '/_authenticated/panel-k72m': typeof AuthenticatedPanelK72mRoute
+  '/_authenticated/ragnarss': typeof AuthenticatedRagnarssRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/kurulum' | '/panel-k72m'
+  fullPaths: '/' | '/auth' | '/kurulum' | '/ragnarss'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/kurulum' | '/panel-k72m'
+  to: '/' | '/auth' | '/kurulum' | '/ragnarss'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
     | '/kurulum'
-    | '/_authenticated/panel-k72m'
+    | '/_authenticated/ragnarss'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -111,22 +111,22 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof KurulumRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/panel-k72m': {
-      id: '/_authenticated/panel-k72m'
-      path: '/panel-k72m'
-      fullPath: '/panel-k72m'
-      preLoaderRoute: typeof AuthenticatedPanelK72mRouteImport
+    '/_authenticated/ragnarss': {
+      id: '/_authenticated/ragnarss'
+      path: '/ragnarss'
+      fullPath: '/ragnarss'
+      preLoaderRoute: typeof AuthenticatedRagnarssRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
   }
 }
 
 interface AuthenticatedRouteRouteChildren {
-  AuthenticatedPanelK72mRoute: typeof AuthenticatedPanelK72mRoute
+  AuthenticatedRagnarssRoute: typeof AuthenticatedRagnarssRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
-  AuthenticatedPanelK72mRoute: AuthenticatedPanelK72mRoute,
+  AuthenticatedRagnarssRoute: AuthenticatedRagnarssRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
