@@ -35,7 +35,7 @@ function AuthPage() {
       });
       if (error) throw error;
       toast.success("Giriş yapıldı.");
-      navigate({ to: "/admin", replace: true });
+      navigate({ to: "/panel-k72m", replace: true });
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "İşlem başarısız.");
     } finally {
