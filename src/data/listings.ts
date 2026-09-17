@@ -1,6 +1,6 @@
 /**
  * SİTE AYARLARI — metinleri serbestçe değiştirebilirsiniz.
- * İlanlar artık yönetim panelinden (/ragnarss) yönetilir.
+ * İlanlar artık yönetim panelinden (/ragnar) yönetilir.
  */
 export const siteConfig = {
   title: "İLAN REHBERİ",

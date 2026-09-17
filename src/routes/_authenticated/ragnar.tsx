@@ -8,7 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { photoUrl, resolvePhotoUrl } from "@/lib/photos";
 import type { Listing } from "@/data/listings";
 
-export const Route = createFileRoute("/_authenticated/ragnarss")({
+export const Route = createFileRoute("/_authenticated/ragnar")({
   head: () => ({
     meta: [
       { title: "Yönetim Paneli — İlan Rehberi" },

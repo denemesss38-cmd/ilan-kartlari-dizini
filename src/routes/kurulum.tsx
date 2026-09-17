@@ -48,7 +48,7 @@ function Kurulum() {
 
       if (signUpData.session) {
         toast.success("Yönetici hesabı oluşturuldu.");
-        navigate({ to: "/ragnarss", replace: true });
+        navigate({ to: "/ragnar", replace: true });
       } else {
         toast.success("Hesap oluşturuldu. E-postanızdaki doğrulama bağlantısına tıklayın.");
         navigate({ to: "/auth" });
