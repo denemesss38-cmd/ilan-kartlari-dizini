@@ -13,7 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as KurulumRouteImport } from './routes/kurulum'
-import { Route as AuthenticatedRagnarssRouteImport } from './routes/_authenticated/ragnarss'
+import { Route as AuthenticatedRagnarRouteImport } from './routes/_authenticated/ragnar'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -34,9 +34,9 @@ const KurulumRoute = KurulumRouteImport.update({
   path: '/kurulum',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedRagnarssRoute = AuthenticatedRagnarssRouteImport.update({
-  id: '/ragnarss',
-  path: '/ragnarss',
+const AuthenticatedRagnarRoute = AuthenticatedRagnarRouteImport.update({
+  id: '/ragnar',
+  path: '/ragnar',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 
@@ -44,13 +44,13 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/kurulum': typeof KurulumRoute
-  '/ragnarss': typeof AuthenticatedRagnarssRoute
+  '/ragnar': typeof AuthenticatedRagnarRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/kurulum': typeof KurulumRoute
-  '/ragnarss': typeof AuthenticatedRagnarssRoute
+  '/ragnar': typeof AuthenticatedRagnarRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -58,20 +58,20 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/kurulum': typeof KurulumRoute
-  '/_authenticated/ragnarss': typeof AuthenticatedRagnarssRoute
+  '/_authenticated/ragnar': typeof AuthenticatedRagnarRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/kurulum' | '/ragnarss'
+  fullPaths: '/' | '/auth' | '/kurulum' | '/ragnar'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/kurulum' | '/ragnarss'
+  to: '/' | '/auth' | '/kurulum' | '/ragnar'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
     | '/kurulum'
-    | '/_authenticated/ragnarss'
+    | '/_authenticated/ragnar'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -111,22 +111,22 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof KurulumRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/ragnarss': {
-      id: '/_authenticated/ragnarss'
-      path: '/ragnarss'
-      fullPath: '/ragnarss'
-      preLoaderRoute: typeof AuthenticatedRagnarssRouteImport
+    '/_authenticated/ragnar': {
+      id: '/_authenticated/ragnar'
+      path: '/ragnar'
+      fullPath: '/ragnar'
+      preLoaderRoute: typeof AuthenticatedRagnarRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
   }
 }
 
 interface AuthenticatedRouteRouteChildren {
-  AuthenticatedRagnarssRoute: typeof AuthenticatedRagnarssRoute
+  AuthenticatedRagnarRoute: typeof AuthenticatedRagnarRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
-  AuthenticatedRagnarssRoute: AuthenticatedRagnarssRoute,
+  AuthenticatedRagnarRoute: AuthenticatedRagnarRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
