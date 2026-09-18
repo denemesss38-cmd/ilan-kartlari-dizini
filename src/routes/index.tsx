@@ -139,10 +139,12 @@ function ListingStrip({
   item,
   intervalSeconds,
   message,
+  priority = false,
 }: {
   item: Listing;
   intervalSeconds: number;
   message: string;
+  priority?: boolean;
 }) {
   return (
     <a
@@ -158,6 +160,7 @@ function ListingStrip({
         intervalSeconds={intervalSeconds}
         split={3}
         interactive={false}
+        priority={priority}
         className="h-[220px] w-full md:h-64"
       />
 
@@ -201,9 +204,10 @@ function ListingStrip({
 }
 
 function Index() {
-  const listingsQuery = useQuery(listingsQueryOptions);
+  const loaderData = Route.useLoaderData();
+  const listingsQuery = useQuery({ ...listingsQueryOptions, initialData: loaderData.listings });
 
-  const settingsQuery = useQuery(settingsQueryOptions);
+  const settingsQuery = useQuery({ ...settingsQueryOptions, initialData: loaderData.settings });
 
   const listings = listingsQuery.data ?? [];
   const settings = settingsQuery.data ?? {
@@ -290,12 +294,13 @@ function Index() {
           </p>
         ) : (
           <div className="mt-5 md:mt-8">
-            {listings.map((item) => (
+            {listings.map((item, index) => (
               <ListingStrip
                 key={item.id}
                 item={item}
                 intervalSeconds={settings.carouselIntervalSeconds}
                 message={settings.whatsappMessage}
+                priority={index === 0}
               />
             ))}
           </div>
