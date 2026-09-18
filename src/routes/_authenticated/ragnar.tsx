@@ -25,6 +25,8 @@ export const Route = createFileRoute("/_authenticated/ragnar")({
 
 type Draft = Omit<Listing, "id"> & { id?: string };
 
+const DEFAULT_LISTING_WA_MESSAGE = "Merhaba, Nova'dan geliyorum bilgi alabilir miyim?";
+
 const emptyDraft: Draft = {
   name: "",
   location: "",
@@ -34,6 +36,7 @@ const emptyDraft: Draft = {
   whatsapp: "",
   badge: "",
   venue: "",
+  whatsapp_message: DEFAULT_LISTING_WA_MESSAGE,
   sort_order: 0,
   is_published: true,
 };
@@ -91,6 +94,7 @@ function AdminPage() {
         whatsapp: item.whatsapp.replace(/[^0-9]/g, ""),
         badge: item.badge?.trim() ? item.badge.trim() : null,
         venue: item.venue?.trim() ? item.venue.trim() : null,
+        whatsapp_message: item.whatsapp_message?.trim() || DEFAULT_LISTING_WA_MESSAGE,
         photos: item.photos,
         sort_order: Number(item.sort_order) || 0,
         is_published: item.is_published,
@@ -287,6 +291,12 @@ function AdminPage() {
                 </select>
               </div>
               <Field
+                label="WhatsApp hazır mesajı"
+                value={draft.whatsapp_message ?? ""}
+                onChange={(v) => setDraft({ ...draft, whatsapp_message: v })}
+                max={200}
+              />
+              <Field
                 label="Sıra numarası"
                 value={String(draft.sort_order)}
                 onChange={(v) => setDraft({ ...draft, sort_order: Number(v.replace(/\D/g, "")) || 0 })}
@@ -432,6 +442,7 @@ function AdminPage() {
                       whatsapp: item.whatsapp,
                       badge: item.badge ?? "",
                       venue: item.venue ?? "",
+                      whatsapp_message: item.whatsapp_message ?? DEFAULT_LISTING_WA_MESSAGE,
                       sort_order: item.sort_order,
                       is_published: item.is_published,
                     })
