@@ -22,6 +22,8 @@ type Props = {
   onLightboxOpenChange?: (open: boolean) => void;
   /** false ise fotoğraflar tıklanamaz (kartın tamamı bağlantı olduğunda). */
   interactive?: boolean;
+  /** Yalnızca ilk ekrandaki şeridin görünen fotoğraflarını öncelikli indirir. */
+  priority?: boolean;
 };
 
 function usePrefersReducedMotion() {
@@ -48,6 +50,7 @@ export function PhotoCarousel({
   lightboxOpen,
   onLightboxOpenChange,
   interactive = true,
+  priority = false,
 }: Props) {
   const list = useMemo(() => (photos ?? []).filter(Boolean), [photos]);
   const count = list.length;
@@ -129,8 +132,8 @@ export function PhotoCarousel({
                       <img
                         src={photoUrl(src, originalIndex)}
                         alt={`${alt} fotoğraf ${originalIndex + 1}`}
-                        loading={copy === 0 && index < 3 ? "eager" : "lazy"}
-                        fetchPriority={copy === 0 && index === 0 ? "high" : "auto"}
+                        loading={priority && copy === 0 && index < split ? "eager" : "lazy"}
+                        fetchPriority={priority && copy === 0 && index === 0 ? "high" : "auto"}
                         decoding="async"
                         draggable={false}
                         className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
@@ -151,8 +154,8 @@ export function PhotoCarousel({
                     <img
                       src={photoUrl(src, originalIndex)}
                       alt={`${alt} fotoğraf ${originalIndex + 1}`}
-                      loading={copy === 0 && index < 3 ? "eager" : "lazy"}
-                      fetchPriority={copy === 0 && index === 0 ? "high" : "auto"}
+                        loading={priority && copy === 0 && index < split ? "eager" : "lazy"}
+                        fetchPriority={priority && copy === 0 && index === 0 ? "high" : "auto"}
                       decoding="async"
                       draggable={false}
                       className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"

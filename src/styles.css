@@ -162,6 +162,12 @@
   }
 }
 
+@media (max-width: 768px) {
+  body {
+    background-attachment: scroll;
+  }
+}
+
 
 @utility bg-cta {
   background-image: var(--gradient-cta);
@@ -228,11 +234,6 @@
   transform: translate3d(0, 0, 0);
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
-}
-
-.photo-marquee-item img {
-  transform: translate3d(0, 0, 0);
-  backface-visibility: hidden;
 }
 
 .photo-marquee:hover .photo-marquee-track,
