@@ -189,10 +189,10 @@
 
 @keyframes photo-marquee-slide {
   from {
-    transform: translateX(0);
+    transform: translate3d(0, 0, 0);
   }
   to {
-    transform: translateX(-50%);
+    transform: translate3d(-50%, 0, 0);
   }
 }
 
@@ -218,11 +218,21 @@
 
 .photo-marquee {
   container-type: inline-size;
+  contain: paint;
+  -webkit-overflow-scrolling: touch;
 }
 
 .photo-marquee-track {
   animation: photo-marquee-slide 28s linear infinite;
   will-change: transform;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.photo-marquee-item img {
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
 }
 
 .photo-marquee:hover .photo-marquee-track,
