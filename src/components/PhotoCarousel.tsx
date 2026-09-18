@@ -131,6 +131,7 @@ export function PhotoCarousel({
                         alt={`${alt} fotoğraf ${originalIndex + 1}`}
                         loading={copy === 0 && index < 3 ? "eager" : "lazy"}
                         fetchPriority={copy === 0 && index === 0 ? "high" : "auto"}
+                        decoding="async"
                         draggable={false}
                         className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
                       />
@@ -150,7 +151,9 @@ export function PhotoCarousel({
                     <img
                       src={photoUrl(src, originalIndex)}
                       alt={`${alt} fotoğraf ${originalIndex + 1}`}
-                      loading="lazy"
+                      loading={copy === 0 && index < 3 ? "eager" : "lazy"}
+                      fetchPriority={copy === 0 && index === 0 ? "high" : "auto"}
+                      decoding="async"
                       draggable={false}
                       className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
                     />

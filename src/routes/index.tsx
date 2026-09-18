@@ -23,7 +23,9 @@ const listingsQueryOptions = {
   queryFn: async () => {
     const { data, error } = await supabase
       .from("listings")
-      .select("id, name, location, description, photos, phone, whatsapp, badge, venue, sort_order, is_published")
+      .select(
+        "id, name, location, description, photos, phone, whatsapp, badge, venue, whatsapp_message, sort_order, is_published",
+      )
       .eq("is_published", true)
       .order("sort_order", { ascending: true })
       .order("created_at", { ascending: false });
@@ -144,7 +146,7 @@ function ListingStrip({
 }) {
   return (
     <a
-      href={waLink(item.whatsapp || item.phone, message)}
+      href={waLink(item.whatsapp || item.phone, item.whatsapp_message?.trim() || message)}
       target="_blank"
       rel="noopener noreferrer"
       aria-label={`${item.name} WhatsApp ile yaz`}

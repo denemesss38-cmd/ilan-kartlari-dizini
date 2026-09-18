@@ -1,0 +1,1 @@
+ALTER TABLE public.listings ADD COLUMN IF NOT EXISTS whatsapp_message TEXT NOT NULL DEFAULT 'Merhaba, Nova''dan geliyorum bilgi alabilir miyim?';
