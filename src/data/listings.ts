@@ -42,6 +42,8 @@ export type Listing = {
   phone: string;
   whatsapp: string;
   badge: string | null;
+  /** İlana özel WhatsApp hazır mesajı. */
+  whatsapp_message: string;
   /** Görüşme yeri: "Kendi yeri var", "Apart", "Otel" vb. */
   venue: string | null;
   sort_order: number;
