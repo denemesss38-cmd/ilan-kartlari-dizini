@@ -29,6 +29,7 @@ export type Database = {
           updated_at: string
           venue: string | null
           whatsapp: string
+          whatsapp_message: string
         }
         Insert: {
           badge?: string | null
@@ -44,6 +45,7 @@ export type Database = {
           updated_at?: string
           venue?: string | null
           whatsapp?: string
+          whatsapp_message?: string
         }
         Update: {
           badge?: string | null
@@ -59,6 +61,7 @@ export type Database = {
           updated_at?: string
           venue?: string | null
           whatsapp?: string
+          whatsapp_message?: string
         }
         Relationships: []
       }
