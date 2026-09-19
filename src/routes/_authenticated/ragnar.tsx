@@ -550,6 +550,7 @@ function SeoSettings() {
     title: string;
     description: string;
     keywords: string;
+    footerText: string;
   } | null>(null);
 
   const seoQuery = useQuery({
@@ -558,7 +559,7 @@ function SeoSettings() {
       const { data, error } = await supabase
         .from("site_settings")
         .select("key, value")
-        .in("key", ["seo_title", "seo_description", "seo_keywords"]);
+        .in("key", ["seo_title", "seo_description", "seo_keywords", "footer_text"]);
       if (error) throw error;
       const map = new Map((data ?? []).map((r) => [r.key, r.value]));
       const str = (k: string) => (typeof map.get(k) === "string" ? String(map.get(k)) : "");
@@ -566,6 +567,7 @@ function SeoSettings() {
         title: str("seo_title"),
         description: str("seo_description"),
         keywords: str("seo_keywords"),
+        footerText: str("footer_text"),
       };
     },
   });
