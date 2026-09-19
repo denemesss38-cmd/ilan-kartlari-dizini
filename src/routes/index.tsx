@@ -216,6 +216,9 @@ function Index() {
     carouselIntervalSeconds: 4,
     whatsappNumber: "905551112233",
     whatsappMessage: DEFAULT_WA_MESSAGE,
+    seoTitle: DEFAULT_TITLE,
+    seoDescription: DEFAULT_DESCRIPTION,
+    footerText: "",
   };
   const contactHref = waLink(settings.whatsappNumber, settings.whatsappMessage);
 
