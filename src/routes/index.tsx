@@ -307,10 +307,8 @@ function Index() {
         )}
 
         <footer className="mt-10 border-t border-border/60 px-3 pb-4 pt-6 text-center xs:px-4 md:px-6">
-          <p className="text-[11px] leading-relaxed text-muted-foreground md:text-xs">
-            {siteConfig.footerNote}
-          </p>
-          <p className="mt-2 text-[11px] text-muted-foreground/80 md:text-xs">
+          <p className="text-[11px] text-muted-foreground/80 md:text-xs">
+
             © {new Date().getFullYear()} {siteConfig.siteName}. Tüm hakları saklıdır.
           </p>
         </footer>
