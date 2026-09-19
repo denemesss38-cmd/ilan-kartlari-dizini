@@ -624,6 +624,13 @@ function SeoSettings() {
           max={300}
           textarea
         />
+        <Field
+          label="Sayfa altı bilgilendirme metni (boş bırakılırsa vitrinde gösterilmez)"
+          value={current.footerText}
+          onChange={(v) => setDraft({ ...current, footerText: v })}
+          max={2000}
+          textarea
+        />
       </div>
       <button
         onClick={() => saveMutation.mutate(current)}
