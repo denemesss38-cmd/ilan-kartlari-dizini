@@ -60,6 +60,7 @@ const settingsQueryOptions = {
         "whatsapp_message",
         "seo_title",
         "seo_description",
+        "footer_text",
       ]);
     const map = new Map((data ?? []).map((r) => [r.key, r.value]));
     const raw = Number(map.get("carousel_interval_seconds") ?? 4);
@@ -73,6 +74,7 @@ const settingsQueryOptions = {
       whatsappMessage: str("whatsapp_message", DEFAULT_WA_MESSAGE),
       seoTitle: str("seo_title", DEFAULT_TITLE),
       seoDescription: str("seo_description", DEFAULT_DESCRIPTION),
+      footerText: str("footer_text", ""),
     };
   },
 };
@@ -214,6 +216,9 @@ function Index() {
     carouselIntervalSeconds: 4,
     whatsappNumber: "905551112233",
     whatsappMessage: DEFAULT_WA_MESSAGE,
+    seoTitle: DEFAULT_TITLE,
+    seoDescription: DEFAULT_DESCRIPTION,
+    footerText: "",
   };
   const contactHref = waLink(settings.whatsappNumber, settings.whatsappMessage);
 
@@ -305,6 +310,17 @@ function Index() {
             ))}
           </div>
         )}
+
+        {settings.footerText ? (
+          <section className="mx-3 mt-8 rounded-2xl border border-border/60 bg-card/60 p-4 shadow-sm backdrop-blur-md xs:mx-4 md:mx-6 md:mt-10 md:p-6">
+            <h2 className="text-xs font-black uppercase tracking-wider text-primary md:text-sm">
+              Bilgilendirme
+            </h2>
+            <p className="mt-2 whitespace-pre-line text-[11px] leading-relaxed text-muted-foreground md:text-sm">
+              {settings.footerText}
+            </p>
+          </section>
+        ) : null}
 
         <footer className="mt-10 border-t border-border/60 px-3 pb-4 pt-6 text-center xs:px-4 md:px-6">
           <p className="text-[11px] text-muted-foreground/80 md:text-xs">

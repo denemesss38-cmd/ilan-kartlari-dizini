@@ -550,6 +550,7 @@ function SeoSettings() {
     title: string;
     description: string;
     keywords: string;
+    footerText: string;
   } | null>(null);
 
   const seoQuery = useQuery({
@@ -558,7 +559,7 @@ function SeoSettings() {
       const { data, error } = await supabase
         .from("site_settings")
         .select("key, value")
-        .in("key", ["seo_title", "seo_description", "seo_keywords"]);
+        .in("key", ["seo_title", "seo_description", "seo_keywords", "footer_text"]);
       if (error) throw error;
       const map = new Map((data ?? []).map((r) => [r.key, r.value]));
       const str = (k: string) => (typeof map.get(k) === "string" ? String(map.get(k)) : "");
@@ -566,18 +567,20 @@ function SeoSettings() {
         title: str("seo_title"),
         description: str("seo_description"),
         keywords: str("seo_keywords"),
+        footerText: str("footer_text"),
       };
     },
   });
 
   const saveMutation = useMutation({
-    mutationFn: async (v: { title: string; description: string; keywords: string }) => {
+    mutationFn: async (v: { title: string; description: string; keywords: string; footerText: string }) => {
       const now = new Date().toISOString();
       const { error } = await supabase.from("site_settings").upsert(
         [
           { key: "seo_title", value: v.title.trim(), updated_at: now },
           { key: "seo_description", value: v.description.trim(), updated_at: now },
           { key: "seo_keywords", value: v.keywords.trim(), updated_at: now },
+          { key: "footer_text", value: v.footerText.trim(), updated_at: now },
         ],
         { onConflict: "key" },
       );
@@ -591,7 +594,7 @@ function SeoSettings() {
   });
 
   const current =
-    draft ?? seoQuery.data ?? { title: "", description: "", keywords: "" };
+    draft ?? seoQuery.data ?? { title: "", description: "", keywords: "", footerText: "" };
 
   return (
     <section className="mt-4 rounded-2xl border border-border bg-card p-4">
@@ -619,6 +622,13 @@ function SeoSettings() {
           value={current.keywords}
           onChange={(v) => setDraft({ ...current, keywords: v })}
           max={300}
+          textarea
+        />
+        <Field
+          label="Sayfa altı bilgilendirme metni (boş bırakılırsa vitrinde gösterilmez)"
+          value={current.footerText}
+          onChange={(v) => setDraft({ ...current, footerText: v })}
+          max={2000}
           textarea
         />
       </div>
