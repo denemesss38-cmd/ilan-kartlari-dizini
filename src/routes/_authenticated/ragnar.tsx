@@ -573,13 +573,14 @@ function SeoSettings() {
   });
 
   const saveMutation = useMutation({
-    mutationFn: async (v: { title: string; description: string; keywords: string }) => {
+    mutationFn: async (v: { title: string; description: string; keywords: string; footerText: string }) => {
       const now = new Date().toISOString();
       const { error } = await supabase.from("site_settings").upsert(
         [
           { key: "seo_title", value: v.title.trim(), updated_at: now },
           { key: "seo_description", value: v.description.trim(), updated_at: now },
           { key: "seo_keywords", value: v.keywords.trim(), updated_at: now },
+          { key: "footer_text", value: v.footerText.trim(), updated_at: now },
         ],
         { onConflict: "key" },
       );
@@ -593,7 +594,7 @@ function SeoSettings() {
   });
 
   const current =
-    draft ?? seoQuery.data ?? { title: "", description: "", keywords: "" };
+    draft ?? seoQuery.data ?? { title: "", description: "", keywords: "", footerText: "" };
 
   return (
     <section className="mt-4 rounded-2xl border border-border bg-card p-4">
