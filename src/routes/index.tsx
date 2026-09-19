@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { BadgeCheck, BellRing, Home, MessageCircle, Phone, Send } from "lucide-react";
+import { BadgeCheck, BellRing, Home, MessageCircle, Phone, Send, Sparkles } from "lucide-react";
 
 import { PhotoCarousel } from "@/components/PhotoCarousel";
 import { supabase } from "@/integrations/supabase/client";
@@ -312,13 +312,27 @@ function Index() {
         )}
 
         {settings.footerText ? (
-          <section className="mx-3 mt-8 rounded-2xl border border-border/60 bg-card/60 p-4 shadow-sm backdrop-blur-md xs:mx-4 md:mx-6 md:mt-10 md:p-6">
-            <h2 className="text-xs font-black uppercase tracking-wider text-primary md:text-sm">
-              Bilgilendirme
-            </h2>
-            <p className="mt-2 whitespace-pre-line text-[11px] leading-relaxed text-muted-foreground md:text-sm">
-              {settings.footerText}
-            </p>
+          <section className="relative mx-3 mt-8 overflow-hidden rounded-2xl border border-primary/25 bg-gradient-to-b from-card/85 to-card/40 p-5 shadow-xl backdrop-blur-xl xs:mx-4 md:mx-6 md:mt-10 md:p-7">
+            <div
+              aria-hidden
+              className="pointer-events-none absolute -top-16 left-1/2 h-40 w-72 -translate-x-1/2 rounded-full bg-primary/15 blur-3xl"
+            />
+            <div className="relative flex items-center gap-2">
+              <h2 className="text-foreground text-sm font-black tracking-wide md:text-base">
+                Diyarbakır
+              </h2>
+              <span className="inline-flex items-center gap-1 rounded-full border border-primary/30 bg-primary/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-primary">
+                <Sparkles className="h-3 w-3" aria-hidden />
+                Rehber
+              </span>
+            </div>
+            <div className="relative mt-3 space-y-3 text-xs font-medium leading-relaxed text-foreground/85 md:text-sm">
+              {settings.footerText.split(/\n{2,}/).map((para, i) => (
+                <p key={i} className="whitespace-pre-line">
+                  {para}
+                </p>
+              ))}
+            </div>
           </section>
         ) : null}
 
