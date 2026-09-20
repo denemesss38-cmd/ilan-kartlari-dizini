@@ -186,11 +186,11 @@ function ListingStrip({
           <h2 className="truncate text-sm font-black tracking-tight text-foreground xs:text-base md:text-xl">
             {item.name}
           </h2>
-          <span className="mt-1.5 inline-flex items-center gap-1.5 rounded-full border border-primary/60 bg-background/85 py-1 pl-1.5 pr-3 shadow-[0_0_14px_var(--card-glow),0_2px_10px_rgba(0,0,0,0.5)] backdrop-blur-md md:gap-2 md:py-1.5 md:pl-2 md:pr-4">
-            <span className="grid size-5 shrink-0 place-items-center rounded-full bg-gradient-to-br from-primary to-amber-400 text-primary-foreground shadow-[0_0_10px_var(--card-glow)] md:size-6">
+          <span className="mt-1.5 inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-white/10 py-1 pl-1.5 pr-3 shadow-[0_4px_20px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.22)] backdrop-blur-xl md:gap-2 md:py-1.5 md:pl-2 md:pr-4">
+            <span className="grid size-5 shrink-0 place-items-center rounded-full border border-white/30 bg-gradient-to-br from-primary/90 to-amber-400/90 text-primary-foreground shadow-[0_0_12px_var(--card-glow)] md:size-6">
               <Phone className="size-3 md:size-3.5" />
             </span>
-            <span className="text-sm font-black tracking-wide text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)] xs:text-base md:text-lg">
+            <span className="text-sm font-black tracking-wider text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)] xs:text-base md:text-lg">
               {formatPhone(item.phone)}
             </span>
           </span>
