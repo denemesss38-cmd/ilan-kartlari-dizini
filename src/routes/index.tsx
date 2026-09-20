@@ -224,7 +224,7 @@ function Index() {
 
   return (
     <div className="min-h-screen">
-      <div className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur-xl">
+      <div className="relative z-40 border-b border-border bg-background/95 backdrop-blur-xl">
         <div className="mx-auto flex max-w-3xl items-center gap-2.5 px-3 py-2.5 xs:px-4 md:px-6">
           <div className="grid size-10 shrink-0 place-items-center rounded-full border border-primary bg-secondary text-sm font-black text-primary shadow-[0_0_18px_var(--card-glow)]">
             DR
