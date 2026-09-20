@@ -269,17 +269,32 @@ function Index() {
                 href={contactHref}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`flex flex-col items-center justify-center rounded-3xl p-3 text-center ring-1 ring-border md:p-4 ${
-                  promo.variant === "primary" ? "bg-cta" : "bg-cta-alt"
+                className={`relative flex flex-col items-center justify-center overflow-hidden rounded-3xl p-4 text-center ring-1 md:p-5 ${
+                  promo.variant === "primary"
+                    ? "bg-cta-hot shadow-glow-gold ring-primary/50 transition-transform duration-200 hover:scale-[1.015]"
+                    : "bg-cta-alt ring-border"
                 }`}
               >
-                <h2 className="text-xs font-black tracking-wide text-primary-foreground md:text-sm">
+                {promo.variant === "primary" ? (
+                  <>
+                    <span
+                      aria-hidden
+                      className="pointer-events-none absolute -top-12 left-1/2 h-28 w-48 -translate-x-1/2 rounded-full bg-primary-foreground/25 blur-3xl"
+                    />
+                    <span
+                      aria-hidden
+                      className="pointer-events-none absolute inset-x-4 top-0 h-px bg-gradient-to-r from-transparent via-primary-foreground/80 to-transparent"
+                    />
+                  </>
+                ) : null}
+                <h2 className="relative text-sm font-black uppercase tracking-wide text-primary-foreground drop-shadow-sm md:text-base">
                   {promo.title}
                 </h2>
-                <p className="mt-1 text-[10px] leading-relaxed text-primary-foreground/90 md:text-[11px]">
+                <p className="relative mt-1.5 text-[11px] font-semibold leading-relaxed text-primary-foreground/95 md:text-xs">
                   {promo.text}
                 </p>
-                <span className="mt-2 inline-flex min-h-9 items-center rounded-full bg-background/25 px-3 py-1.5 text-[10px] font-bold text-primary-foreground md:text-xs">
+                <span className="relative mt-3 inline-flex min-h-10 items-center gap-1.5 rounded-full bg-background/30 px-4 py-2 text-xs font-black text-primary-foreground ring-1 ring-primary-foreground/40 backdrop-blur-md transition-transform duration-200 hover:scale-105 md:mt-4">
+                  <Sparkles className="size-4" aria-hidden />
                   {promo.ctaLabel}
                 </span>
               </a>
@@ -312,16 +327,24 @@ function Index() {
         )}
 
         {settings.footerText ? (
-          <section className="relative mx-3 mt-8 overflow-hidden rounded-2xl border border-primary/25 bg-gradient-to-b from-card/85 to-card/40 p-5 shadow-xl backdrop-blur-xl xs:mx-4 md:mx-6 md:mt-10 md:p-7">
+          <section className="relative mx-3 mt-8 overflow-hidden rounded-2xl border border-primary/40 bg-gradient-to-b from-card/85 to-card/40 p-5 shadow-[0_22px_70px_-30px_var(--card-glow)] ring-1 ring-primary/15 backdrop-blur-xl xs:mx-4 md:mx-6 md:mt-10 md:p-7">
             <div
               aria-hidden
-              className="pointer-events-none absolute -top-16 left-1/2 h-40 w-72 -translate-x-1/2 rounded-full bg-primary/15 blur-3xl"
+              className="pointer-events-none absolute -top-16 left-1/2 h-40 w-80 -translate-x-1/2 rounded-full bg-primary/20 blur-3xl"
+            />
+            <div
+              aria-hidden
+              className="pointer-events-none absolute -bottom-20 right-0 h-44 w-64 rounded-full bg-accent/10 blur-3xl"
+            />
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-primary/60 to-transparent"
             />
             <div className="relative flex items-center gap-2">
-              <h2 className="text-foreground text-sm font-black tracking-wide md:text-base">
+              <h2 className="text-foreground text-sm font-black tracking-wide drop-shadow-[0_0_14px_var(--card-glow)] md:text-base">
                 Diyarbakır
               </h2>
-              <span className="inline-flex items-center gap-1 rounded-full border border-primary/30 bg-primary/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-primary">
+              <span className="inline-flex items-center gap-1 rounded-full border border-primary/40 bg-primary/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-primary shadow-[0_0_16px_-4px_var(--card-glow)]">
                 <Sparkles className="h-3 w-3" aria-hidden />
                 Rehber
               </span>
