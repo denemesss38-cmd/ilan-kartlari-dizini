@@ -17,7 +17,7 @@ export const siteConfig = {
     {
       title: "İLANINIZI ÖNE ÇIKARIN",
       text: "Vitrinin en üstünde yayınlanmak için hemen yazın.",
-      ctaLabel: "Reklam ver",
+      ctaLabel: "Bilgi al",
       href: "https://wa.me/905551112233",
       variant: "primary" as const,
     },
