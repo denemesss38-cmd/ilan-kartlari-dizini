@@ -294,7 +294,7 @@ function Index() {
                   {promo.text}
                 </p>
                 <span className="relative mt-3 inline-flex min-h-10 items-center gap-1.5 rounded-full bg-background/30 px-4 py-2 text-xs font-black text-primary-foreground ring-1 ring-primary-foreground/40 backdrop-blur-md transition-transform duration-200 hover:scale-105 md:mt-4">
-                  <Sparkles className="size-4" aria-hidden />
+                  <MessageCircle className="size-4" aria-hidden />
                   {promo.ctaLabel}
                 </span>
               </a>
