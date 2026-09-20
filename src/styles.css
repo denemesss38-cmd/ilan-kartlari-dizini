@@ -88,6 +88,7 @@
   --gradient-card: linear-gradient(145deg, oklch(0.14 0 0), oklch(0.07 0 0));
   --gradient-cta: linear-gradient(135deg, oklch(0.82 0.175 76), oklch(0.7 0.16 55));
   --gradient-cta-alt: linear-gradient(135deg, oklch(0.7 0.2 35), oklch(0.58 0.22 350));
+  --gradient-cta-hot: linear-gradient(135deg, oklch(0.86 0.18 85) 0%, oklch(0.76 0.19 60) 45%, oklch(0.68 0.21 42) 100%);
   --gradient-online: linear-gradient(135deg, oklch(0.68 0.2 35), oklch(0.58 0.22 350));
   --gradient-visitors: linear-gradient(135deg, oklch(0.34 0.14 285), oklch(0.48 0.16 285));
   --gradient-whatsapp: linear-gradient(135deg, oklch(0.72 0.19 145), oklch(0.55 0.13 165));
