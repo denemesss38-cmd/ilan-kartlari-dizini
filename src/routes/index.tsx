@@ -326,34 +326,55 @@ function Index() {
         )}
 
         {settings.footerText ? (
-          <section className="relative mx-3 mt-8 overflow-hidden rounded-2xl border border-primary/40 bg-gradient-to-b from-card/85 to-card/40 p-5 shadow-[0_22px_70px_-30px_var(--card-glow)] ring-1 ring-primary/15 backdrop-blur-xl xs:mx-4 md:mx-6 md:mt-10 md:p-7">
+          <section className="relative mx-3 mt-10 overflow-hidden rounded-3xl border border-primary/35 bg-gradient-to-b from-card/90 via-card/60 to-card/30 p-6 shadow-[0_26px_80px_-30px_var(--card-glow),0_0_40px_-18px_var(--card-glow)] ring-1 ring-primary/10 backdrop-blur-2xl xs:mx-4 md:mx-6 md:mt-14 md:p-9">
             <div
               aria-hidden
-              className="pointer-events-none absolute -top-16 left-1/2 h-40 w-80 -translate-x-1/2 rounded-full bg-primary/20 blur-3xl"
+              className="pointer-events-none absolute -top-20 left-1/2 h-48 w-[26rem] -translate-x-1/2 rounded-full bg-primary/25 blur-3xl"
             />
             <div
               aria-hidden
-              className="pointer-events-none absolute -bottom-20 right-0 h-44 w-64 rounded-full bg-accent/10 blur-3xl"
+              className="pointer-events-none absolute -bottom-24 -right-10 h-52 w-72 rounded-full bg-primary/10 blur-3xl"
             />
             <div
               aria-hidden
-              className="pointer-events-none absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-primary/60 to-transparent"
+              className="pointer-events-none absolute -left-16 top-1/3 h-40 w-40 rounded-full bg-accent/10 blur-3xl"
             />
-            <div className="relative flex items-center gap-2">
-              <h2 className="text-foreground text-sm font-black tracking-wide drop-shadow-[0_0_14px_var(--card-glow)] md:text-base">
-                Diyarbakır
-              </h2>
-              <span className="inline-flex items-center gap-1 rounded-full border border-primary/40 bg-primary/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-primary shadow-[0_0_16px_-4px_var(--card-glow)]">
-                <Sparkles className="h-3 w-3" aria-hidden />
-                Rehber
-              </span>
-            </div>
-            <div className="relative mt-3 space-y-3 text-xs font-medium leading-relaxed text-foreground/85 md:text-sm">
-              {settings.footerText.split(/\n{2,}/).map((para, i) => (
-                <p key={i} className="whitespace-pre-line">
-                  {para}
-                </p>
-              ))}
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-primary/70 to-transparent"
+            />
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-x-8 bottom-0 h-px bg-gradient-to-r from-transparent via-primary/25 to-transparent"
+            />
+
+            <div className="relative">
+              <div className="flex items-center gap-2.5">
+                <span className="relative grid size-9 shrink-0 place-items-center rounded-full border border-primary/50 bg-gradient-to-br from-primary/25 to-primary/5 text-primary shadow-[0_0_20px_-4px_var(--card-glow)]">
+                  <Sparkles className="size-4" aria-hidden />
+                </span>
+                <h2 className="bg-gradient-to-r from-foreground via-foreground to-primary/80 bg-clip-text text-base font-black tracking-[0.08em] text-transparent drop-shadow-[0_0_16px_var(--card-glow)] md:text-lg">
+                  Diyarbakır
+                </h2>
+                <span className="inline-flex items-center gap-1 rounded-full border border-primary/45 bg-primary/15 px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.18em] text-primary shadow-[0_0_18px_-5px_var(--card-glow)] md:text-[10px]">
+                  Rehber
+                </span>
+              </div>
+              <div
+                aria-hidden
+                className="mt-3.5 h-px w-full bg-gradient-to-r from-primary/60 via-primary/20 to-transparent"
+              />
+
+              <div className="relative mt-5 space-y-4 border-l border-primary/25 pl-4 md:mt-6 md:space-y-5 md:pl-6">
+                {settings.footerText.split(/\n{2,}/).map((para, i) => (
+                  <p
+                    key={i}
+                    className="whitespace-pre-line text-[13px] font-medium leading-[1.85] text-zinc-300/95 md:text-sm"
+                  >
+                    {para}
+                  </p>
+                ))}
+              </div>
             </div>
           </section>
         ) : null}
