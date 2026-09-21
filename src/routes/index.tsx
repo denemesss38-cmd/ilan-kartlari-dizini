@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { BadgeCheck, BellRing, Home, MessageCircle, Phone, Send, Sparkles } from "lucide-react";
+import { BadgeCheck, BellRing, Home, MessageCircle, Send, Sparkles } from "lucide-react";
 
 import { PhotoCarousel } from "@/components/PhotoCarousel";
 import { supabase } from "@/integrations/supabase/client";
@@ -186,13 +186,8 @@ function ListingStrip({
           <h2 className="truncate text-sm font-black tracking-tight text-foreground xs:text-base md:text-xl">
             {item.name}
           </h2>
-          <span className="mt-1.5 inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-white/10 py-1 pl-1.5 pr-3 shadow-[0_4px_20px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.22)] backdrop-blur-xl transition-all duration-200 will-change-transform hover:scale-[1.03] hover:border-primary/80 hover:shadow-[0_0_18px_rgba(234,179,8,0.35),inset_0_1px_0_rgba(255,255,255,0.22)] md:gap-2 md:py-1.5 md:pl-2 md:pr-4">
-            <span className="grid size-5 shrink-0 place-items-center rounded-full border border-white/30 bg-gradient-to-br from-primary/90 to-amber-400/90 text-primary-foreground shadow-[0_0_12px_var(--card-glow)] md:size-6">
-              <Phone className="size-3 md:size-3.5" />
-            </span>
-            <span className="text-sm font-black tracking-wider text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)] xs:text-base md:text-lg">
-              {formatPhone(item.phone)}
-            </span>
+          <span className="mt-1.5 block text-sm font-extrabold tracking-wider text-foreground drop-shadow-[0_1px_4px_var(--background)] xs:text-base md:text-lg">
+            {formatPhone(item.phone)}
           </span>
         </div>
 
@@ -260,7 +255,7 @@ function Index() {
           </a>
         </section>
 
-        <div className="mx-auto mt-4 grid w-full max-w-2xl gap-3 px-3 xs:px-4 sm:grid-cols-2 md:mt-5 md:px-6">
+        <div className="mx-auto mt-4 w-full max-w-2xl px-3 xs:px-4 md:mt-5 md:px-6">
           {siteConfig.promos
             .filter((promo) => promo.title !== "GÜVENLİ İLETİŞİM")
             .map((promo) => (
@@ -269,7 +264,7 @@ function Index() {
                 href={contactHref}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`relative flex flex-col items-center justify-center overflow-hidden rounded-3xl p-4 text-center ring-1 md:p-5 ${
+                className={`relative grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 overflow-hidden rounded-2xl p-3 text-left ring-1 ${
                   promo.variant === "primary"
                     ? "bg-cta-hot shadow-glow-gold ring-primary/50 transition-transform duration-200 hover:scale-[1.015]"
                     : "bg-cta-alt ring-border"
@@ -287,14 +282,18 @@ function Index() {
                     />
                   </>
                 ) : null}
-                <h2 className="relative text-sm font-black uppercase tracking-wide text-primary-foreground drop-shadow-sm md:text-base">
-                  {promo.title}
-                </h2>
-                <p className="relative mt-1.5 text-[11px] font-semibold leading-relaxed text-primary-foreground/95 md:text-xs">
-                  {promo.text}
-                </p>
-                <span className="relative mt-3 inline-flex min-h-10 items-center gap-1.5 rounded-full bg-background/30 px-4 py-2 text-xs font-black text-primary-foreground ring-1 ring-primary-foreground/40 backdrop-blur-md transition-transform duration-200 hover:scale-105 md:mt-4">
-                  <MessageCircle className="size-4" aria-hidden />
+                <span className="relative grid size-10 shrink-0 place-items-center rounded-full bg-background/25 text-primary-foreground ring-1 ring-primary-foreground/35 backdrop-blur-md">
+                  <MessageCircle className="size-5" aria-hidden />
+                </span>
+                <span className="relative min-w-0">
+                  <span className="block text-xs font-black uppercase text-primary-foreground drop-shadow-sm md:text-sm">
+                    {promo.title}
+                  </span>
+                  <span className="mt-0.5 line-clamp-2 block text-[10px] font-semibold leading-relaxed text-primary-foreground/95 md:text-xs">
+                    {promo.text}
+                  </span>
+                </span>
+                <span className="relative shrink-0 rounded-full bg-background/25 px-3 py-2 text-[11px] font-black text-primary-foreground ring-1 ring-primary-foreground/40 backdrop-blur-md">
                   {promo.ctaLabel}
                 </span>
               </a>
