@@ -22,3 +22,9 @@
 - [x] Onaylı İlan rozeti: tık ikonlu kompakt rozet (VIP yazısı yok)
 - [x] Görseller anında yüklensin: imzalı URL önbelleği (localStorage), tek toplu istek
 - [x] En alttaki "Bilgi Al" alanını kaldır
+- [x] Türkçe kod düzenleme ve VPS/Plesk kurulum kılavuzunu tamamla
+- [x] Bilgi Al kutusunu Dikkat kutusuyla aynı kompakt ölçülere getir
+- [x] İlan telefon numaralarını sade ve yüksek kontrastlı göster
+- [x] Yönetim paneline ikili ve serbest yer seçenekleri ekle
+- [x] Header başlığını “Diyarbakır Rehberi” olarak güncelle
+- [x] Mobil, tablet ve masaüstü görünümünü doğrula

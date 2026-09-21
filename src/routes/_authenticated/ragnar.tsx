@@ -277,18 +277,27 @@ function AdminPage() {
                 <label className="text-xs font-bold text-muted-foreground">
                   Görüşme yeri (isteğe bağlı)
                 </label>
-                <select
+                <input
+                  list="venue-options"
                   value={draft.venue ?? ""}
                   onChange={(e) => setDraft({ ...draft, venue: e.target.value })}
+                  placeholder="Seçin veya özel bir seçenek yazın"
+                  maxLength={60}
                   className="mt-1 w-full rounded-xl border border-border bg-secondary px-3 py-2.5 text-sm text-foreground"
-                >
-                  <option value="">Belirtilmedi</option>
-                  <option value="Kendi yeri var">Kendi yeri var</option>
-                  <option value="Apart">Apart</option>
-                  <option value="Otel">Otel</option>
-                  <option value="Ev">Ev</option>
-                  <option value="Rezidans">Rezidans</option>
-                </select>
+                />
+                <datalist id="venue-options">
+                  <option value="Kendi yeri var" />
+                  <option value="Apart" />
+                  <option value="Otel" />
+                  <option value="Ev" />
+                  <option value="Rezidans" />
+                  <option value="Ev & Apart" />
+                  <option value="Otel & Apart" />
+                  <option value="Kendi Yeri & Apart" />
+                </datalist>
+                <p className="mt-1 text-[11px] text-muted-foreground">
+                  Listeden seçebilir veya istediğiniz yer bilgisini yazabilirsiniz.
+                </p>
               </div>
               <Field
                 label="WhatsApp hazır mesajı"
