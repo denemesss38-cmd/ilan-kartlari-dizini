@@ -168,8 +168,6 @@ function ListingStrip({
         className="h-[220px] w-full md:h-64"
       />
 
-      <div className="pointer-events-none absolute inset-0 z-10 bg-gradient-to-t from-image-overlay via-image-overlay/35 to-transparent" />
-
       <span className="pointer-events-none absolute right-3 top-3 z-20 flex items-center gap-1 rounded-full border border-primary/30 bg-background/70 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-primary shadow-sm backdrop-blur-md md:right-6 md:top-5 md:text-[10px]">
         <BadgeCheck className="size-3" />
         Onaylı İlan
