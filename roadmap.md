@@ -28,3 +28,4 @@
 - [x] Yönetim paneline ikili ve serbest yer seçenekleri ekle
 - [x] Header başlığını “Diyarbakır Rehberi” olarak güncelle
 - [x] Mobil, tablet ve masaüstü görünümünü doğrula
+- [ ] Mevcut düzeni değiştirmeden ana site ve panel temasını beyaz zemine uyarlayıp doğrula
