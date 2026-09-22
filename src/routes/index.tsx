@@ -183,10 +183,10 @@ function ListingStrip({
       <div className="pointer-events-none absolute inset-x-3 bottom-3 z-20 flex items-end justify-between gap-2 md:inset-x-6 md:bottom-5">
 
         <div className="min-w-0">
-          <h2 className="truncate text-sm font-black tracking-tight text-image-foreground xs:text-base md:text-xl">
+          <h2 className="truncate text-sm font-black tracking-tight text-image-foreground drop-shadow-[0_1px_6px_var(--image-overlay)] xs:text-base md:text-xl">
             {item.name}
           </h2>
-          <span className="mt-1.5 block text-sm font-extrabold tracking-wider text-image-foreground drop-shadow-[0_1px_4px_var(--image-overlay)] xs:text-base md:text-lg">
+          <span className="mt-1.5 block text-sm font-extrabold tracking-wider text-image-foreground drop-shadow-[0_1px_6px_var(--image-overlay)] xs:text-base md:text-lg">
             {formatPhone(item.phone)}
           </span>
         </div>
