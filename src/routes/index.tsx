@@ -168,8 +168,6 @@ function ListingStrip({
         className="h-[220px] w-full md:h-64"
       />
 
-      <div className="pointer-events-none absolute inset-0 z-10 bg-gradient-to-t from-image-overlay via-image-overlay/35 to-transparent" />
-
       <span className="pointer-events-none absolute right-3 top-3 z-20 flex items-center gap-1 rounded-full border border-primary/30 bg-background/70 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-primary shadow-sm backdrop-blur-md md:right-6 md:top-5 md:text-[10px]">
         <BadgeCheck className="size-3" />
         Onaylı İlan
@@ -185,10 +183,10 @@ function ListingStrip({
       <div className="pointer-events-none absolute inset-x-3 bottom-3 z-20 flex items-end justify-between gap-2 md:inset-x-6 md:bottom-5">
 
         <div className="min-w-0">
-          <h2 className="truncate text-sm font-black tracking-tight text-image-foreground xs:text-base md:text-xl">
+          <h2 className="truncate text-sm font-black tracking-tight text-image-foreground drop-shadow-[0_1px_6px_var(--image-overlay)] xs:text-base md:text-xl">
             {item.name}
           </h2>
-          <span className="mt-1.5 block text-sm font-extrabold tracking-wider text-image-foreground drop-shadow-[0_1px_4px_var(--image-overlay)] xs:text-base md:text-lg">
+          <span className="mt-1.5 block text-sm font-extrabold tracking-wider text-image-foreground drop-shadow-[0_1px_6px_var(--image-overlay)] xs:text-base md:text-lg">
             {formatPhone(item.phone)}
           </span>
         </div>
