@@ -81,9 +81,11 @@ const settingsQueryOptions = {
 
 export const Route = createFileRoute("/")({
   loader: async ({ context }) => {
+    // Backend geçici olarak yanıt vermezse sayfa tamamen çökmesin;
+    // veriler istemcide tekrar denenir.
     const [listings, settings] = await Promise.all([
-      context.queryClient.ensureQueryData(listingsQueryOptions),
-      context.queryClient.ensureQueryData(settingsQueryOptions),
+      context.queryClient.ensureQueryData(listingsQueryOptions).catch(() => undefined),
+      context.queryClient.ensureQueryData(settingsQueryOptions).catch(() => undefined),
     ]);
     return { listings, settings };
   },
