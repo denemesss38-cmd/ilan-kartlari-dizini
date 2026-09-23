@@ -29,10 +29,10 @@
 - [x] Header başlığını “Diyarbakır Rehberi” olarak güncelle
 - [x] Mobil, tablet ve masaüstü görünümünü doğrula
 - [x] Mevcut düzeni değiştirmeden ana site ve panel temasını beyaz zemine uyarlayıp doğrula
-- [ ] Fotoğraf altındaki beyaz ışık/degradeyi komple kaldır
-- [ ] Header modern ve canlı yap (beyaz tema)
-- [ ] Dikkat kutusu ve Bilgi Al vitrin alanını dolgunlaştır
-- [ ] Onaylı İlan ve mekan rozetlerini beyaz temaya uygun canlı yap
-- [ ] Telefon numaralarını siyah/belirgin yap
-- [ ] Alt metni 4 kutucuğa böl (Ofis, Yenişehir, Kayapınar, Bağlar)
-- [ ] Tümü admin panel entegrasyonunu koru
+- [x] Fotoğraf altındaki beyaz ışık/degradeyi komple kaldır
+- [x] Header modern ve canlı yap (beyaz tema)
+- [x] Dikkat kutusu ve Bilgi Al vitrin alanını dolgunlaştır
+- [x] Onaylı İlan ve mekan rozetlerini beyaz temaya uygun canlı yap
+- [x] Telefon numaralarını siyah/belirgin yap
+- [x] Alt metni 4 kutucuğa böl (Ofis, Yenişehir, Kayapınar, Bağlar)
+- [x] Tümü admin panel entegrasyonunu koru
