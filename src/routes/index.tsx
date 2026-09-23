@@ -184,11 +184,11 @@ function ListingStrip({
 
       <div className="pointer-events-none absolute inset-x-3 bottom-3 z-20 flex items-end justify-between gap-2 md:inset-x-6 md:bottom-5">
 
-        <div className="min-w-0 rounded-2xl bg-background/95 px-3 py-2 shadow-[0_12px_30px_-14px_var(--card-glow)] ring-1 ring-border backdrop-blur-md md:px-4">
-          <h2 className="truncate text-sm font-black tracking-tight text-foreground xs:text-base md:text-xl">
+        <div className="min-w-0">
+          <h2 className="truncate text-base font-black tracking-tight text-image-foreground drop-shadow-[0_1px_5px_var(--image-overlay)] xs:text-lg md:text-2xl">
             {item.name}
           </h2>
-          <span className="mt-0.5 block text-sm font-black tracking-wider text-primary xs:text-base md:text-lg">
+          <span className="mt-0.5 block text-base font-black tracking-wider text-image-foreground drop-shadow-[0_1px_5px_var(--image-overlay)] xs:text-lg md:text-xl">
             {formatPhone(item.phone)}
           </span>
         </div>
@@ -247,19 +247,13 @@ function Index() {
       <main className="mx-auto max-w-3xl pb-14 pt-5 md:pt-8">
 
 
-        <section className="relative mx-3 mt-4 grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 overflow-hidden rounded-2xl border border-primary/40 bg-gradient-to-r from-primary/12 via-card to-accent/10 p-4 shadow-[0_16px_40px_-24px_var(--card-glow)] ring-1 ring-primary/15 xs:mx-4 md:mx-6 md:mt-6 md:gap-4 md:p-5">
-          <div
-            aria-hidden
-            className="pointer-events-none absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-primary/60 to-transparent"
-          />
-          <div className="grid size-11 shrink-0 place-items-center rounded-2xl bg-primary text-primary-foreground shadow-glow-gold">
+        <section className="mx-3 mt-4 grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 rounded-2xl border border-primary/40 bg-showcase-card p-3 shadow-[0_14px_34px_-24px_var(--card-glow)] xs:mx-4 md:mx-6 md:mt-6 md:p-4">
+          <div className="grid size-10 shrink-0 place-items-center rounded-full bg-primary/10 text-primary">
             <BellRing className="size-5" />
           </div>
           <div className="min-w-0">
-            <h2 className="text-xs font-black uppercase tracking-widest text-primary md:text-sm">
-              {siteConfig.banner.title}
-            </h2>
-            <p className="mt-1 text-[11px] font-medium leading-relaxed text-foreground/80 md:text-xs">
+            <h2 className="text-xs font-black text-primary">{siteConfig.banner.title}</h2>
+            <p className="mt-0.5 line-clamp-2 text-[10px] leading-relaxed text-muted-foreground md:text-xs">
               {siteConfig.banner.text}
             </p>
           </div>
@@ -268,10 +262,9 @@ function Index() {
             target="_blank"
             rel="noopener noreferrer"
             aria-label={siteConfig.banner.ctaLabel}
-            className="flex shrink-0 items-center gap-1.5 rounded-full bg-primary px-3 py-2 text-[11px] font-black text-primary-foreground shadow-glow-gold transition-transform hover:scale-105 md:px-4 md:text-xs"
+            className="grid size-10 shrink-0 place-items-center rounded-full bg-primary text-primary-foreground transition-transform hover:scale-105"
           >
             <Send className="size-4" />
-            Yaz
           </a>
         </section>
 
@@ -284,7 +277,7 @@ function Index() {
                 href={contactHref}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`relative grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 overflow-hidden rounded-2xl p-4 text-left ring-1 md:gap-4 md:p-5 ${
+                className={`relative grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 overflow-hidden rounded-2xl p-3 text-left ring-1 ${
                   promo.variant === "primary"
                     ? "bg-cta-hot shadow-glow-gold ring-primary/50 transition-transform duration-200 hover:scale-[1.015]"
                     : "bg-cta-alt ring-border"
@@ -300,25 +293,20 @@ function Index() {
                       aria-hidden
                       className="pointer-events-none absolute inset-x-4 top-0 h-px bg-gradient-to-r from-transparent via-primary-foreground/80 to-transparent"
                     />
-                    <span
-                      aria-hidden
-                      className="pointer-events-none absolute inset-x-4 bottom-0 h-px bg-gradient-to-r from-transparent via-primary-foreground/40 to-transparent"
-                    />
                   </>
                 ) : null}
-                <span className="relative grid size-11 shrink-0 place-items-center rounded-2xl bg-background/25 text-primary-foreground ring-1 ring-primary-foreground/35 backdrop-blur-md">
-                  <Sparkles className="size-5" aria-hidden />
+                <span className="relative grid size-10 shrink-0 place-items-center rounded-full bg-background/25 text-primary-foreground ring-1 ring-primary-foreground/35 backdrop-blur-md">
+                  <MessageCircle className="size-5" aria-hidden />
                 </span>
                 <span className="relative min-w-0">
-                  <span className="block text-sm font-black uppercase tracking-wide text-primary-foreground drop-shadow-sm md:text-base">
+                  <span className="block text-xs font-black uppercase text-primary-foreground drop-shadow-sm md:text-sm">
                     {promo.title}
                   </span>
-                  <span className="mt-1 block text-[11px] font-semibold leading-relaxed text-primary-foreground/95 md:text-xs">
+                  <span className="mt-0.5 line-clamp-2 block text-[10px] font-semibold leading-relaxed text-primary-foreground/95 md:text-xs">
                     {promo.text}
                   </span>
                 </span>
-                <span className="relative flex shrink-0 items-center gap-1.5 rounded-full bg-background/25 px-3.5 py-2 text-[11px] font-black text-primary-foreground ring-1 ring-primary-foreground/40 backdrop-blur-md md:px-4 md:text-xs">
-                  <MessageCircle className="size-4" aria-hidden />
+                <span className="relative shrink-0 rounded-full bg-background/25 px-3 py-2 text-[11px] font-black text-primary-foreground ring-1 ring-primary-foreground/40 backdrop-blur-md">
                   {promo.ctaLabel}
                 </span>
               </a>
