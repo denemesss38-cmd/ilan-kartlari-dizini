@@ -282,7 +282,7 @@ function Index() {
                 href={contactHref}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`relative grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 overflow-hidden rounded-2xl p-3 text-left ring-1 ${
+                className={`relative grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 overflow-hidden rounded-2xl p-4 text-left ring-1 md:gap-4 md:p-5 ${
                   promo.variant === "primary"
                     ? "bg-cta-hot shadow-glow-gold ring-primary/50 transition-transform duration-200 hover:scale-[1.015]"
                     : "bg-cta-alt ring-border"
@@ -298,20 +298,25 @@ function Index() {
                       aria-hidden
                       className="pointer-events-none absolute inset-x-4 top-0 h-px bg-gradient-to-r from-transparent via-primary-foreground/80 to-transparent"
                     />
+                    <span
+                      aria-hidden
+                      className="pointer-events-none absolute inset-x-4 bottom-0 h-px bg-gradient-to-r from-transparent via-primary-foreground/40 to-transparent"
+                    />
                   </>
                 ) : null}
-                <span className="relative grid size-10 shrink-0 place-items-center rounded-full bg-background/25 text-primary-foreground ring-1 ring-primary-foreground/35 backdrop-blur-md">
-                  <MessageCircle className="size-5" aria-hidden />
+                <span className="relative grid size-11 shrink-0 place-items-center rounded-2xl bg-background/25 text-primary-foreground ring-1 ring-primary-foreground/35 backdrop-blur-md">
+                  <Sparkles className="size-5" aria-hidden />
                 </span>
                 <span className="relative min-w-0">
-                  <span className="block text-xs font-black uppercase text-primary-foreground drop-shadow-sm md:text-sm">
+                  <span className="block text-sm font-black uppercase tracking-wide text-primary-foreground drop-shadow-sm md:text-base">
                     {promo.title}
                   </span>
-                  <span className="mt-0.5 line-clamp-2 block text-[10px] font-semibold leading-relaxed text-primary-foreground/95 md:text-xs">
+                  <span className="mt-1 block text-[11px] font-semibold leading-relaxed text-primary-foreground/95 md:text-xs">
                     {promo.text}
                   </span>
                 </span>
-                <span className="relative shrink-0 rounded-full bg-background/25 px-3 py-2 text-[11px] font-black text-primary-foreground ring-1 ring-primary-foreground/40 backdrop-blur-md">
+                <span className="relative flex shrink-0 items-center gap-1.5 rounded-full bg-background/25 px-3.5 py-2 text-[11px] font-black text-primary-foreground ring-1 ring-primary-foreground/40 backdrop-blur-md md:px-4 md:text-xs">
+                  <MessageCircle className="size-4" aria-hidden />
                   {promo.ctaLabel}
                 </span>
               </a>
