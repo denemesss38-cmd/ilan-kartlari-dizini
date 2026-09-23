@@ -184,11 +184,11 @@ function ListingStrip({
 
       <div className="pointer-events-none absolute inset-x-3 bottom-3 z-20 flex items-end justify-between gap-2 md:inset-x-6 md:bottom-5">
 
-        <div className="min-w-0 rounded-2xl bg-background/95 px-3 py-2 shadow-[0_12px_30px_-14px_var(--card-glow)] ring-1 ring-border backdrop-blur-md md:px-4">
-          <h2 className="truncate text-sm font-black tracking-tight text-foreground xs:text-base md:text-xl">
+        <div className="min-w-0">
+          <h2 className="truncate text-base font-black tracking-tight text-foreground xs:text-lg md:text-2xl">
             {item.name}
           </h2>
-          <span className="mt-0.5 block text-sm font-black tracking-wider text-primary xs:text-base md:text-lg">
+          <span className="mt-0.5 block text-base font-black tracking-wider text-foreground xs:text-lg md:text-xl">
             {formatPhone(item.phone)}
           </span>
         </div>
