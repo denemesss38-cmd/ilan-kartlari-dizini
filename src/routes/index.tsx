@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { BadgeCheck, BellRing, Home, MessageCircle, Send, Sparkles } from "lucide-react";
+import { BadgeCheck, BellRing, Home, MapPin, MessageCircle, Send, Sparkles } from "lucide-react";
 
 import { PhotoCarousel } from "@/components/PhotoCarousel";
 import { supabase } from "@/integrations/supabase/client";
@@ -14,6 +14,8 @@ const DEFAULT_WA_MESSAGE = "Merhaba, Nova'dan geldim bilgi alabilir miyim?";
 
 const QUERY_STALE = 5 * 60 * 1000;
 const QUERY_GC = 30 * 60 * 1000;
+/** Alt bilgilendirme kutucuklarının başlıkları; metinler admin panelinden (footer_text) gelir. */
+const FOOTER_BOX_LABELS = ["Ofis", "Yenişehir", "Kayapınar", "Bağlar"];
 
 const listingsQueryOptions = {
   queryKey: ["public-listings"],
@@ -168,25 +170,25 @@ function ListingStrip({
         className="h-[220px] w-full md:h-64"
       />
 
-      <span className="pointer-events-none absolute right-3 top-3 z-20 flex items-center gap-1 rounded-full border border-primary/30 bg-background/70 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-primary shadow-sm backdrop-blur-md md:right-6 md:top-5 md:text-[10px]">
+      <span className="pointer-events-none absolute right-3 top-3 z-20 flex items-center gap-1 rounded-full bg-primary px-2.5 py-1 text-[9px] font-bold uppercase tracking-wider text-primary-foreground shadow-[0_8px_20px_-6px_var(--card-glow)] md:right-6 md:top-5 md:text-[10px]">
         <BadgeCheck className="size-3" />
         Onaylı İlan
       </span>
 
       {item.venue?.trim() ? (
-        <span className="pointer-events-none absolute right-3 top-[30px] z-20 flex items-center gap-1 rounded-full border border-border/60 bg-background/70 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-foreground/90 shadow-sm backdrop-blur-md md:right-6 md:top-[38px] md:text-[10px]">
-          <Home className="size-3" />
+        <span className="pointer-events-none absolute right-3 top-[32px] z-20 flex items-center gap-1 rounded-full border border-primary/35 bg-background/95 px-2.5 py-1 text-[9px] font-bold uppercase tracking-wider text-foreground shadow-md backdrop-blur-md md:right-6 md:top-[42px] md:text-[10px]">
+          <Home className="size-3 text-primary" />
           {item.venue}
         </span>
       ) : null}
 
       <div className="pointer-events-none absolute inset-x-3 bottom-3 z-20 flex items-end justify-between gap-2 md:inset-x-6 md:bottom-5">
 
-        <div className="min-w-0">
-          <h2 className="truncate text-sm font-black tracking-tight text-image-foreground xs:text-base md:text-xl">
+        <div className="min-w-0 rounded-2xl bg-background/95 px-3 py-2 shadow-[0_12px_30px_-14px_var(--card-glow)] ring-1 ring-border backdrop-blur-md md:px-4">
+          <h2 className="truncate text-sm font-black tracking-tight text-foreground xs:text-base md:text-xl">
             {item.name}
           </h2>
-          <span className="mt-1.5 block text-sm font-extrabold tracking-wider text-image-foreground xs:text-base md:text-lg">
+          <span className="mt-0.5 block text-sm font-black tracking-wider text-primary xs:text-base md:text-lg">
             {formatPhone(item.phone)}
           </span>
         </div>
@@ -219,13 +221,24 @@ function Index() {
 
   return (
     <div className="min-h-screen">
-      <div className="relative z-40 border-b border-border bg-background/95 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-3xl items-center gap-2.5 px-3 py-2.5 xs:px-4 md:px-6">
-          <div className="grid size-10 shrink-0 place-items-center rounded-full border border-primary bg-secondary text-sm font-black text-primary shadow-[0_0_18px_var(--card-glow)]">
+      <div className="relative z-40 overflow-hidden border-b border-border/60 bg-background/90 backdrop-blur-xl">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 top-0 h-[3px] bg-gradient-to-r from-primary via-accent to-primary"
+        />
+        <div className="mx-auto flex max-w-3xl items-center gap-3 px-3 py-3 xs:px-4 md:px-6">
+          <div className="grid size-11 shrink-0 place-items-center rounded-2xl bg-cta text-sm font-black text-primary-foreground shadow-glow-gold">
             DR
           </div>
-          <p className="truncate text-sm font-black text-foreground">{siteConfig.siteName}</p>
-          <span className="ml-auto shrink-0 rounded-full border border-primary/40 bg-secondary px-2.5 py-1 text-[11px] font-black text-primary">
+          <div className="min-w-0">
+            <p className="truncate text-sm font-black tracking-tight text-foreground md:text-base">
+              {siteConfig.siteName}
+            </p>
+            <p className="truncate text-[10px] font-semibold text-muted-foreground md:text-[11px]">
+              {siteConfig.subtitle}
+            </p>
+          </div>
+          <span className="ml-auto shrink-0 rounded-full bg-primary/10 px-3 py-1 text-[11px] font-black text-primary ring-1 ring-primary/30">
             {listings.length} İlan
           </span>
         </div>
@@ -234,13 +247,19 @@ function Index() {
       <main className="mx-auto max-w-3xl pb-14 pt-5 md:pt-8">
 
 
-        <section className="mx-3 mt-4 grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 rounded-2xl border border-primary/40 bg-showcase-card p-3 shadow-[0_14px_34px_-24px_var(--card-glow)] xs:mx-4 md:mx-6 md:mt-6 md:p-4">
-          <div className="grid size-10 shrink-0 place-items-center rounded-full bg-primary/10 text-primary">
+        <section className="relative mx-3 mt-4 grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 overflow-hidden rounded-2xl border border-primary/40 bg-gradient-to-r from-primary/12 via-card to-accent/10 p-4 shadow-[0_16px_40px_-24px_var(--card-glow)] ring-1 ring-primary/15 xs:mx-4 md:mx-6 md:mt-6 md:gap-4 md:p-5">
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-primary/60 to-transparent"
+          />
+          <div className="grid size-11 shrink-0 place-items-center rounded-2xl bg-primary text-primary-foreground shadow-glow-gold">
             <BellRing className="size-5" />
           </div>
           <div className="min-w-0">
-            <h2 className="text-xs font-black text-primary">{siteConfig.banner.title}</h2>
-            <p className="mt-0.5 line-clamp-2 text-[10px] leading-relaxed text-muted-foreground md:text-xs">
+            <h2 className="text-xs font-black uppercase tracking-widest text-primary md:text-sm">
+              {siteConfig.banner.title}
+            </h2>
+            <p className="mt-1 text-[11px] font-medium leading-relaxed text-foreground/80 md:text-xs">
               {siteConfig.banner.text}
             </p>
           </div>
@@ -249,9 +268,10 @@ function Index() {
             target="_blank"
             rel="noopener noreferrer"
             aria-label={siteConfig.banner.ctaLabel}
-            className="grid size-10 shrink-0 place-items-center rounded-full bg-primary text-primary-foreground transition-transform hover:scale-105"
+            className="flex shrink-0 items-center gap-1.5 rounded-full bg-primary px-3 py-2 text-[11px] font-black text-primary-foreground shadow-glow-gold transition-transform hover:scale-105 md:px-4 md:text-xs"
           >
             <Send className="size-4" />
+            Yaz
           </a>
         </section>
 
@@ -264,7 +284,7 @@ function Index() {
                 href={contactHref}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`relative grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 overflow-hidden rounded-2xl p-3 text-left ring-1 ${
+                className={`relative grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 overflow-hidden rounded-2xl p-4 text-left ring-1 md:gap-4 md:p-5 ${
                   promo.variant === "primary"
                     ? "bg-cta-hot shadow-glow-gold ring-primary/50 transition-transform duration-200 hover:scale-[1.015]"
                     : "bg-cta-alt ring-border"
@@ -280,20 +300,25 @@ function Index() {
                       aria-hidden
                       className="pointer-events-none absolute inset-x-4 top-0 h-px bg-gradient-to-r from-transparent via-primary-foreground/80 to-transparent"
                     />
+                    <span
+                      aria-hidden
+                      className="pointer-events-none absolute inset-x-4 bottom-0 h-px bg-gradient-to-r from-transparent via-primary-foreground/40 to-transparent"
+                    />
                   </>
                 ) : null}
-                <span className="relative grid size-10 shrink-0 place-items-center rounded-full bg-background/25 text-primary-foreground ring-1 ring-primary-foreground/35 backdrop-blur-md">
-                  <MessageCircle className="size-5" aria-hidden />
+                <span className="relative grid size-11 shrink-0 place-items-center rounded-2xl bg-background/25 text-primary-foreground ring-1 ring-primary-foreground/35 backdrop-blur-md">
+                  <Sparkles className="size-5" aria-hidden />
                 </span>
                 <span className="relative min-w-0">
-                  <span className="block text-xs font-black uppercase text-primary-foreground drop-shadow-sm md:text-sm">
+                  <span className="block text-sm font-black uppercase tracking-wide text-primary-foreground drop-shadow-sm md:text-base">
                     {promo.title}
                   </span>
-                  <span className="mt-0.5 line-clamp-2 block text-[10px] font-semibold leading-relaxed text-primary-foreground/95 md:text-xs">
+                  <span className="mt-1 block text-[11px] font-semibold leading-relaxed text-primary-foreground/95 md:text-xs">
                     {promo.text}
                   </span>
                 </span>
-                <span className="relative shrink-0 rounded-full bg-background/25 px-3 py-2 text-[11px] font-black text-primary-foreground ring-1 ring-primary-foreground/40 backdrop-blur-md">
+                <span className="relative flex shrink-0 items-center gap-1.5 rounded-full bg-background/25 px-3.5 py-2 text-[11px] font-black text-primary-foreground ring-1 ring-primary-foreground/40 backdrop-blur-md md:px-4 md:text-xs">
+                  <MessageCircle className="size-4" aria-hidden />
                   {promo.ctaLabel}
                 </span>
               </a>
@@ -326,55 +351,43 @@ function Index() {
         )}
 
         {settings.footerText ? (
-          <section className="relative mx-3 mt-10 overflow-hidden rounded-3xl border border-primary/35 bg-gradient-to-b from-card/90 via-card/60 to-card/30 p-6 shadow-[0_26px_80px_-30px_var(--card-glow),0_0_40px_-18px_var(--card-glow)] ring-1 ring-primary/10 backdrop-blur-2xl xs:mx-4 md:mx-6 md:mt-14 md:p-9">
-            <div
-              aria-hidden
-              className="pointer-events-none absolute -top-20 left-1/2 h-48 w-[26rem] -translate-x-1/2 rounded-full bg-primary/25 blur-3xl"
-            />
-            <div
-              aria-hidden
-              className="pointer-events-none absolute -bottom-24 -right-10 h-52 w-72 rounded-full bg-primary/10 blur-3xl"
-            />
-            <div
-              aria-hidden
-              className="pointer-events-none absolute -left-16 top-1/3 h-40 w-40 rounded-full bg-accent/10 blur-3xl"
-            />
-            <div
-              aria-hidden
-              className="pointer-events-none absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-primary/70 to-transparent"
-            />
-            <div
-              aria-hidden
-              className="pointer-events-none absolute inset-x-8 bottom-0 h-px bg-gradient-to-r from-transparent via-primary/25 to-transparent"
-            />
+          <section className="mx-3 mt-10 xs:mx-4 md:mx-6 md:mt-14">
+            <div className="mb-4 flex items-center gap-2.5 px-1 md:mb-5">
+              <span className="grid size-9 shrink-0 place-items-center rounded-2xl bg-cta text-primary-foreground shadow-glow-gold">
+                <Sparkles className="size-4" aria-hidden />
+              </span>
+              <h2 className="text-base font-black tracking-[0.08em] text-foreground md:text-lg">
+                Diyarbakır
+              </h2>
+              <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.18em] text-primary ring-1 ring-primary/25 md:text-[10px]">
+                Rehber
+              </span>
+            </div>
 
-            <div className="relative">
-              <div className="flex items-center gap-2.5">
-                <span className="relative grid size-9 shrink-0 place-items-center rounded-full border border-primary/50 bg-gradient-to-br from-primary/25 to-primary/5 text-primary shadow-[0_0_20px_-4px_var(--card-glow)]">
-                  <Sparkles className="size-4" aria-hidden />
-                </span>
-                <h2 className="bg-gradient-to-r from-foreground via-foreground to-primary/80 bg-clip-text text-base font-black tracking-[0.08em] text-transparent drop-shadow-[0_0_16px_var(--card-glow)] md:text-lg">
-                  Diyarbakır
-                </h2>
-                <span className="inline-flex items-center gap-1 rounded-full border border-primary/45 bg-primary/15 px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.18em] text-primary shadow-[0_0_18px_-5px_var(--card-glow)] md:text-[10px]">
-                  Rehber
-                </span>
-              </div>
-              <div
-                aria-hidden
-                className="mt-3.5 h-px w-full bg-gradient-to-r from-primary/60 via-primary/20 to-transparent"
-              />
-
-              <div className="relative mt-5 space-y-4 border-l border-primary/25 pl-4 md:mt-6 md:space-y-5 md:pl-6">
-                {settings.footerText.split(/\n{2,}/).map((para, i) => (
-                  <p
+            <div className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
+              {settings.footerText
+                .split(/\n{2,}/)
+                .map((para) => para.trim())
+                .filter(Boolean)
+                .slice(0, 4)
+                .map((para, i) => (
+                  <div
                     key={i}
-                    className="whitespace-pre-line text-[13px] font-medium leading-[1.85] text-foreground/85 md:text-sm"
+                    className="relative overflow-hidden rounded-2xl border border-primary/25 bg-showcase-card p-4 shadow-[0_16px_40px_-26px_var(--card-glow)] ring-1 ring-primary/10 md:p-5"
                   >
-                    {para}
-                  </p>
+                    <div
+                      aria-hidden
+                      className="pointer-events-none absolute inset-x-4 top-0 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent"
+                    />
+                    <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-1 text-[9px] font-bold uppercase tracking-widest text-primary ring-1 ring-primary/25 md:text-[10px]">
+                      <MapPin className="size-3" aria-hidden />
+                      {FOOTER_BOX_LABELS[i] ?? `Bölge ${i + 1}`}
+                    </span>
+                    <p className="mt-2.5 whitespace-pre-line text-[11px] font-medium leading-relaxed text-foreground/80 md:text-xs">
+                      {para}
+                    </p>
+                  </div>
                 ))}
-              </div>
             </div>
           </section>
         ) : null}
