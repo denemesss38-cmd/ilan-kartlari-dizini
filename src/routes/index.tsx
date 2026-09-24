@@ -7,6 +7,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { resolvePhotoUrls } from "@/lib/photos";
 import { siteConfig, type Listing } from "@/data/listings";
 import { parseFooterBoxes } from "@/lib/footer-boxes";
+import footerImage1 from "@/assets/placeholder-1.jpg";
+import footerImage2 from "@/assets/placeholder-2.jpg";
+import footerImage3 from "@/assets/placeholder-3.jpg";
+
+const FOOTER_IMAGES = [footerImage1, footerImage2, footerImage3];
 
 const DEFAULT_TITLE = "Diyarbakır İlan Rehberi — Güncel İlanlar ve İletişim";
 const DEFAULT_DESCRIPTION =
