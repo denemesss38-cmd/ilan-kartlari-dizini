@@ -16,8 +16,8 @@ export function parseFooterBoxes(value: string): FooterBox[] {
       return parsed.flatMap((item) => {
         if (!item || typeof item !== "object") return [];
         const record = item as Record<string, unknown>;
-        const title = typeof record.title === "string" ? record.title.trim() : "";
-        const text = typeof record.text === "string" ? record.text.trim() : "";
+        const title = typeof record["title"] === "string" ? record["title"].trim() : "";
+        const text = typeof record["text"] === "string" ? record["text"].trim() : "";
         return title || text ? [{ title, text }] : [];
       });
     }
