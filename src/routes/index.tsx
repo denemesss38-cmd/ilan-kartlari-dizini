@@ -7,6 +7,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { resolvePhotoUrls } from "@/lib/photos";
 import { siteConfig, type Listing } from "@/data/listings";
 import { parseFooterBoxes } from "@/lib/footer-boxes";
+import footerImage1 from "@/assets/placeholder-1.jpg";
+import footerImage2 from "@/assets/placeholder-2.jpg";
+import footerImage3 from "@/assets/placeholder-3.jpg";
+
+const FOOTER_IMAGES = [footerImage1, footerImage2, footerImage3];
 
 const DEFAULT_TITLE = "Diyarbakır İlan Rehberi — Güncel İlanlar ve İletişim";
 const DEFAULT_DESCRIPTION =
@@ -375,23 +380,32 @@ function Index() {
               </span>
             </div>
 
-            <div className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
+            <div className="space-y-3 md:space-y-4">
               {footerBoxes.map((box, i) => (
                   <div
                     key={i}
-                    className="relative overflow-hidden rounded-2xl border border-primary/25 bg-showcase-card p-4 shadow-[0_16px_40px_-26px_var(--card-glow)] ring-1 ring-primary/10 md:p-5"
+                    className="relative grid grid-cols-[auto_minmax(0,1fr)] items-center gap-3 overflow-hidden rounded-2xl border border-primary/25 bg-showcase-card p-3 shadow-[0_16px_40px_-26px_var(--card-glow)] ring-1 ring-primary/10 md:gap-4 md:p-4"
                   >
                     <div
                       aria-hidden
                       className="pointer-events-none absolute inset-x-4 top-0 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent"
                     />
-                    <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-1 text-[9px] font-bold uppercase tracking-widest text-primary ring-1 ring-primary/25 md:text-[10px]">
-                      <MapPin className="size-3" aria-hidden />
-                      {box.title || `Bölge ${i + 1}`}
-                    </span>
-                    <p className="mt-2.5 whitespace-pre-line text-[11px] font-medium leading-relaxed text-foreground/80 md:text-xs">
-                      {box.text}
-                    </p>
+                    <img
+                      src={FOOTER_IMAGES[i % FOOTER_IMAGES.length]}
+                      alt={box.title || `Bölge ${i + 1}`}
+                      loading="lazy"
+                      decoding="async"
+                      className="size-20 shrink-0 rounded-xl object-cover ring-1 ring-primary/20 md:size-24"
+                    />
+                    <div className="min-w-0">
+                      <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-1 text-[9px] font-bold uppercase tracking-widest text-primary ring-1 ring-primary/25 md:text-[10px]">
+                        <MapPin className="size-3" aria-hidden />
+                        {box.title || `Bölge ${i + 1}`}
+                      </span>
+                      <p className="mt-2 whitespace-pre-line text-[11px] font-medium leading-relaxed text-foreground/80 md:text-xs">
+                        {box.text}
+                      </p>
+                    </div>
                   </div>
                 ))}
             </div>
