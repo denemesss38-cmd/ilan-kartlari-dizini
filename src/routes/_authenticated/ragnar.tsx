@@ -66,7 +66,7 @@ function AdminPage() {
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState({ done: 0, total: 0 });
   const [detailsOpen, setDetailsOpen] = useState(false);
-  const [tab, setTab] = useState<"listings" | "showcase" | "seo">("listings");
+  const [tab, setTab] = useState<"listings" | "showcase" | "seo" | "stats">("listings");
 
   const roleQuery = useQuery({
     queryKey: ["my-admin-role"],
@@ -252,12 +252,13 @@ function AdminPage() {
 
       <main className="mx-auto max-w-3xl px-3 pb-16 pt-4">
         {/* Sekmeli düzen: her başlık kendi bölümünü açar, sayfa karışmaz. */}
-        <nav className="grid grid-cols-3 gap-1 rounded-2xl border border-border bg-secondary/60 p-1">
+        <nav className="grid grid-cols-4 gap-1 rounded-2xl border border-border bg-secondary/60 p-1">
           {(
             [
               { key: "listings", label: `İlanlar (${items.length})` },
               { key: "showcase", label: "Vitrin & Hız" },
               { key: "seo", label: "SEO & Bölgeler" },
+              { key: "stats", label: "İstatistik" },
             ] as const
           ).map((t) => (
             <button
@@ -282,6 +283,8 @@ function AdminPage() {
         ) : null}
 
         {tab === "seo" ? <SeoSettings /> : null}
+
+        {tab === "stats" ? <StatsPanel items={items} /> : null}
 
         {tab === "listings" ? (
         <>
