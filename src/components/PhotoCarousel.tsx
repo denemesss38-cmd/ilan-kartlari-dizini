@@ -53,6 +53,7 @@ export function PhotoCarousel({
   onLightboxOpenChange,
   interactive = true,
   priority = false,
+  direction = "left",
 }: Props) {
   const list = useMemo(() => (photos ?? []).filter(Boolean), [photos]);
   const count = list.length;
