@@ -14,6 +14,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as KurulumRouteImport } from './routes/kurulum'
 import { Route as AuthenticatedRagnarRouteImport } from './routes/_authenticated/ragnar'
+import { Route as IlanIdRouteImport } from './routes/ilan.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -39,18 +40,25 @@ const AuthenticatedRagnarRoute = AuthenticatedRagnarRouteImport.update({
   path: '/ragnar',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const IlanIdRoute = IlanIdRouteImport.update({
+  id: '/ilan/$id',
+  path: '/ilan/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/kurulum': typeof KurulumRoute
   '/ragnar': typeof AuthenticatedRagnarRoute
+  '/ilan/$id': typeof IlanIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/kurulum': typeof KurulumRoute
   '/ragnar': typeof AuthenticatedRagnarRoute
+  '/ilan/$id': typeof IlanIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -59,12 +67,13 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/kurulum': typeof KurulumRoute
   '/_authenticated/ragnar': typeof AuthenticatedRagnarRoute
+  '/ilan/$id': typeof IlanIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/kurulum' | '/ragnar'
+  fullPaths: '/' | '/auth' | '/kurulum' | '/ragnar' | '/ilan/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/kurulum' | '/ragnar'
+  to: '/' | '/auth' | '/kurulum' | '/ragnar' | '/ilan/$id'
   id:
     | '__root__'
     | '/'
@@ -72,6 +81,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/kurulum'
     | '/_authenticated/ragnar'
+    | '/ilan/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -79,6 +89,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   KurulumRoute: typeof KurulumRoute
+  IlanIdRoute: typeof IlanIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -118,6 +129,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRagnarRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/ilan/$id': {
+      id: '/ilan/$id'
+      path: '/ilan/$id'
+      fullPath: '/ilan/$id'
+      preLoaderRoute: typeof IlanIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -137,6 +155,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   KurulumRoute: KurulumRoute,
+  IlanIdRoute: IlanIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
