@@ -180,14 +180,23 @@ function ListingStrip({
         </span>
       </div>
       </Link>
+      {/* Sol altta küçük, siyah zeminli telefon kapsülü (tel:) */}
+      <a
+        href={`tel:${(item.phone || item.whatsapp || "").replace(/[^\d+]/g, "")}`}
+        aria-label={`${item.name} numarasını ara`}
+        className="absolute bottom-3 left-3 z-30 flex items-center gap-1.5 rounded-full bg-black/90 px-2.5 py-1 text-[10px] font-semibold leading-none text-white ring-1 ring-white/15 transition-colors hover:bg-black md:bottom-5 md:left-6 md:px-3 md:py-1.5 md:text-xs"
+      >
+        <Phone className="size-3 md:size-3.5" />
+        <span className="tracking-wide">{formatPhone(item.phone || item.whatsapp || "")}</span>
+      </a>
       <a
         href={waLink(item.whatsapp || item.phone, item.whatsapp_message?.trim() || message)}
         target="_blank"
         rel="noopener noreferrer"
         aria-label={`${item.name} WhatsApp ile yaz`}
-        className="whatsapp-shake absolute bottom-3 right-3 z-30 grid size-11 place-items-center rounded-full bg-whatsapp text-primary-foreground ring-1 ring-border md:bottom-5 md:right-6 md:size-14"
+        className="whatsapp-shake absolute bottom-3 right-3 z-30 grid size-11 place-items-center rounded-full bg-whatsapp text-white shadow-lg ring-1 ring-border md:bottom-5 md:right-6 md:size-14"
       >
-        <MessageCircle className="size-6 md:size-7" />
+        <WhatsAppGlyph className="size-6 md:size-7" />
       </a>
     </article>
   );
