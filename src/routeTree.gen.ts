@@ -14,7 +14,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as KurulumRouteImport } from './routes/kurulum'
 import { Route as AuthenticatedRagnarRouteImport } from './routes/_authenticated/ragnar'
-import { Route as IlanIdRouteImport } from './routes/ilan.$id'
+import { Route as DiyarbakirIlanlarSayfasiIdRouteImport } from './routes/diyarbakir-ilanlar-sayfasi.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -40,25 +40,26 @@ const AuthenticatedRagnarRoute = AuthenticatedRagnarRouteImport.update({
   path: '/ragnar',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const IlanIdRoute = IlanIdRouteImport.update({
-  id: '/ilan/$id',
-  path: '/ilan/$id',
-  getParentRoute: () => rootRouteImport,
-} as any)
+const DiyarbakirIlanlarSayfasiIdRoute =
+  DiyarbakirIlanlarSayfasiIdRouteImport.update({
+    id: '/diyarbakir-ilanlar-sayfasi/$id',
+    path: '/diyarbakir-ilanlar-sayfasi/$id',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/kurulum': typeof KurulumRoute
   '/ragnar': typeof AuthenticatedRagnarRoute
-  '/ilan/$id': typeof IlanIdRoute
+  '/diyarbakir-ilanlar-sayfasi/$id': typeof DiyarbakirIlanlarSayfasiIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/kurulum': typeof KurulumRoute
   '/ragnar': typeof AuthenticatedRagnarRoute
-  '/ilan/$id': typeof IlanIdRoute
+  '/diyarbakir-ilanlar-sayfasi/$id': typeof DiyarbakirIlanlarSayfasiIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -67,13 +68,14 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/kurulum': typeof KurulumRoute
   '/_authenticated/ragnar': typeof AuthenticatedRagnarRoute
-  '/ilan/$id': typeof IlanIdRoute
+  '/diyarbakir-ilanlar-sayfasi/$id': typeof DiyarbakirIlanlarSayfasiIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/kurulum' | '/ragnar' | '/ilan/$id'
+  fullPaths:
+    '/' | '/auth' | '/kurulum' | '/ragnar' | '/diyarbakir-ilanlar-sayfasi/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/kurulum' | '/ragnar' | '/ilan/$id'
+  to: '/' | '/auth' | '/kurulum' | '/ragnar' | '/diyarbakir-ilanlar-sayfasi/$id'
   id:
     | '__root__'
     | '/'
@@ -81,7 +83,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/kurulum'
     | '/_authenticated/ragnar'
-    | '/ilan/$id'
+    | '/diyarbakir-ilanlar-sayfasi/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -89,7 +91,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   KurulumRoute: typeof KurulumRoute
-  IlanIdRoute: typeof IlanIdRoute
+  DiyarbakirIlanlarSayfasiIdRoute: typeof DiyarbakirIlanlarSayfasiIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -129,11 +131,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRagnarRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/ilan/$id': {
-      id: '/ilan/$id'
-      path: '/ilan/$id'
-      fullPath: '/ilan/$id'
-      preLoaderRoute: typeof IlanIdRouteImport
+    '/diyarbakir-ilanlar-sayfasi/$id': {
+      id: '/diyarbakir-ilanlar-sayfasi/$id'
+      path: '/diyarbakir-ilanlar-sayfasi/$id'
+      fullPath: '/diyarbakir-ilanlar-sayfasi/$id'
+      preLoaderRoute: typeof DiyarbakirIlanlarSayfasiIdRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -155,7 +157,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   KurulumRoute: KurulumRoute,
-  IlanIdRoute: IlanIdRoute,
+  DiyarbakirIlanlarSayfasiIdRoute: DiyarbakirIlanlarSayfasiIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
