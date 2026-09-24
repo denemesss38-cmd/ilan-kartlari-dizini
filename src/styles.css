@@ -208,7 +208,7 @@
 }
 
 .photo-marquee-track {
-  animation: photo-marquee-slide 28s linear infinite;
+  animation: photo-marquee-slide var(--marquee-duration, 22s) linear infinite;
   will-change: transform;
   transform: translate3d(0, 0, 0);
   backface-visibility: hidden;

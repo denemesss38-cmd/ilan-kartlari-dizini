@@ -14,7 +14,7 @@ const DEFAULT_WA_MESSAGE = "Merhaba, Nova'dan geldim bilgi alabilir miyim?";
 
 const QUERY_STALE = 5 * 60 * 1000;
 const QUERY_GC = 30 * 60 * 1000;
-/** Alt bilgilendirme kutucuklarının başlıkları; metinler admin panelinden (footer_text) gelir. */
+/** İlk alt bilgilendirme kutucuklarının başlıkları; devamı otomatik numaralanır. */
 const FOOTER_BOX_LABELS = ["Ofis", "Yenişehir", "Kayapınar", "Bağlar"];
 
 const listingsQueryOptions = {
@@ -167,7 +167,7 @@ function ListingStrip({
         split={3}
         interactive={false}
         priority={priority}
-        className="h-[220px] w-full md:h-64"
+        className="h-[200px] w-full md:h-60"
       />
 
       <span className="pointer-events-none absolute right-3 top-3 z-20 flex items-center gap-1 rounded-full bg-primary px-2.5 py-1 text-[9px] font-bold uppercase tracking-wider text-primary-foreground shadow-[0_8px_20px_-6px_var(--card-glow)] md:right-6 md:top-5 md:text-[10px]">
@@ -184,11 +184,11 @@ function ListingStrip({
 
       <div className="pointer-events-none absolute inset-x-3 bottom-3 z-20 flex items-end justify-between gap-2 md:inset-x-6 md:bottom-5">
 
-        <div className="min-w-0">
-          <h2 className="truncate text-base font-black tracking-tight text-image-foreground drop-shadow-[0_1px_5px_var(--image-overlay)] xs:text-lg md:text-2xl">
+        <div className="min-w-0 space-y-1.5">
+          <h2 className="truncate text-sm font-black text-image-foreground md:text-base">
             {item.name}
           </h2>
-          <span className="mt-0.5 block text-base font-black tracking-wider text-image-foreground drop-shadow-[0_1px_5px_var(--image-overlay)] xs:text-lg md:text-xl">
+          <span className="inline-flex max-w-full rounded-full bg-foreground px-2.5 py-1 text-sm font-black text-background md:px-3 md:text-base">
             {formatPhone(item.phone)}
           </span>
         </div>
@@ -316,7 +316,7 @@ function Index() {
         {listingsQuery.isLoading ? (
           <div className="mt-5 md:mt-8">
             {[0, 1, 2, 3].map((i) => (
-              <div key={i} className="h-[220px] w-full animate-pulse bg-secondary/60 md:h-64" />
+              <div key={i} className="h-[200px] w-full animate-pulse bg-secondary/60 md:h-60" />
             ))}
           </div>
         ) : listings.length === 0 ? (
@@ -325,7 +325,7 @@ function Index() {
             Şu anda yayınlanmış ilan bulunmuyor.
           </p>
         ) : (
-          <div className="mt-5 md:mt-8">
+          <div className="mt-5 space-y-[2px] bg-background md:mt-8">
             {listings.map((item, index) => (
               <ListingStrip
                 key={item.id}
@@ -357,7 +357,6 @@ function Index() {
                 .split(/\n{2,}/)
                 .map((para) => para.trim())
                 .filter(Boolean)
-                .slice(0, 4)
                 .map((para, i) => (
                   <div
                     key={i}

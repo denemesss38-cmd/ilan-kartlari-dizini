@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import { ChevronLeft, ChevronRight, ImageOff, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -105,6 +105,8 @@ export function PhotoCarousel({
   }
 
   const animationPaused = reduced || intervalSeconds === 0 || pressed;
+  // Paneldeki değer, şeridin akış süresine çevrilir. Küçük değer daha hızlı akış demektir.
+  const marqueeDuration = Math.max(14, Math.min(45, intervalSeconds * 5));
 
   return (
     <>
@@ -118,6 +120,7 @@ export function PhotoCarousel({
         <div
           className={`photo-marquee-track flex h-full w-max ${animationPaused ? "is-paused" : ""}`}
           aria-label={`${alt} fotoğraf galerisi`}
+          style={{ "--marquee-duration": `${marqueeDuration}s` } as CSSProperties}
         >
           {[0, 1].map((copy) => (
             <div key={copy} className="flex h-full shrink-0" aria-hidden={copy === 1}>

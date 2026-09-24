@@ -634,7 +634,7 @@ function SeoSettings() {
           textarea
         />
         <Field
-          label="Sayfa altı bilgilendirme metni (boş bırakılırsa vitrinde gösterilmez)"
+          label="Sayfa altı bilgilendirme metni (her boş satırla ayrılan metin yeni kutu olur; boşsa gizlenir)"
           value={current.footerText}
           onChange={(v) => setDraft({ ...current, footerText: v })}
           max={2000}
