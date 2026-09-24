@@ -29,7 +29,7 @@ const listingsQueryOptions = {
     const { data, error } = await supabase
       .from("listings")
       .select(
-        "id, name, location, description, photos, phone, whatsapp, badge, venue, whatsapp_message, age, height, weight, district, meeting, price_note, sort_order, is_published",
+        "id, name, location, description, photos, phone, whatsapp, badge, venue, whatsapp_message, age, height, weight, district, meeting, price_note, scroll_direction, sort_order, is_published",
       )
       .eq("is_published", true)
       .order("sort_order", { ascending: true })
