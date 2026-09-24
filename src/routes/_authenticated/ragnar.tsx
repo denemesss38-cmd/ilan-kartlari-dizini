@@ -556,6 +556,7 @@ function CarouselSpeedSetting() {
 /** Ana sayfa SEO metinleri: sayfa başlığı, açıklama ve anahtar kelimeler. */
 function SeoSettings() {
   const queryClient = useQueryClient();
+  const [openFooterBox, setOpenFooterBox] = useState<number | null>(null);
   const [draft, setDraft] = useState<{
     title: string;
     description: string;
@@ -646,10 +647,13 @@ function SeoSettings() {
             <button
               type="button"
               onClick={() =>
-                setDraft({
-                  ...current,
-                  footerBoxes: [...current.footerBoxes, { title: "Yeni Bölge", text: "" }],
-                })
+                (() => {
+                  setOpenFooterBox(current.footerBoxes.length);
+                  setDraft({
+                    ...current,
+                    footerBoxes: [...current.footerBoxes, { title: "Yeni Bölge", text: "" }],
+                  });
+                })()
               }
               className="flex shrink-0 items-center gap-1 rounded-lg bg-primary px-3 py-2 text-[11px] font-black text-primary-foreground"
             >
@@ -661,47 +665,63 @@ function SeoSettings() {
           <div className="mt-3 space-y-3">
             {current.footerBoxes.map((box, index) => (
               <div key={index} className="rounded-xl border border-border bg-card p-3">
-                <div className="flex items-center justify-between gap-2">
-                  <span className="text-[11px] font-black text-muted-foreground">Kutucuk {index + 1}</span>
+                <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setOpenFooterBox(openFooterBox === index ? null : index)}
+                    className="min-w-0 text-left"
+                  >
+                    <span className="block truncate text-xs font-black text-foreground">
+                      {box.title || `Kutucuk ${index + 1}`}
+                    </span>
+                    <span className="text-[10px] text-muted-foreground">
+                      {openFooterBox === index ? "Kapat" : "Düzenlemek için aç"}
+                    </span>
+                  </button>
                   <button
                     type="button"
                     aria-label={`${box.title || `Kutucuk ${index + 1}`} sil`}
-                    onClick={() =>
+                    onClick={() => {
+                      setOpenFooterBox(null);
                       setDraft({
                         ...current,
                         footerBoxes: current.footerBoxes.filter((_, itemIndex) => itemIndex !== index),
-                      })
-                    }
+                      });
+                    }}
                     className="rounded-lg p-1.5 text-destructive hover:bg-destructive/10"
                   >
                     <Trash2 className="size-4" />
                   </button>
                 </div>
-                <input
-                  value={box.title}
-                  maxLength={50}
-                  placeholder="Bölge adı"
-                  onChange={(event) => {
-                    const boxes = current.footerBoxes.map((item, itemIndex) =>
-                      itemIndex === index ? { ...item, title: event.target.value } : item,
-                    );
-                    setDraft({ ...current, footerBoxes: boxes });
-                  }}
-                  className="mt-2 w-full rounded-xl border border-border bg-secondary px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary"
-                />
-                <textarea
-                  value={box.text}
-                  maxLength={1000}
-                  rows={3}
-                  placeholder="Bölge metni"
-                  onChange={(event) => {
-                    const boxes = current.footerBoxes.map((item, itemIndex) =>
-                      itemIndex === index ? { ...item, text: event.target.value } : item,
-                    );
-                    setDraft({ ...current, footerBoxes: boxes });
-                  }}
-                  className="mt-2 w-full rounded-xl border border-border bg-secondary px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary"
-                />
+                {openFooterBox === index ? (
+                  <div className="mt-3 border-t border-border pt-3">
+                    <input
+                      value={box.title}
+                      maxLength={50}
+                      placeholder="Bölge adı"
+                      onChange={(event) => {
+                        const boxes = current.footerBoxes.map((item, itemIndex) =>
+                          itemIndex === index ? { ...item, title: event.target.value } : item,
+                        );
+                        setDraft({ ...current, footerBoxes: boxes });
+                      }}
+                      className="w-full rounded-xl border border-border bg-secondary px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary"
+                    />
+                    <textarea
+                      value={box.text}
+                      maxLength={1000}
+                      rows={3}
+                      placeholder="Bölge metni"
+                      onChange={(event) => {
+                        const boxes = current.footerBoxes.map((item, itemIndex) =>
+                          itemIndex === index ? { ...item, text: event.target.value } : item,
+                        );
+                        setDraft({ ...current, footerBoxes: boxes });
+                      }}
+                      className="mt-2 w-full rounded-xl border border-border bg-secondary px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary"
+                    />
+                  </div>
+                ) : null}
               </div>
             ))}
             {current.footerBoxes.length === 0 ? (
