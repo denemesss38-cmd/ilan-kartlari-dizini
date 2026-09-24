@@ -258,22 +258,30 @@ function Index() {
       <main className="mx-auto max-w-3xl pb-14 pt-5 md:pt-8">
 
 
-        <section className="mx-3 mt-4 grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 rounded-2xl border border-primary/40 bg-showcase-card p-3 shadow-[0_14px_34px_-24px_var(--card-glow)] xs:mx-4 md:mx-6 md:mt-6 md:p-4">
-          <div className="grid size-10 shrink-0 place-items-center rounded-full bg-primary/10 text-primary">
+        <section className="relative mx-3 mt-4 grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 overflow-hidden rounded-2xl bg-cta-hot p-3 shadow-glow-gold ring-1 ring-primary/50 xs:mx-4 md:mx-6 md:mt-6 md:p-4">
+          <span
+            aria-hidden
+            className="pointer-events-none absolute -top-12 left-1/2 h-28 w-48 -translate-x-1/2 rounded-full bg-primary-foreground/25 blur-3xl"
+          />
+          <span
+            aria-hidden
+            className="pointer-events-none absolute inset-x-4 top-0 h-px bg-gradient-to-r from-transparent via-primary-foreground/80 to-transparent"
+          />
+          <span className="relative grid size-10 shrink-0 place-items-center rounded-full bg-background/25 text-primary-foreground ring-1 ring-primary-foreground/35 backdrop-blur-md">
             <BellRing className="size-5" />
-          </div>
-          <div className="min-w-0">
-            <h2 className="text-xs font-black text-primary">{siteConfig.banner.title}</h2>
-            <p className="mt-0.5 line-clamp-2 text-[10px] leading-relaxed text-muted-foreground md:text-xs">
+          </span>
+          <span className="relative min-w-0">
+            <h2 className="text-xs font-black uppercase text-primary-foreground drop-shadow-sm md:text-sm">{siteConfig.banner.title}</h2>
+            <span className="mt-0.5 line-clamp-2 block text-[10px] font-semibold leading-relaxed text-primary-foreground/95 md:text-xs">
               {siteConfig.banner.text}
-            </p>
-          </div>
+            </span>
+          </span>
           <a
             href={contactHref}
             target="_blank"
             rel="noopener noreferrer"
             aria-label={siteConfig.banner.ctaLabel}
-            className="grid size-10 shrink-0 place-items-center rounded-full bg-primary text-primary-foreground transition-transform hover:scale-105"
+            className="relative shrink-0 rounded-full bg-background/25 px-3 py-2 text-[11px] font-black text-primary-foreground ring-1 ring-primary-foreground/40 backdrop-blur-md transition-transform hover:scale-105"
           >
             <Send className="size-4" />
           </a>
