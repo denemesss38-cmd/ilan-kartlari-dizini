@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, ChevronLeft, ChevronRight, Eye, Phone } from "lucide-react";
+import { ArrowLeft, ChevronLeft, ChevronRight, Phone } from "lucide-react";
 import { useEffect, useState } from "react";
 import { trackListing } from "@/lib/stats";
 
@@ -118,9 +118,7 @@ function ListingDetail() {
       </section>
 
       {views ? (
-        <p className="mt-5 flex items-center justify-center text-destructive" title={`${views} kişi görüntüledi`}>
-          <Eye className="size-5" />
-        </p>
+        <p className="mt-5 text-center text-sm font-black text-destructive">Bu ilanı {views} kişi görüntüledi</p>
       ) : null}
     </main>
   );
