@@ -169,13 +169,17 @@ function ListingStrip({
       />
 
       <div className="pointer-events-none absolute right-2.5 top-2.5 z-20 flex max-w-[70%] flex-col items-end gap-1.5 md:right-5 md:top-4 md:gap-2">
-        <h2 className="rounded-full bg-background/85 px-3.5 py-1 text-xs font-semibold tracking-wide text-foreground shadow-sm ring-1 ring-border/40 backdrop-blur-md md:px-4 md:py-1 md:text-sm">
-          {item.name}
-        </h2>
         <span className="flex items-center gap-1 rounded-full border border-primary/35 bg-background/85 px-2.5 py-1 text-[9px] font-bold uppercase tracking-wider text-foreground shadow-sm backdrop-blur-md md:px-3 md:py-1.5 md:text-[11px]">
           <Home className="size-3 md:size-3.5 text-primary" />
           {item.venue?.trim() || ""}
         </span>
+        <h2 className="relative overflow-hidden rounded-full border border-primary/20 bg-gradient-to-l from-primary/20 via-background/80 to-background/85 px-3.5 py-1 text-xs font-medium tracking-[0.02em] text-foreground shadow-[0_8px_20px_-12px_var(--card-glow)] ring-1 ring-primary/15 backdrop-blur-md md:px-4 md:py-1.5 md:text-sm">
+          <span
+            aria-hidden
+            className="pointer-events-none absolute inset-x-3 top-0 h-px bg-gradient-to-r from-transparent via-primary/60 to-transparent"
+          />
+          <span className="relative">{item.name}</span>
+        </h2>
         <span className="flex items-center gap-1 rounded-full border border-primary/35 bg-background/85 px-2.5 py-1 text-[9px] font-bold uppercase tracking-wider text-foreground shadow-sm backdrop-blur-md md:px-3 md:py-1.5 md:text-[11px]">
           {item.price_note?.trim() || ""}
         </span>
