@@ -1,18 +1,17 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { BellRing, MapPin, Phone, Send, Sparkles } from "lucide-react";
+import { BellRing, MapPin, MessageCircle, Phone, Send, Sparkles } from "lucide-react";
 
 import { PhotoCarousel } from "@/components/PhotoCarousel";
 import { supabase } from "@/integrations/supabase/client";
 import { resolvePhotoUrls } from "@/lib/photos";
 import { siteConfig, type Listing } from "@/data/listings";
 import { parseFooterBoxes } from "@/lib/footer-boxes";
-import footerImage1 from "@/assets/placeholder-1.jpg";
-import footerImage2 from "@/assets/placeholder-2.jpg";
-import footerImage3 from "@/assets/placeholder-3.jpg";
-import girlPromo from "@/assets/girl-promo.jpg";
+import girlImage1 from "@/assets/girl-promo.jpg";
+import girlImage2 from "@/assets/girl-2.jpg";
+import girlImage3 from "@/assets/girl-3.jpg";
 
-const FOOTER_IMAGES = [footerImage1, footerImage2, footerImage3];
+const FOOTER_IMAGES = [girlImage1, girlImage2, girlImage3];
 
 const DEFAULT_TITLE = "Diyarbakır İlan Rehberi — Güncel İlanlar ve İletişim";
 const DEFAULT_DESCRIPTION =
