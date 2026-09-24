@@ -44,6 +44,7 @@ const emptyDraft: Draft = {
   district: "",
   meeting: "",
   price_note: "",
+  scroll_direction: "left",
   sort_order: 0,
   is_published: true,
 };
@@ -109,6 +110,7 @@ function AdminPage() {
         district: item.district?.trim() || null,
         meeting: item.meeting?.trim() || null,
         price_note: item.price_note?.trim() || null,
+        scroll_direction: item.scroll_direction === "right" ? "right" : "left",
         photos: item.photos,
         sort_order: Number(item.sort_order) || 0,
         is_published: item.is_published,
