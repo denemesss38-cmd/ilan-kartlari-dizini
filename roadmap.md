@@ -40,3 +40,8 @@
 - [x] Fotoğraf şeridi hızını panel ayarına bağla ve varsayılan akışı hızlandır
 - [x] Sayfa altı metinlerinden sınırsız otomatik kutu üret
 - [x] Alt bölge kutularını panelden ad ve metin bazında eklenebilir, düzenlenebilir ve silinebilir yap
+- [ ] Mobil vitrinde 4–5 ilan gösterecek kart ölçüsü ve 3px ilan aralığı
+- [ ] Vitrin kartından telefon kapsülünü kaldır, ayrı WhatsApp düğmesi ve ilan detay bağlantısı ekle
+- [ ] `/ilan/:id` galeri, iletişim düğmeleri ve 6 bilgi kutusuyla detay sayfası
+- [ ] İlan detay alanlarını veritabanına ve admin akordiyonuna bağla
+- [ ] Galeri hız ayarını serbest aralıkta çalıştır ve tüm akışları doğrula
