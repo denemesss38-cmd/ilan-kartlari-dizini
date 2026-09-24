@@ -105,8 +105,8 @@ export function PhotoCarousel({
   }
 
   const animationPaused = reduced || intervalSeconds === 0 || pressed;
-  // Paneldeki değer, şeridin akış süresine çevrilir. Küçük değer daha hızlı akış demektir.
-  const marqueeDuration = Math.max(14, Math.min(45, intervalSeconds * 5));
+  // Panelde girilen değer şeridin tam tur süresidir. Küçük değer daha hızlı akış demektir.
+  const marqueeDuration = Math.max(5, Math.min(60, intervalSeconds));
 
   return (
     <>

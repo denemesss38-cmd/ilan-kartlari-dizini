@@ -14,52 +14,85 @@ export type Database = {
   }
   public: {
     Tables: {
+      app_state: {
+        Row: {
+          key: string
+          updated_at: string
+          value: boolean
+        }
+        Insert: {
+          key: string
+          updated_at?: string
+          value?: boolean
+        }
+        Update: {
+          key?: string
+          updated_at?: string
+          value?: boolean
+        }
+        Relationships: []
+      }
       listings: {
         Row: {
+          age: string | null
           badge: string | null
           created_at: string
           description: string
+          district: string | null
+          height: string | null
           id: string
           is_published: boolean
           location: string
+          meeting: string | null
           name: string
           phone: string
           photos: string[]
           sort_order: number
           updated_at: string
           venue: string | null
+          weight: string | null
           whatsapp: string
           whatsapp_message: string
         }
         Insert: {
+          age?: string | null
           badge?: string | null
           created_at?: string
           description?: string
+          district?: string | null
+          height?: string | null
           id?: string
           is_published?: boolean
           location?: string
+          meeting?: string | null
           name: string
           phone?: string
           photos?: string[]
           sort_order?: number
           updated_at?: string
           venue?: string | null
+          weight?: string | null
           whatsapp?: string
           whatsapp_message?: string
         }
         Update: {
+          age?: string | null
           badge?: string | null
           created_at?: string
           description?: string
+          district?: string | null
+          height?: string | null
           id?: string
           is_published?: boolean
           location?: string
+          meeting?: string | null
           name?: string
           phone?: string
           photos?: string[]
           sort_order?: number
           updated_at?: string
           venue?: string | null
+          weight?: string | null
           whatsapp?: string
           whatsapp_message?: string
         }

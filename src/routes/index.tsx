@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { BadgeCheck, BellRing, Home, MapPin, MessageCircle, Send, Sparkles } from "lucide-react";
 
@@ -24,7 +24,7 @@ const listingsQueryOptions = {
     const { data, error } = await supabase
       .from("listings")
       .select(
-        "id, name, location, description, photos, phone, whatsapp, badge, venue, whatsapp_message, sort_order, is_published",
+        "id, name, location, description, photos, phone, whatsapp, badge, venue, whatsapp_message, age, height, weight, district, meeting, sort_order, is_published",
       )
       .eq("is_published", true)
       .order("sort_order", { ascending: true })
@@ -63,13 +63,13 @@ const settingsQueryOptions = {
         "footer_text",
       ]);
     const map = new Map((data ?? []).map((r) => [r.key, r.value]));
-    const raw = Number(map.get("carousel_interval_seconds") ?? 4);
+    const raw = Number(map.get("carousel_interval_seconds") ?? 22);
     const str = (k: string, fallback: string) => {
       const v = map.get(k);
       return typeof v === "string" && v.trim() ? v.trim() : fallback;
     };
     return {
-      carouselIntervalSeconds: Number.isFinite(raw) && raw >= 0 && raw <= 30 ? raw : 4,
+      carouselIntervalSeconds: Number.isFinite(raw) && raw >= 0 && raw <= 60 ? raw : 22,
       whatsappNumber: str("whatsapp_number", "905551112233"),
       whatsappMessage: str("whatsapp_message", DEFAULT_WA_MESSAGE),
       seoTitle: str("seo_title", DEFAULT_TITLE),
@@ -151,13 +151,13 @@ function ListingStrip({
   priority?: boolean;
 }) {
   return (
-    <a
-      href={waLink(item.whatsapp || item.phone, item.whatsapp_message?.trim() || message)}
-      target="_blank"
-      rel="noopener noreferrer"
-      aria-label={`${item.name} WhatsApp ile yaz`}
-      className="group relative block w-full overflow-hidden"
-    >
+    <article className="group relative w-full overflow-hidden">
+      <Link
+        to="/ilan/$id"
+        params={{ id: item.id }}
+        aria-label={`${item.name} ilan detayını aç`}
+        className="block"
+      >
       <PhotoCarousel
         photos={item.photos}
         alt={item.name}
@@ -165,7 +165,7 @@ function ListingStrip({
         split={3}
         interactive={false}
         priority={priority}
-        className="h-[200px] w-full md:h-60"
+        className="h-[128px] w-full md:h-56"
       />
 
       <span className="pointer-events-none absolute right-3 top-3 z-20 flex items-center gap-1 rounded-full bg-primary px-2.5 py-1 text-[9px] font-bold uppercase tracking-wider text-primary-foreground shadow-[0_8px_20px_-6px_var(--card-glow)] md:right-6 md:top-5 md:text-[10px]">
@@ -182,21 +182,23 @@ function ListingStrip({
 
       <div className="pointer-events-none absolute inset-x-3 bottom-3 z-20 flex items-end justify-between gap-2 md:inset-x-6 md:bottom-5">
 
-        <div className="min-w-0 space-y-1.5">
+        <div className="min-w-0">
           <h2 className="truncate text-sm font-black text-image-foreground md:text-base">
             {item.name}
           </h2>
-          <span className="inline-flex max-w-full rounded-full bg-foreground px-2.5 py-1 text-sm font-black text-background md:px-3 md:text-base">
-            {formatPhone(item.phone)}
-          </span>
         </div>
-
-        <span className="whatsapp-shake flex shrink-0 items-center gap-1.5 rounded-full bg-whatsapp px-3 py-2 text-xs font-black text-primary-foreground ring-1 ring-border md:px-4 md:py-2.5 md:text-sm">
-          <MessageCircle className="size-5 md:size-6" />
-          Yaz
-        </span>
       </div>
-    </a>
+      </Link>
+      <a
+        href={waLink(item.whatsapp || item.phone, item.whatsapp_message?.trim() || message)}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={`${item.name} WhatsApp ile yaz`}
+        className="whatsapp-shake absolute bottom-3 right-3 z-30 grid size-10 place-items-center rounded-full bg-whatsapp text-primary-foreground ring-1 ring-border md:bottom-5 md:right-6 md:size-12"
+      >
+        <MessageCircle className="size-5 md:size-6" />
+      </a>
+    </article>
   );
 }
 
@@ -208,7 +210,7 @@ function Index() {
 
   const listings = listingsQuery.data ?? [];
   const settings = settingsQuery.data ?? {
-    carouselIntervalSeconds: 4,
+    carouselIntervalSeconds: 22,
     whatsappNumber: "905551112233",
     whatsappMessage: DEFAULT_WA_MESSAGE,
     seoTitle: DEFAULT_TITLE,
@@ -315,7 +317,7 @@ function Index() {
         {listingsQuery.isLoading ? (
           <div className="mt-5 md:mt-8">
             {[0, 1, 2, 3].map((i) => (
-              <div key={i} className="h-[200px] w-full animate-pulse bg-secondary/60 md:h-60" />
+              <div key={i} className="h-[128px] w-full animate-pulse bg-secondary/60 md:h-56" />
             ))}
           </div>
         ) : listings.length === 0 ? (
@@ -324,7 +326,7 @@ function Index() {
             Şu anda yayınlanmış ilan bulunmuyor.
           </p>
         ) : (
-          <div className="mt-5 space-y-[2px] bg-background md:mt-8">
+          <div className="mt-5 space-y-[3px] bg-background md:mt-8">
             {listings.map((item, index) => (
               <ListingStrip
                 key={item.id}
