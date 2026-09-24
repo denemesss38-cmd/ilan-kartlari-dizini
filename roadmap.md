@@ -36,3 +36,6 @@
 - [x] Telefon numaralarını siyah/belirgin yap
 - [x] Alt metni 4 kutucuğa böl (Ofis, Yenişehir, Kayapınar, Bağlar)
 - [x] Tümü admin panel entegrasyonunu koru
+- [x] İlan kartlarını küçült, aralarına 2px boşluk ekle ve telefon kapsülünü yenile
+- [x] Fotoğraf şeridi hızını panel ayarına bağla ve varsayılan akışı hızlandır
+- [x] Sayfa altı metinlerinden sınırsız otomatik kutu üret
