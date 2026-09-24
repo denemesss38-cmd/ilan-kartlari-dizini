@@ -24,6 +24,8 @@ type Props = {
   interactive?: boolean;
   /** Yalnızca ilk ekrandaki şeridin görünen fotoğraflarını öncelikli indirir. */
   priority?: boolean;
+  /** Fotoğraf şeridinin akış yönü. */
+  direction?: "left" | "right";
 };
 
 function usePrefersReducedMotion() {
