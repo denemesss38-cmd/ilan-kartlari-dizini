@@ -541,6 +541,7 @@ function AdminPage() {
                       district: item.district ?? "",
                       meeting: item.meeting ?? "",
                       price_note: item.price_note ?? "",
+                      scroll_direction: item.scroll_direction ?? "left",
                       sort_order: item.sort_order,
                       is_published: item.is_published,
                     })
