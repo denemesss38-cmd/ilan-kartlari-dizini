@@ -10,6 +10,7 @@ import { parseFooterBoxes } from "@/lib/footer-boxes";
 import footerImage1 from "@/assets/placeholder-1.jpg";
 import footerImage2 from "@/assets/placeholder-2.jpg";
 import footerImage3 from "@/assets/placeholder-3.jpg";
+import girlPromo from "@/assets/girl-promo.jpg";
 
 const FOOTER_IMAGES = [footerImage1, footerImage2, footerImage3];
 
@@ -323,9 +324,15 @@ function Index() {
                     />
                   </>
                 ) : null}
-                <span className="relative grid size-10 shrink-0 place-items-center rounded-full bg-background/25 text-primary-foreground ring-1 ring-primary-foreground/35 backdrop-blur-md">
-                  <MessageCircle className="size-5" aria-hidden />
-                </span>
+                <img
+                  src={girlPromo}
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                  width={736}
+                  height={912}
+                  className="relative size-12 shrink-0 rounded-full object-cover ring-2 ring-primary-foreground/50 md:size-14"
+                />
                 <span className="relative min-w-0">
                   <span className="block text-xs font-black uppercase text-primary-foreground drop-shadow-sm md:text-sm">
                     {promo.title}
