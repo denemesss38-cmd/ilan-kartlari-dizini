@@ -62,7 +62,7 @@ function ListingDetail() {
 
   return (
     <main className="mx-auto min-h-screen max-w-3xl px-3 pb-12 pt-3 xs:px-4 md:px-6 md:pt-6">
-      <Button asChild variant="outline" className="h-11 w-full justify-start rounded-none border-primary/40 bg-card font-black text-foreground">
+      <Button asChild className="h-11 w-full justify-center rounded-none bg-sky-600 font-black text-white hover:bg-sky-500">
         <Link to="/"><ArrowLeft /> Vitrine Dön</Link>
       </Button>
 
