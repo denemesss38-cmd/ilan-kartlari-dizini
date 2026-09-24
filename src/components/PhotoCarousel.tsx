@@ -121,7 +121,7 @@ export function PhotoCarousel({
         onPointerLeave={() => setPressed(false)}
       >
         <div
-          className={`photo-marquee-track flex h-full w-max ${animationPaused ? "is-paused" : ""}`}
+          className={`photo-marquee-track flex h-full w-max ${animationPaused ? "is-paused" : ""} ${direction === "right" ? "is-reverse" : ""}`}
           aria-label={`${alt} fotoğraf galerisi`}
           style={{ "--marquee-duration": `${marqueeDuration}s` } as CSSProperties}
         >

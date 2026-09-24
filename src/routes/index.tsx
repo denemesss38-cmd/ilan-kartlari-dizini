@@ -179,6 +179,7 @@ function ListingStrip({
         split={3}
         interactive={false}
         priority={priority}
+        direction={item.scroll_direction === "right" ? "right" : "left"}
         className="h-[178px] w-full md:h-72"
       />
 
