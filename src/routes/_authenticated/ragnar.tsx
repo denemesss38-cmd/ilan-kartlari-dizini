@@ -2,7 +2,17 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { ArrowDown, ArrowUp, Loader2, LogOut, Plus, Trash2, X } from "lucide-react";
+import {
+  ArrowDown,
+  ArrowUp,
+  ChevronLeft,
+  ChevronRight,
+  Loader2,
+  LogOut,
+  Plus,
+  Trash2,
+  X,
+} from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
 import { photoUrl, resolvePhotoUrl } from "@/lib/photos";
