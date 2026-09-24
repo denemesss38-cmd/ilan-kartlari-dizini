@@ -18,6 +18,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { photoUrl, resolvePhotoUrl } from "@/lib/photos";
 import type { Listing } from "@/data/listings";
 import { parseFooterBoxes, serializeFooterBoxes, type FooterBox } from "@/lib/footer-boxes";
+import { StatsPanel } from "@/components/StatsPanel";
 
 export const Route = createFileRoute("/_authenticated/ragnar")({
   head: () => ({
