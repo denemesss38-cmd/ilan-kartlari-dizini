@@ -164,6 +164,7 @@ function ListingStrip({
       <Link
         to="/diyarbakir-ilanlar-sayfasi/$id"
         params={{ id: item.id }}
+        preload="intent"
         aria-label={`${item.name} ilan detayını aç`}
         className="block"
       >
