@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, ChevronLeft, ChevronRight, Phone } from "lucide-react";
-import { useState } from "react";
+import { ArrowLeft, ChevronLeft, ChevronRight, Eye, Phone } from "lucide-react";
+import { useEffect, useState } from "react";
+import { trackListing } from "@/lib/stats";
 
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
@@ -42,6 +43,12 @@ function phoneDisplay(raw: string) {
 function ListingDetail() {
   const { id } = Route.useParams();
   const [active, setActive] = useState(0);
+  const [views, setViews] = useState<number | null>(null);
+  useEffect(() => {
+    let alive = true;
+    void trackListing(id, "view").then((n) => { if (alive) setViews(n); });
+    return () => { alive = false; };
+  }, [id]);
   const query = useQuery({
     queryKey: ["public-listing", id],
     queryFn: async () => {
@@ -97,8 +104,8 @@ function ListingDetail() {
       </section>
 
       <div className="mt-3 grid gap-2 sm:grid-cols-2">
-        <a href={wa} target="_blank" rel="noopener noreferrer" className="flex h-14 items-center justify-center gap-2 bg-whatsapp px-4 font-black text-primary-foreground"><WhatsAppGlyph className="size-5" />{phoneDisplay(number)}</a>
-        <a href={`tel:${item.phone.replace(/[^+\d]/g, "")}`} className="flex h-14 items-center justify-center gap-2 bg-chart-3 px-4 font-black text-primary-foreground"><Phone className="size-5" />{phoneDisplay(item.phone)}</a>
+        <a href={wa} onClick={() => void trackListing(item.id, "wa")} target="_blank" rel="noopener noreferrer" className="flex h-14 items-center justify-center gap-2 bg-whatsapp px-4 font-black text-primary-foreground"><WhatsAppGlyph className="size-5" />{phoneDisplay(number)}</a>
+        <a href={`tel:${item.phone.replace(/[^+\d]/g, "")}`} onClick={() => void trackListing(item.id, "call")} className="flex h-14 items-center justify-center gap-2 bg-chart-3 px-4 font-black text-primary-foreground"><Phone className="size-5" />{phoneDisplay(item.phone)}</a>
       </div>
 
       <section className="mt-4 grid grid-cols-2 gap-2 md:grid-cols-3">
@@ -109,6 +116,12 @@ function ListingDetail() {
           </div>
         ))}
       </section>
+
+      {views ? (
+        <p className="mt-5 flex items-center justify-center gap-2 text-sm font-black text-destructive">
+          <Eye className="size-4" /> Bu ilanı {views} kişi görüntüledi
+        </p>
+      ) : null}
     </main>
   );
 }
