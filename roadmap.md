@@ -44,4 +44,4 @@
 - [x] Vitrin kartından telefon kapsülünü kaldır, ayrı WhatsApp düğmesi ve ilan detay bağlantısı ekle
 - [x] `/ilan/:id` galeri, iletişim düğmeleri ve 6 bilgi kutusuyla detay sayfası
 - [x] İlan detay alanlarını veritabanına ve admin akordiyonuna bağla
-- [ ] Galeri hız ayarını serbest aralıkta çalıştır ve tüm akışları doğrula
+- [x] Galeri hız ayarını serbest aralıkta çalıştır ve tüm akışları doğrula
