@@ -449,6 +449,36 @@ function AdminPage() {
                 </div>
               </div>
 
+              {/* Fotoğraf akış yönü: her ilan ayrı yöne dönebilir. */}
+              <div className="mt-3 flex items-center gap-2">
+                <span className="text-[11px] font-bold text-muted-foreground">Fotoğraf yönü:</span>
+                <button
+                  onClick={() =>
+                    patchMutation.mutate({ id: item.id, values: { scroll_direction: "left" } })
+                  }
+                  aria-label="Fotoğraflar sola dönsün"
+                  className={`flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-[11px] font-bold ${
+                    (item.scroll_direction ?? "left") !== "right"
+                      ? "bg-primary text-primary-foreground"
+                      : "border border-border text-muted-foreground"
+                  }`}
+                >
+                  <ChevronLeft className="size-3.5" /> Sola
+                </button>
+                <button
+                  onClick={() =>
+                    patchMutation.mutate({ id: item.id, values: { scroll_direction: "right" } })
+                  }
+                  aria-label="Fotoğraflar sağa dönsün"
+                  className={`flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-[11px] font-bold ${
+                    item.scroll_direction === "right"
+                      ? "bg-primary text-primary-foreground"
+                      : "border border-border text-muted-foreground"
+                  }`}
+                >
+                  Sağa <ChevronRight className="size-3.5" />
+                </button>
+              </div>
 
               <div className="mt-3 flex flex-wrap items-center gap-2">
                 <button
