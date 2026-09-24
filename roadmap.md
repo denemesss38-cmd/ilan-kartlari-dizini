@@ -39,3 +39,4 @@
 - [x] İlan kartlarını küçült, aralarına 2px boşluk ekle ve telefon kapsülünü yenile
 - [x] Fotoğraf şeridi hızını panel ayarına bağla ve varsayılan akışı hızlandır
 - [x] Sayfa altı metinlerinden sınırsız otomatik kutu üret
+- [x] Alt bölge kutularını panelden ad ve metin bazında eklenebilir, düzenlenebilir ve silinebilir yap

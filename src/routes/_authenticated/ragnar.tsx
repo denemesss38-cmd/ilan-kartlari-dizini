@@ -7,6 +7,7 @@ import { ArrowDown, ArrowUp, Loader2, LogOut, Plus, Trash2, X } from "lucide-rea
 import { supabase } from "@/integrations/supabase/client";
 import { photoUrl, resolvePhotoUrl } from "@/lib/photos";
 import type { Listing } from "@/data/listings";
+import { parseFooterBoxes, serializeFooterBoxes, type FooterBox } from "@/lib/footer-boxes";
 
 export const Route = createFileRoute("/_authenticated/ragnar")({
   head: () => ({
@@ -559,7 +560,7 @@ function SeoSettings() {
     title: string;
     description: string;
     keywords: string;
-    footerText: string;
+    footerBoxes: FooterBox[];
   } | null>(null);
 
   const seoQuery = useQuery({
@@ -576,20 +577,20 @@ function SeoSettings() {
         title: str("seo_title"),
         description: str("seo_description"),
         keywords: str("seo_keywords"),
-        footerText: str("footer_text"),
+        footerBoxes: parseFooterBoxes(str("footer_text")),
       };
     },
   });
 
   const saveMutation = useMutation({
-    mutationFn: async (v: { title: string; description: string; keywords: string; footerText: string }) => {
+    mutationFn: async (v: { title: string; description: string; keywords: string; footerBoxes: FooterBox[] }) => {
       const now = new Date().toISOString();
       const { error } = await supabase.from("site_settings").upsert(
         [
           { key: "seo_title", value: v.title.trim(), updated_at: now },
           { key: "seo_description", value: v.description.trim(), updated_at: now },
           { key: "seo_keywords", value: v.keywords.trim(), updated_at: now },
-          { key: "footer_text", value: v.footerText.trim(), updated_at: now },
+          { key: "footer_text", value: serializeFooterBoxes(v.footerBoxes), updated_at: now },
         ],
         { onConflict: "key" },
       );
@@ -598,12 +599,13 @@ function SeoSettings() {
     onSuccess: () => {
       toast.success("SEO ayarları kaydedildi.");
       queryClient.invalidateQueries({ queryKey: ["seo-settings"] });
+      queryClient.invalidateQueries({ queryKey: ["public-settings"] });
     },
     onError: (e: Error) => toast.error(e.message),
   });
 
   const current =
-    draft ?? seoQuery.data ?? { title: "", description: "", keywords: "", footerText: "" };
+    draft ?? seoQuery.data ?? { title: "", description: "", keywords: "", footerBoxes: [] };
 
   return (
     <section className="mt-4 rounded-2xl border border-border bg-card p-4">
@@ -633,13 +635,82 @@ function SeoSettings() {
           max={300}
           textarea
         />
-        <Field
-          label="Sayfa altı bilgilendirme metni (her boş satırla ayrılan metin yeni kutu olur; boşsa gizlenir)"
-          value={current.footerText}
-          onChange={(v) => setDraft({ ...current, footerText: v })}
-          max={2000}
-          textarea
-        />
+        <div className="rounded-xl border border-border bg-secondary/50 p-3">
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <p className="text-xs font-black text-foreground">Sayfa altı bölge kutuları</p>
+              <p className="mt-0.5 text-[11px] text-muted-foreground">
+                Bölge adını ve metnini ayrı ayrı düzenleyebilirsiniz.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() =>
+                setDraft({
+                  ...current,
+                  footerBoxes: [...current.footerBoxes, { title: "Yeni Bölge", text: "" }],
+                })
+              }
+              className="flex shrink-0 items-center gap-1 rounded-lg bg-primary px-3 py-2 text-[11px] font-black text-primary-foreground"
+            >
+              <Plus className="size-3.5" />
+              Kutucuk ekle
+            </button>
+          </div>
+
+          <div className="mt-3 space-y-3">
+            {current.footerBoxes.map((box, index) => (
+              <div key={index} className="rounded-xl border border-border bg-card p-3">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-[11px] font-black text-muted-foreground">Kutucuk {index + 1}</span>
+                  <button
+                    type="button"
+                    aria-label={`${box.title || `Kutucuk ${index + 1}`} sil`}
+                    onClick={() =>
+                      setDraft({
+                        ...current,
+                        footerBoxes: current.footerBoxes.filter((_, itemIndex) => itemIndex !== index),
+                      })
+                    }
+                    className="rounded-lg p-1.5 text-destructive hover:bg-destructive/10"
+                  >
+                    <Trash2 className="size-4" />
+                  </button>
+                </div>
+                <input
+                  value={box.title}
+                  maxLength={50}
+                  placeholder="Bölge adı"
+                  onChange={(event) => {
+                    const boxes = current.footerBoxes.map((item, itemIndex) =>
+                      itemIndex === index ? { ...item, title: event.target.value } : item,
+                    );
+                    setDraft({ ...current, footerBoxes: boxes });
+                  }}
+                  className="mt-2 w-full rounded-xl border border-border bg-secondary px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary"
+                />
+                <textarea
+                  value={box.text}
+                  maxLength={1000}
+                  rows={3}
+                  placeholder="Bölge metni"
+                  onChange={(event) => {
+                    const boxes = current.footerBoxes.map((item, itemIndex) =>
+                      itemIndex === index ? { ...item, text: event.target.value } : item,
+                    );
+                    setDraft({ ...current, footerBoxes: boxes });
+                  }}
+                  className="mt-2 w-full rounded-xl border border-border bg-secondary px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary"
+                />
+              </div>
+            ))}
+            {current.footerBoxes.length === 0 ? (
+              <p className="py-2 text-center text-[11px] text-muted-foreground">
+                Henüz bölge kutusu yok. “Kutucuk ekle” ile oluşturabilirsiniz.
+              </p>
+            ) : null}
+          </div>
+        </div>
       </div>
       <button
         onClick={() => saveMutation.mutate(current)}
