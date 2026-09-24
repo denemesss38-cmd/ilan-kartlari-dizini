@@ -38,6 +38,11 @@ const emptyDraft: Draft = {
   badge: "",
   venue: "",
   whatsapp_message: DEFAULT_LISTING_WA_MESSAGE,
+  age: "",
+  height: "",
+  weight: "",
+  district: "",
+  meeting: "",
   sort_order: 0,
   is_published: true,
 };
@@ -48,6 +53,7 @@ function AdminPage() {
   const [draft, setDraft] = useState<Draft | null>(null);
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState({ done: 0, total: 0 });
+  const [detailsOpen, setDetailsOpen] = useState(false);
 
   const roleQuery = useQuery({
     queryKey: ["my-admin-role"],
@@ -96,6 +102,11 @@ function AdminPage() {
         badge: item.badge?.trim() ? item.badge.trim() : null,
         venue: item.venue?.trim() ? item.venue.trim() : null,
         whatsapp_message: item.whatsapp_message?.trim() || DEFAULT_LISTING_WA_MESSAGE,
+        age: item.age?.trim() || null,
+        height: item.height?.trim() || null,
+        weight: item.weight?.trim() || null,
+        district: item.district?.trim() || null,
+        meeting: item.meeting?.trim() || null,
         photos: item.photos,
         sort_order: Number(item.sort_order) || 0,
         is_published: item.is_published,
@@ -306,6 +317,30 @@ function AdminPage() {
                 onChange={(v) => setDraft({ ...draft, whatsapp_message: v })}
                 max={200}
               />
+              <div className="rounded-xl border border-border bg-secondary/50 p-3">
+                <button
+                  type="button"
+                  onClick={() => setDetailsOpen((open) => !open)}
+                  className="grid w-full grid-cols-[minmax(0,1fr)_auto] items-center gap-2 text-left"
+                >
+                  <span className="min-w-0">
+                    <span className="block truncate text-xs font-black text-foreground">Detay sayfası bilgileri</span>
+                    <span className="text-[10px] text-muted-foreground">Yaş, boy, kilo, semt ve görüşme</span>
+                  </span>
+                  <span className="shrink-0 text-[11px] font-bold text-primary">{detailsOpen ? "Kapat" : "Aç"}</span>
+                </button>
+                {detailsOpen ? (
+                  <div className="mt-3 grid grid-cols-2 gap-2 border-t border-border pt-3">
+                    <Field label="Yaş" value={draft.age ?? ""} onChange={(v) => setDraft({ ...draft, age: v })} max={20} />
+                    <Field label="Boy" value={draft.height ?? ""} onChange={(v) => setDraft({ ...draft, height: v })} max={20} />
+                    <Field label="Kilo" value={draft.weight ?? ""} onChange={(v) => setDraft({ ...draft, weight: v })} max={20} />
+                    <Field label="Semt" value={draft.district ?? ""} onChange={(v) => setDraft({ ...draft, district: v })} max={60} />
+                    <div className="col-span-2">
+                      <Field label="Görüşme" value={draft.meeting ?? ""} onChange={(v) => setDraft({ ...draft, meeting: v })} max={100} />
+                    </div>
+                  </div>
+                ) : null}
+              </div>
               <Field
                 label="Sıra numarası"
                 value={String(draft.sort_order)}
@@ -453,6 +488,11 @@ function AdminPage() {
                       badge: item.badge ?? "",
                       venue: item.venue ?? "",
                       whatsapp_message: item.whatsapp_message ?? DEFAULT_LISTING_WA_MESSAGE,
+                      age: item.age ?? "",
+                      height: item.height ?? "",
+                      weight: item.weight ?? "",
+                      district: item.district ?? "",
+                      meeting: item.meeting ?? "",
                       sort_order: item.sort_order,
                       is_published: item.is_published,
                     })
@@ -484,7 +524,7 @@ function AdminPage() {
   );
 }
 
-/** Site genelinde fotoğraf geçiş hızı (saniye). 0 = otomatik geçiş kapalı. */
+/** Site genelinde kayan şeridin tam tur süresi. 0 = otomatik akış kapalı. */
 function CarouselSpeedSetting() {
   const queryClient = useQueryClient();
   const [value, setValue] = useState<string | null>(null);
@@ -498,7 +538,7 @@ function CarouselSpeedSetting() {
         .eq("key", "carousel_interval_seconds")
         .maybeSingle();
       if (error) throw error;
-      return Number(data?.value ?? 4);
+      return Number(data?.value ?? 22);
     },
   });
 
@@ -519,19 +559,19 @@ function CarouselSpeedSetting() {
     onError: (e: Error) => toast.error(e.message),
   });
 
-  const current = value ?? String(settingQuery.data ?? 4);
+  const current = value ?? String(settingQuery.data ?? 22);
 
   return (
     <section className="rounded-2xl border border-border bg-card p-4">
       <h2 className="text-sm font-black text-foreground">Fotoğraf geçiş hızı</h2>
       <p className="mt-1 text-[11px] text-muted-foreground">
-        Kartlardaki fotoğrafların kaç saniyede bir değişeceği. 0 yazarsanız otomatik geçiş kapanır.
+        Fotoğraf şeridinin bir tam tur süresi. Küçük sayı daha hızlıdır; 0 akışı kapatır.
       </p>
       <div className="mt-3 flex items-center gap-2">
         <input
           type="number"
           min={0}
-          max={30}
+           max={60}
           value={current}
           onChange={(e) => setValue(e.target.value)}
           className="w-24 rounded-xl border border-border bg-secondary px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary"
@@ -539,7 +579,7 @@ function CarouselSpeedSetting() {
         <span className="text-xs text-muted-foreground">saniye</span>
         <button
           onClick={() => {
-            const n = Math.min(30, Math.max(0, Math.round(Number(current) || 0)));
+             const n = Math.min(60, Math.max(0, Math.round(Number(current) || 0)));
             setValue(String(n));
             saveMutation.mutate(n);
           }}
