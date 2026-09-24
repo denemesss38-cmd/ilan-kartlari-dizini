@@ -178,13 +178,14 @@ function ListingStrip({
       />
 
       <div className="pointer-events-none absolute right-2.5 top-2.5 z-20 flex max-w-[70%] flex-col items-end gap-1.5 md:right-5 md:top-4 md:gap-2">
-        <span className="rounded-full bg-background/85 px-2.5 py-1 text-[9px] font-medium uppercase tracking-wider text-foreground backdrop-blur-md md:px-3 md:py-1 md:text-[11px]">
+        <span className="rounded-full bg-pink-500/90 px-2.5 py-1 text-[9px] font-medium uppercase tracking-wider text-white backdrop-blur-md md:px-3 md:py-1 md:text-[11px]">
+
           {item.venue?.trim() || ""}
         </span>
-        <h2 className="rounded-full bg-background/85 px-3 py-0.5 text-[10px] font-semibold leading-snug tracking-wide text-foreground backdrop-blur-md md:px-4 md:py-1 md:text-sm">
+        <h2 className="rounded-full bg-sky-500/90 px-3 py-0.5 text-[10px] font-semibold leading-snug tracking-wide text-white backdrop-blur-md md:px-4 md:py-1 md:text-sm">
           {item.name}
         </h2>
-        <span className="rounded-full bg-background/85 px-2.5 py-1 text-[9px] font-medium uppercase tracking-wider text-foreground backdrop-blur-md md:px-3 md:py-1 md:text-[11px]">
+        <span className="rounded-full bg-violet-500/90 px-2.5 py-1 text-[9px] font-medium uppercase tracking-wider text-white backdrop-blur-md md:px-3 md:py-1 md:text-[11px]">
           {item.price_note?.trim() || ""}
         </span>
       </div>
