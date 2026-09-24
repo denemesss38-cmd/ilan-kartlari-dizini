@@ -162,7 +162,7 @@ function ListingStrip({
   return (
     <article className="group relative w-full overflow-hidden">
       <Link
-        to="/ilan/$id"
+        to="/diyarbakir-ilanlar-sayfasi/$id"
         params={{ id: item.id }}
         aria-label={`${item.name} ilan detayını aç`}
         className="block"
