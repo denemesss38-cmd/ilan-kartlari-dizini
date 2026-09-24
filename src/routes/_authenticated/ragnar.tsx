@@ -341,7 +341,7 @@ function AdminPage() {
                       <Field label="Görüşme" value={draft.meeting ?? ""} onChange={(v) => setDraft({ ...draft, meeting: v })} max={100} />
                     </div>
                     <div className="col-span-2">
-                      <Field label="Ücret notu (örn. Ücret elden)" value={draft.price_note ?? ""} onChange={(v) => setDraft({ ...draft, price_note: v })} max={60} />
+                      <Field label="Ek not kutucuğu (örn. Ücret elden)" value={draft.price_note ?? ""} onChange={(v) => setDraft({ ...draft, price_note: v })} max={60} />
                     </div>
                   </div>
                 ) : null}

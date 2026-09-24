@@ -179,8 +179,7 @@ function ListingStrip({
           </span>
         ) : null}
         {item.price_note?.trim() ? (
-          <span className="flex items-center gap-1 rounded-full bg-cta px-2.5 py-1 text-[9px] font-black uppercase tracking-wider text-primary-foreground shadow-md md:px-3 md:py-1.5 md:text-[11px]">
-            <BadgeCheck className="size-3 md:size-3.5" />
+          <span className="flex items-center gap-1 rounded-full border border-primary/35 bg-background/95 px-2.5 py-1 text-[9px] font-bold uppercase tracking-wider text-foreground shadow-md backdrop-blur-md md:px-3 md:py-1.5 md:text-[11px]">
             {item.price_note}
           </span>
         ) : null}
