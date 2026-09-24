@@ -47,6 +47,7 @@ export type Database = {
           name: string
           phone: string
           photos: string[]
+          price_note: string | null
           sort_order: number
           updated_at: string
           venue: string | null
@@ -68,6 +69,7 @@ export type Database = {
           name: string
           phone?: string
           photos?: string[]
+          price_note?: string | null
           sort_order?: number
           updated_at?: string
           venue?: string | null
@@ -89,6 +91,7 @@ export type Database = {
           name?: string
           phone?: string
           photos?: string[]
+          price_note?: string | null
           sort_order?: number
           updated_at?: string
           venue?: string | null
