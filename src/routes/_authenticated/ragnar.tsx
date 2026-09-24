@@ -601,6 +601,8 @@ function AdminPage() {
             <p className="text-center text-sm text-muted-foreground">Henüz ilan yok.</p>
           ) : null}
         </div>
+        </>
+        ) : null}
       </main>
     </div>
   );
