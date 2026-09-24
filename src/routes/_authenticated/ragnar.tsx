@@ -66,6 +66,7 @@ function AdminPage() {
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState({ done: 0, total: 0 });
   const [detailsOpen, setDetailsOpen] = useState(false);
+  const [tab, setTab] = useState<"listings" | "showcase" | "seo">("listings");
 
   const roleQuery = useQuery({
     queryKey: ["my-admin-role"],
