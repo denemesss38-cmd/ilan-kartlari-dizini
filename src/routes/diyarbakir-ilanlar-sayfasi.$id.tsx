@@ -19,7 +19,7 @@ function WhatsAppGlyph({ className }: { className?: string }) {
   );
 }
 
-export const Route = createFileRoute("/ilan/$id")({
+export const Route = createFileRoute("/diyarbakir-ilanlar-sayfasi/$id")({
   head: () => ({
     meta: [
       { title: "İlan Detayı — Diyarbakır Rehberi" },
