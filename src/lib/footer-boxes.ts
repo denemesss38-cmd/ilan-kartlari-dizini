@@ -32,6 +32,21 @@ export function parseFooterBoxes(value: string): FooterBox[] {
     .map((text, index) => ({ title: DEFAULT_TITLES[index] ?? `Bölge ${index + 1}`, text }));
 }
 
+/** Bölge adını URL dostu kısaltmaya çevirir (Türkçe karakterler dahil). */
+export function footerBoxSlug(title: string, index: number): string {
+  const slug = title
+    .toLowerCase()
+    .replaceAll("ı", "i")
+    .replaceAll("ğ", "g")
+    .replaceAll("ü", "u")
+    .replaceAll("ş", "s")
+    .replaceAll("ö", "o")
+    .replaceAll("ç", "c")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+  return slug || `bölge-${index + 1}`.replaceAll("ö", "o");
+}
+
 export function serializeFooterBoxes(boxes: FooterBox[]) {
   return JSON.stringify(
     boxes

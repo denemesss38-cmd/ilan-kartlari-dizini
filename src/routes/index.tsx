@@ -183,14 +183,14 @@ function ListingStrip({
       />
 
       <div className="pointer-events-none absolute right-2.5 top-2.5 z-20 flex max-w-[70%] flex-col items-end gap-1.5 md:right-5 md:top-4 md:gap-2">
-        <span className="rounded-full bg-pink-500/90 px-2.5 py-1 text-[9px] font-medium uppercase tracking-wider text-white backdrop-blur-md md:px-3 md:py-1 md:text-[11px]">
+        <span className="rounded-full bg-pink-500/90 px-3 py-1 text-[10px] font-medium uppercase tracking-wider text-white backdrop-blur-md md:px-3.5 md:py-1 md:text-xs">
 
           {item.venue?.trim() || ""}
         </span>
-        <h2 className="rounded-full bg-sky-500/90 px-3 py-0.5 text-[10px] font-semibold leading-snug tracking-wide text-white backdrop-blur-md md:px-4 md:py-1 md:text-sm">
+        <h2 className="rounded-full bg-sky-500/90 px-3.5 py-1 text-xs font-semibold leading-snug tracking-wide text-white backdrop-blur-md md:px-4 md:py-1 md:text-base">
           {item.name}
         </h2>
-        <span className="rounded-full bg-violet-500/90 px-2.5 py-1 text-[9px] font-medium uppercase tracking-wider text-white backdrop-blur-md md:px-3 md:py-1 md:text-[11px]">
+        <span className="rounded-full bg-violet-500/90 px-3 py-1 text-[10px] font-medium uppercase tracking-wider text-white backdrop-blur-md md:px-3.5 md:py-1 md:text-xs">
           {item.price_note?.trim() || ""}
         </span>
       </div>
@@ -199,9 +199,9 @@ function ListingStrip({
       <a
         href={`tel:${(item.phone || item.whatsapp || "").replace(/[^\d+]/g, "")}`}
         aria-label={`${item.name} numarasını ara`}
-        className="absolute bottom-3 left-3 z-30 flex items-center gap-1.5 rounded-full bg-black/90 px-2.5 py-1 text-[10px] font-semibold leading-none text-white ring-1 ring-white/15 transition-colors hover:bg-black md:bottom-5 md:left-6 md:px-3 md:py-1.5 md:text-xs"
+        className="absolute bottom-3 left-3 z-30 flex items-center gap-1.5 rounded-full bg-black/90 px-3 py-1.5 text-xs font-semibold leading-none text-white ring-1 ring-white/15 transition-colors hover:bg-black md:bottom-5 md:left-6 md:px-3.5 md:py-2 md:text-sm"
       >
-        <Phone className="size-3 md:size-3.5" />
+        <Phone className="size-3.5 md:size-4" />
         <span className="tracking-wide">{formatPhone(item.phone || item.whatsapp || "")}</span>
       </a>
       <a
@@ -209,9 +209,9 @@ function ListingStrip({
         target="_blank"
         rel="noopener noreferrer"
         aria-label={`${item.name} WhatsApp ile yaz`}
-        className="whatsapp-shake absolute bottom-3 right-3 z-30 grid size-11 place-items-center rounded-full bg-whatsapp text-white shadow-lg ring-1 ring-border md:bottom-5 md:right-6 md:size-14"
+        className="whatsapp-shake absolute bottom-3 right-3 z-30 grid size-12 place-items-center rounded-full bg-whatsapp text-white shadow-lg ring-1 ring-border md:bottom-5 md:right-6 md:size-[60px]"
       >
-        <WhatsAppGlyph className="size-6 md:size-7" />
+        <WhatsAppGlyph className="size-7 md:size-8" />
       </a>
     </article>
   );
