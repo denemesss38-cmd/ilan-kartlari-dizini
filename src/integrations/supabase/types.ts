@@ -32,6 +32,38 @@ export type Database = {
         }
         Relationships: []
       }
+      listing_stats: {
+        Row: {
+          call_clicks: number
+          listing_id: string
+          updated_at: string
+          views: number
+          wa_clicks: number
+        }
+        Insert: {
+          call_clicks?: number
+          listing_id: string
+          updated_at?: string
+          views?: number
+          wa_clicks?: number
+        }
+        Update: {
+          call_clicks?: number
+          listing_id?: string
+          updated_at?: string
+          views?: number
+          wa_clicks?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "listing_stats_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: true
+            referencedRelation: "listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       listings: {
         Row: {
           age: string | null
@@ -155,6 +187,10 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      track_listing_event: {
+        Args: { _kind: string; _listing_id: string }
+        Returns: number
       }
     }
     Enums: {
