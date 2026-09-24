@@ -142,7 +142,7 @@ export function PhotoCarousel({
                         fetchPriority={priority && copy === 0 && index === 0 ? "high" : "auto"}
                         decoding="async"
                         draggable={false}
-                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                        className="h-full w-full object-cover"
                       />
                     </div>
                   );

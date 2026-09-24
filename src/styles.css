@@ -203,9 +203,12 @@
 
 .photo-marquee {
   container-type: inline-size;
-  contain: paint;
+  contain: paint layout style;
+  content-visibility: auto;
+  contain-intrinsic-size: auto 178px;
   -webkit-overflow-scrolling: touch;
 }
+
 
 .photo-marquee-track {
   animation: photo-marquee-slide var(--marquee-duration, 22s) linear infinite;
