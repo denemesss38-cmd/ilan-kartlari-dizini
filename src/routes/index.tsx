@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { BellRing, MapPin, MessageCircle, Phone, Send, Sparkles } from "lucide-react";
+import { BellRing, MapPin, Phone, Send, Sparkles } from "lucide-react";
 
 import { PhotoCarousel } from "@/components/PhotoCarousel";
 import { supabase } from "@/integrations/supabase/client";
