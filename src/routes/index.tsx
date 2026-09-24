@@ -168,14 +168,14 @@ function ListingStrip({
         className="h-[152px] w-full md:h-60"
       />
 
-      <span className="pointer-events-none absolute right-3 top-3 z-20 flex items-center gap-1 rounded-full bg-primary px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-primary-foreground shadow-[0_8px_20px_-6px_var(--card-glow)] md:right-6 md:top-5 md:px-3.5 md:text-xs">
-        <BadgeCheck className="size-3.5" />
+      <span className="pointer-events-none absolute right-2.5 top-2.5 z-20 flex items-center gap-1 rounded-full bg-primary px-2.5 py-1 text-[9px] font-bold uppercase tracking-wider text-primary-foreground shadow-[0_6px_16px_-6px_var(--card-glow)] md:right-5 md:top-4 md:px-3 md:py-1.5 md:text-[11px]">
+        <BadgeCheck className="size-3 md:size-3.5" />
         Onaylı İlan
       </span>
 
       {item.venue?.trim() ? (
-        <span className="pointer-events-none absolute right-3 top-[38px] z-20 flex items-center gap-1 rounded-full border border-primary/35 bg-background/95 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-foreground shadow-md backdrop-blur-md md:right-6 md:top-[46px] md:px-3.5 md:text-xs">
-          <Home className="size-3.5 text-primary" />
+        <span className="pointer-events-none absolute right-2.5 top-[30px] z-20 flex items-center gap-1 rounded-full border border-primary/35 bg-background/95 px-2.5 py-1 text-[9px] font-bold uppercase tracking-wider text-foreground shadow-md backdrop-blur-md md:right-5 md:top-[42px] md:px-3 md:py-1.5 md:text-[11px]">
+          <Home className="size-3 md:size-3.5 text-primary" />
           {item.venue}
         </span>
       ) : null}
