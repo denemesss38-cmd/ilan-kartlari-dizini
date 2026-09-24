@@ -2,7 +2,17 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { ArrowDown, ArrowUp, Loader2, LogOut, Plus, Trash2, X } from "lucide-react";
+import {
+  ArrowDown,
+  ArrowUp,
+  ChevronLeft,
+  ChevronRight,
+  Loader2,
+  LogOut,
+  Plus,
+  Trash2,
+  X,
+} from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
 import { photoUrl, resolvePhotoUrl } from "@/lib/photos";
@@ -44,6 +54,7 @@ const emptyDraft: Draft = {
   district: "",
   meeting: "",
   price_note: "",
+  scroll_direction: "left",
   sort_order: 0,
   is_published: true,
 };
@@ -109,6 +120,7 @@ function AdminPage() {
         district: item.district?.trim() || null,
         meeting: item.meeting?.trim() || null,
         price_note: item.price_note?.trim() || null,
+        scroll_direction: item.scroll_direction === "right" ? "right" : "left",
         photos: item.photos,
         sort_order: Number(item.sort_order) || 0,
         is_published: item.is_published,
@@ -447,6 +459,36 @@ function AdminPage() {
                 </div>
               </div>
 
+              {/* Fotoğraf akış yönü: her ilan ayrı yöne dönebilir. */}
+              <div className="mt-3 flex items-center gap-2">
+                <span className="text-[11px] font-bold text-muted-foreground">Fotoğraf yönü:</span>
+                <button
+                  onClick={() =>
+                    patchMutation.mutate({ id: item.id, values: { scroll_direction: "left" } })
+                  }
+                  aria-label="Fotoğraflar sola dönsün"
+                  className={`flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-[11px] font-bold ${
+                    (item.scroll_direction ?? "left") !== "right"
+                      ? "bg-primary text-primary-foreground"
+                      : "border border-border text-muted-foreground"
+                  }`}
+                >
+                  <ChevronLeft className="size-3.5" /> Sola
+                </button>
+                <button
+                  onClick={() =>
+                    patchMutation.mutate({ id: item.id, values: { scroll_direction: "right" } })
+                  }
+                  aria-label="Fotoğraflar sağa dönsün"
+                  className={`flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-[11px] font-bold ${
+                    item.scroll_direction === "right"
+                      ? "bg-primary text-primary-foreground"
+                      : "border border-border text-muted-foreground"
+                  }`}
+                >
+                  Sağa <ChevronRight className="size-3.5" />
+                </button>
+              </div>
 
               <div className="mt-3 flex flex-wrap items-center gap-2">
                 <button
@@ -499,6 +541,7 @@ function AdminPage() {
                       district: item.district ?? "",
                       meeting: item.meeting ?? "",
                       price_note: item.price_note ?? "",
+                      scroll_direction: item.scroll_direction ?? "left",
                       sort_order: item.sort_order,
                       is_published: item.is_published,
                     })

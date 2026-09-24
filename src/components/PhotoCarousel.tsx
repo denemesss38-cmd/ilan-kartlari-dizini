@@ -24,6 +24,8 @@ type Props = {
   interactive?: boolean;
   /** Yalnızca ilk ekrandaki şeridin görünen fotoğraflarını öncelikli indirir. */
   priority?: boolean;
+  /** Fotoğraf şeridinin akış yönü. */
+  direction?: "left" | "right";
 };
 
 function usePrefersReducedMotion() {
@@ -51,6 +53,7 @@ export function PhotoCarousel({
   onLightboxOpenChange,
   interactive = true,
   priority = false,
+  direction = "left",
 }: Props) {
   const list = useMemo(() => (photos ?? []).filter(Boolean), [photos]);
   const count = list.length;
@@ -118,7 +121,7 @@ export function PhotoCarousel({
         onPointerLeave={() => setPressed(false)}
       >
         <div
-          className={`photo-marquee-track flex h-full w-max ${animationPaused ? "is-paused" : ""}`}
+          className={`photo-marquee-track flex h-full w-max ${animationPaused ? "is-paused" : ""} ${direction === "right" ? "is-reverse" : ""}`}
           aria-label={`${alt} fotoğraf galerisi`}
           style={{ "--marquee-duration": `${marqueeDuration}s` } as CSSProperties}
         >

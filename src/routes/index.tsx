@@ -29,7 +29,7 @@ const listingsQueryOptions = {
     const { data, error } = await supabase
       .from("listings")
       .select(
-        "id, name, location, description, photos, phone, whatsapp, badge, venue, whatsapp_message, age, height, weight, district, meeting, price_note, sort_order, is_published",
+        "id, name, location, description, photos, phone, whatsapp, badge, venue, whatsapp_message, age, height, weight, district, meeting, price_note, scroll_direction, sort_order, is_published",
       )
       .eq("is_published", true)
       .order("sort_order", { ascending: true })
@@ -179,6 +179,7 @@ function ListingStrip({
         split={3}
         interactive={false}
         priority={priority}
+        direction={item.scroll_direction === "right" ? "right" : "left"}
         className="h-[178px] w-full md:h-72"
       />
 

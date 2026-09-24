@@ -1,0 +1,1 @@
+ALTER TABLE public.listings ADD COLUMN IF NOT EXISTS scroll_direction text NOT NULL DEFAULT 'left';

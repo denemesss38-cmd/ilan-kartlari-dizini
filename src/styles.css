@@ -215,6 +215,10 @@
   -webkit-backface-visibility: hidden;
 }
 
+.photo-marquee-track.is-reverse {
+  animation-direction: reverse;
+}
+
 .photo-marquee:hover .photo-marquee-track,
 .photo-marquee-track.is-paused {
   animation-play-state: paused;
