@@ -24,7 +24,7 @@ const listingsQueryOptions = {
     const { data, error } = await supabase
       .from("listings")
       .select(
-        "id, name, location, description, photos, phone, whatsapp, badge, venue, whatsapp_message, age, height, weight, district, meeting, sort_order, is_published",
+        "id, name, location, description, photos, phone, whatsapp, badge, venue, whatsapp_message, age, height, weight, district, meeting, price_note, sort_order, is_published",
       )
       .eq("is_published", true)
       .order("sort_order", { ascending: true })
@@ -168,25 +168,22 @@ function ListingStrip({
         className="h-[178px] w-full md:h-72"
       />
 
-      <span className="pointer-events-none absolute right-2.5 top-2.5 z-20 flex items-center gap-1 rounded-full bg-primary px-2.5 py-1 text-[9px] font-bold uppercase tracking-wider text-primary-foreground shadow-[0_6px_16px_-6px_var(--card-glow)] md:right-5 md:top-4 md:px-3 md:py-1.5 md:text-[11px]">
-        <BadgeCheck className="size-3 md:size-3.5" />
-        Onaylı İlan
-      </span>
-
-      {item.venue?.trim() ? (
-        <span className="pointer-events-none absolute right-2.5 top-[30px] z-20 flex items-center gap-1 rounded-full border border-primary/35 bg-background/95 px-2.5 py-1 text-[9px] font-bold uppercase tracking-wider text-foreground shadow-md backdrop-blur-md md:right-5 md:top-[42px] md:px-3 md:py-1.5 md:text-[11px]">
-          <Home className="size-3 md:size-3.5 text-primary" />
-          {item.venue}
-        </span>
-      ) : null}
-
-      <div className="pointer-events-none absolute inset-x-3 bottom-3 z-20 flex items-end justify-between gap-2 md:inset-x-6 md:bottom-5">
-
-        <div className="min-w-0">
-          <h2 className="truncate text-sm font-bold text-image-foreground md:text-lg">
-            {item.name}
-          </h2>
-        </div>
+      <div className="pointer-events-none absolute right-2.5 top-2.5 z-20 flex max-w-[70%] flex-col items-end gap-1.5 md:right-5 md:top-4 md:gap-2">
+        <h2 className="rounded-full bg-background/95 px-3 py-1 text-xs font-black tracking-tight text-foreground shadow-md backdrop-blur-md md:px-4 md:py-1.5 md:text-base">
+          {item.name}
+        </h2>
+        {item.venue?.trim() ? (
+          <span className="flex items-center gap-1 rounded-full border border-primary/35 bg-background/95 px-2.5 py-1 text-[9px] font-bold uppercase tracking-wider text-foreground shadow-md backdrop-blur-md md:px-3 md:py-1.5 md:text-[11px]">
+            <Home className="size-3 md:size-3.5 text-primary" />
+            {item.venue}
+          </span>
+        ) : null}
+        {item.price_note?.trim() ? (
+          <span className="flex items-center gap-1 rounded-full bg-cta px-2.5 py-1 text-[9px] font-black uppercase tracking-wider text-primary-foreground shadow-md md:px-3 md:py-1.5 md:text-[11px]">
+            <BadgeCheck className="size-3 md:size-3.5" />
+            {item.price_note}
+          </span>
+        ) : null}
       </div>
       </Link>
       <a

@@ -49,6 +49,8 @@ export type Listing = {
   weight: string | null;
   district: string | null;
   meeting: string | null;
+  /** Ücret notu: "Ücret elden" vb. */
+  price_note: string | null;
   /** Görüşme yeri: "Kendi yeri var", "Apart", "Otel" vb. */
   venue: string | null;
   sort_order: number;

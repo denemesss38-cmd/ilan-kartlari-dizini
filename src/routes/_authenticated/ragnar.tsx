@@ -43,6 +43,7 @@ const emptyDraft: Draft = {
   weight: "",
   district: "",
   meeting: "",
+  price_note: "",
   sort_order: 0,
   is_published: true,
 };
@@ -107,6 +108,7 @@ function AdminPage() {
         weight: item.weight?.trim() || null,
         district: item.district?.trim() || null,
         meeting: item.meeting?.trim() || null,
+        price_note: item.price_note?.trim() || null,
         photos: item.photos,
         sort_order: Number(item.sort_order) || 0,
         is_published: item.is_published,
@@ -338,6 +340,9 @@ function AdminPage() {
                     <div className="col-span-2">
                       <Field label="Görüşme" value={draft.meeting ?? ""} onChange={(v) => setDraft({ ...draft, meeting: v })} max={100} />
                     </div>
+                    <div className="col-span-2">
+                      <Field label="Ücret notu (örn. Ücret elden)" value={draft.price_note ?? ""} onChange={(v) => setDraft({ ...draft, price_note: v })} max={60} />
+                    </div>
                   </div>
                 ) : null}
               </div>
@@ -493,6 +498,7 @@ function AdminPage() {
                       weight: item.weight ?? "",
                       district: item.district ?? "",
                       meeting: item.meeting ?? "",
+                      price_note: item.price_note ?? "",
                       sort_order: item.sort_order,
                       is_published: item.is_published,
                     })
