@@ -238,9 +238,13 @@ function Index() {
           className="pointer-events-none absolute inset-x-0 top-0 h-[3px] bg-gradient-to-r from-primary via-accent to-primary"
         />
         <div className="mx-auto flex max-w-3xl items-center gap-3 px-3 py-3 xs:px-4 md:px-6">
-          <div className="grid size-11 shrink-0 place-items-center rounded-2xl bg-cta text-sm font-black text-primary-foreground shadow-glow-gold">
-            DR
-          </div>
+          <img
+            src="/favicon.png"
+            alt="Logo"
+            width={44}
+            height={44}
+            className="size-11 shrink-0 rounded-2xl shadow-glow-gold"
+          />
           <div className="min-w-0">
             <p className="truncate text-sm font-black tracking-tight text-foreground md:text-base">
               {siteConfig.siteName}
