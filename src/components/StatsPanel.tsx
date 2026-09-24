@@ -32,19 +32,21 @@ export function StatsPanel({ items }: { items: Listing[] }) {
         ))}
       </div>
       <div className="overflow-hidden rounded-2xl border border-border bg-card">
-        <div className="grid grid-cols-[minmax(0,1fr)_repeat(3,3.5rem)] gap-2 border-b border-border bg-secondary/60 px-3 py-2 text-[10px] font-black uppercase text-muted-foreground">
-          <span>İlan</span><span className="text-center">Görüntü</span><span className="text-center">WP</span><span className="text-center">Arama</span>
+        <div className="grid grid-cols-[1.5rem_minmax(0,1fr)_repeat(4,3rem)] gap-2 border-b border-border bg-secondary/60 px-3 py-2 text-[10px] font-black uppercase text-muted-foreground">
+          <span>#</span><span>İlan</span><span className="text-center">Görüntü</span><span className="text-center">WP</span><span className="text-center">Arama</span><span className="text-center">Oran</span>
         </div>
-        {statsQuery.isLoading ? <p className="p-4 text-sm text-muted-foreground">Yükleniyor…</p> : rows.map(({ item, s }) => (
-          <div key={item.id} className="grid grid-cols-[minmax(0,1fr)_repeat(3,3.5rem)] gap-2 border-b border-border px-3 py-2.5 text-sm last:border-0">
+        {statsQuery.isLoading ? <p className="p-4 text-sm text-muted-foreground">Yükleniyor…</p> : rows.map(({ item, s }, i) => (
+          <div key={item.id} className="grid grid-cols-[1.5rem_minmax(0,1fr)_repeat(4,3rem)] gap-2 border-b border-border px-3 py-2.5 text-sm last:border-0">
+            <span className="font-black text-muted-foreground">{i + 1}</span>
             <span className="truncate font-bold">{item.name}</span>
             <span className="text-center font-black text-destructive">{s.views}</span>
             <span className="text-center font-black text-whatsapp">{s.wa_clicks}</span>
             <span className="text-center font-black text-chart-3">{s.call_clicks}</span>
+            <span className="text-center text-xs font-bold text-muted-foreground">{s.views ? `%${Math.round(((s.wa_clicks + s.call_clicks) / s.views) * 100)}` : "-"}</span>
           </div>
         ))}
       </div>
-      <p className="text-xs text-muted-foreground">Sayılar canlıdır, 30 saniyede bir yenilenir.</p>
+      <p className="text-xs text-muted-foreground">Gerçek veriler: aynı kişi aynı oturumda bir kez sayılır. Oran = (WP + Arama) / Görüntü. 30 sn'de bir yenilenir.</p>
     </div>
   );
 }
