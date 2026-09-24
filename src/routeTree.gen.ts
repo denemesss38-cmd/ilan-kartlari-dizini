@@ -14,6 +14,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as KurulumRouteImport } from './routes/kurulum'
 import { Route as AuthenticatedRagnarRouteImport } from './routes/_authenticated/ragnar'
+import { Route as DiyarbakirIlanlarSayfasiIndexRouteImport } from './routes/diyarbakir-ilanlar-sayfasi.index'
 import { Route as DiyarbakirIlanlarSayfasiIdRouteImport } from './routes/diyarbakir-ilanlar-sayfasi.$id'
 import { Route as IlanIdRouteImport } from './routes/ilan.$id'
 
@@ -41,6 +42,12 @@ const AuthenticatedRagnarRoute = AuthenticatedRagnarRouteImport.update({
   path: '/ragnar',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const DiyarbakirIlanlarSayfasiIndexRoute =
+  DiyarbakirIlanlarSayfasiIndexRouteImport.update({
+    id: '/diyarbakir-ilanlar-sayfasi/',
+    path: '/diyarbakir-ilanlar-sayfasi/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const DiyarbakirIlanlarSayfasiIdRoute =
   DiyarbakirIlanlarSayfasiIdRouteImport.update({
     id: '/diyarbakir-ilanlar-sayfasi/$id',
@@ -60,6 +67,7 @@ export interface FileRoutesByFullPath {
   '/ragnar': typeof AuthenticatedRagnarRoute
   '/diyarbakir-ilanlar-sayfasi/$id': typeof DiyarbakirIlanlarSayfasiIdRoute
   '/ilan/$id': typeof IlanIdRoute
+  '/diyarbakir-ilanlar-sayfasi/': typeof DiyarbakirIlanlarSayfasiIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -68,6 +76,7 @@ export interface FileRoutesByTo {
   '/ragnar': typeof AuthenticatedRagnarRoute
   '/diyarbakir-ilanlar-sayfasi/$id': typeof DiyarbakirIlanlarSayfasiIdRoute
   '/ilan/$id': typeof IlanIdRoute
+  '/diyarbakir-ilanlar-sayfasi': typeof DiyarbakirIlanlarSayfasiIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -78,6 +87,7 @@ export interface FileRoutesById {
   '/_authenticated/ragnar': typeof AuthenticatedRagnarRoute
   '/diyarbakir-ilanlar-sayfasi/$id': typeof DiyarbakirIlanlarSayfasiIdRoute
   '/ilan/$id': typeof IlanIdRoute
+  '/diyarbakir-ilanlar-sayfasi/': typeof DiyarbakirIlanlarSayfasiIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -88,6 +98,7 @@ export interface FileRouteTypes {
     | '/ragnar'
     | '/diyarbakir-ilanlar-sayfasi/$id'
     | '/ilan/$id'
+    | '/diyarbakir-ilanlar-sayfasi/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -96,6 +107,7 @@ export interface FileRouteTypes {
     | '/ragnar'
     | '/diyarbakir-ilanlar-sayfasi/$id'
     | '/ilan/$id'
+    | '/diyarbakir-ilanlar-sayfasi'
   id:
     | '__root__'
     | '/'
@@ -105,6 +117,7 @@ export interface FileRouteTypes {
     | '/_authenticated/ragnar'
     | '/diyarbakir-ilanlar-sayfasi/$id'
     | '/ilan/$id'
+    | '/diyarbakir-ilanlar-sayfasi/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -114,6 +127,7 @@ export interface RootRouteChildren {
   KurulumRoute: typeof KurulumRoute
   DiyarbakirIlanlarSayfasiIdRoute: typeof DiyarbakirIlanlarSayfasiIdRoute
   IlanIdRoute: typeof IlanIdRoute
+  DiyarbakirIlanlarSayfasiIndexRoute: typeof DiyarbakirIlanlarSayfasiIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -153,6 +167,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRagnarRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/diyarbakir-ilanlar-sayfasi/': {
+      id: '/diyarbakir-ilanlar-sayfasi/'
+      path: '/diyarbakir-ilanlar-sayfasi'
+      fullPath: '/diyarbakir-ilanlar-sayfasi/'
+      preLoaderRoute: typeof DiyarbakirIlanlarSayfasiIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/diyarbakir-ilanlar-sayfasi/$id': {
       id: '/diyarbakir-ilanlar-sayfasi/$id'
       path: '/diyarbakir-ilanlar-sayfasi/$id'
@@ -188,6 +209,7 @@ const rootRouteChildren: RootRouteChildren = {
   KurulumRoute: KurulumRoute,
   DiyarbakirIlanlarSayfasiIdRoute: DiyarbakirIlanlarSayfasiIdRoute,
   IlanIdRoute: IlanIdRoute,
+  DiyarbakirIlanlarSayfasiIndexRoute: DiyarbakirIlanlarSayfasiIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
