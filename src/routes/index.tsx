@@ -165,17 +165,17 @@ function ListingStrip({
         split={3}
         interactive={false}
         priority={priority}
-        className="h-[128px] w-full md:h-56"
+        className="h-[152px] w-full md:h-60"
       />
 
-      <span className="pointer-events-none absolute right-3 top-3 z-20 flex items-center gap-1 rounded-full bg-primary px-2.5 py-1 text-[9px] font-bold uppercase tracking-wider text-primary-foreground shadow-[0_8px_20px_-6px_var(--card-glow)] md:right-6 md:top-5 md:text-[10px]">
-        <BadgeCheck className="size-3" />
+      <span className="pointer-events-none absolute right-3 top-3 z-20 flex items-center gap-1 rounded-full bg-primary px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-primary-foreground shadow-[0_8px_20px_-6px_var(--card-glow)] md:right-6 md:top-5 md:px-3.5 md:text-xs">
+        <BadgeCheck className="size-3.5" />
         Onaylı İlan
       </span>
 
       {item.venue?.trim() ? (
-        <span className="pointer-events-none absolute right-3 top-[32px] z-20 flex items-center gap-1 rounded-full border border-primary/35 bg-background/95 px-2.5 py-1 text-[9px] font-bold uppercase tracking-wider text-foreground shadow-md backdrop-blur-md md:right-6 md:top-[42px] md:text-[10px]">
-          <Home className="size-3 text-primary" />
+        <span className="pointer-events-none absolute right-3 top-[38px] z-20 flex items-center gap-1 rounded-full border border-primary/35 bg-background/95 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-foreground shadow-md backdrop-blur-md md:right-6 md:top-[46px] md:px-3.5 md:text-xs">
+          <Home className="size-3.5 text-primary" />
           {item.venue}
         </span>
       ) : null}
@@ -183,7 +183,7 @@ function ListingStrip({
       <div className="pointer-events-none absolute inset-x-3 bottom-3 z-20 flex items-end justify-between gap-2 md:inset-x-6 md:bottom-5">
 
         <div className="min-w-0">
-          <h2 className="truncate text-sm font-black text-image-foreground md:text-base">
+          <h2 className="truncate text-base font-black text-image-foreground md:text-xl">
             {item.name}
           </h2>
         </div>
@@ -194,9 +194,9 @@ function ListingStrip({
         target="_blank"
         rel="noopener noreferrer"
         aria-label={`${item.name} WhatsApp ile yaz`}
-        className="whatsapp-shake absolute bottom-3 right-3 z-30 grid size-10 place-items-center rounded-full bg-whatsapp text-primary-foreground ring-1 ring-border md:bottom-5 md:right-6 md:size-12"
+        className="whatsapp-shake absolute bottom-3 right-3 z-30 grid size-11 place-items-center rounded-full bg-whatsapp text-primary-foreground ring-1 ring-border md:bottom-5 md:right-6 md:size-14"
       >
-        <MessageCircle className="size-5 md:size-6" />
+        <MessageCircle className="size-6 md:size-7" />
       </a>
     </article>
   );
@@ -317,7 +317,7 @@ function Index() {
         {listingsQuery.isLoading ? (
           <div className="mt-5 md:mt-8">
             {[0, 1, 2, 3].map((i) => (
-              <div key={i} className="h-[128px] w-full animate-pulse bg-secondary/60 md:h-56" />
+              <div key={i} className="h-[152px] w-full animate-pulse bg-secondary/60 md:h-60" />
             ))}
           </div>
         ) : listings.length === 0 ? (
