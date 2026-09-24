@@ -165,7 +165,7 @@ function ListingStrip({
         split={3}
         interactive={false}
         priority={priority}
-        className="h-[152px] w-full md:h-60"
+        className="h-[178px] w-full md:h-72"
       />
 
       <span className="pointer-events-none absolute right-2.5 top-2.5 z-20 flex items-center gap-1 rounded-full bg-primary px-2.5 py-1 text-[9px] font-bold uppercase tracking-wider text-primary-foreground shadow-[0_6px_16px_-6px_var(--card-glow)] md:right-5 md:top-4 md:px-3 md:py-1.5 md:text-[11px]">
@@ -183,7 +183,7 @@ function ListingStrip({
       <div className="pointer-events-none absolute inset-x-3 bottom-3 z-20 flex items-end justify-between gap-2 md:inset-x-6 md:bottom-5">
 
         <div className="min-w-0">
-          <h2 className="truncate text-base font-black text-image-foreground md:text-xl">
+          <h2 className="truncate text-sm font-bold text-image-foreground md:text-lg">
             {item.name}
           </h2>
         </div>
@@ -317,7 +317,7 @@ function Index() {
         {listingsQuery.isLoading ? (
           <div className="mt-5 md:mt-8">
             {[0, 1, 2, 3].map((i) => (
-              <div key={i} className="h-[152px] w-full animate-pulse bg-secondary/60 md:h-60" />
+              <div key={i} className="h-[178px] w-full animate-pulse bg-secondary/60 md:h-72" />
             ))}
           </div>
         ) : listings.length === 0 ? (
