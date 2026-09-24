@@ -54,7 +54,7 @@ export type Listing = {
   /** Görüşme yeri: "Kendi yeri var", "Apart", "Otel" vb. */
   venue: string | null;
   /** Fotoğraf şeridinin akış yönü: "left" veya "right". */
-  scroll_direction: string | null;
+  scroll_direction: string;
   sort_order: number;
   is_published: boolean;
 };
