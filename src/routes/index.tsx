@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { resolvePhotoUrls } from "@/lib/photos";
 import { siteConfig, type Listing } from "@/data/listings";
 import { parseFooterBoxes } from "@/lib/footer-boxes";
+import { trackListing } from "@/lib/stats";
 import girlImage1 from "@/assets/girl-promo.jpg";
 import girlImage2 from "@/assets/girl-2.jpg";
 import girlImage3 from "@/assets/girl-3.jpg";
@@ -199,6 +200,7 @@ function ListingStrip({
       {/* Sol altta küçük, siyah zeminli telefon kapsülü (tel:) */}
       <a
         href={`tel:${(item.phone || item.whatsapp || "").replace(/[^\d+]/g, "")}`}
+        onClick={() => void trackListing(item.id, "call")}
         aria-label={`${item.name} numarasını ara`}
         className="absolute bottom-3 left-3 z-30 flex items-center gap-1.5 rounded-full bg-black/90 px-3 py-1.5 text-xs font-semibold leading-none text-white ring-1 ring-white/15 transition-colors hover:bg-black md:bottom-5 md:left-6 md:px-3.5 md:py-2 md:text-sm"
       >
@@ -206,6 +208,7 @@ function ListingStrip({
         <span className="tracking-wide">{formatPhone(item.phone || item.whatsapp || "")}</span>
       </a>
       <a
+        onClick={() => void trackListing(item.id, "wa")}
         href={waLink(item.whatsapp || item.phone, item.whatsapp_message?.trim() || message)}
         target="_blank"
         rel="noopener noreferrer"
