@@ -66,6 +66,7 @@ function AdminPage() {
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState({ done: 0, total: 0 });
   const [detailsOpen, setDetailsOpen] = useState(false);
+  const [tab, setTab] = useState<"listings" | "showcase" | "seo">("listings");
 
   const roleQuery = useQuery({
     queryKey: ["my-admin-role"],
@@ -250,10 +251,40 @@ function AdminPage() {
       </header>
 
       <main className="mx-auto max-w-3xl px-3 pb-16 pt-4">
-        <CarouselSpeedSetting />
-        <WhatsAppSettings />
-        <SeoSettings />
+        {/* Sekmeli düzen: her başlık kendi bölümünü açar, sayfa karışmaz. */}
+        <nav className="grid grid-cols-3 gap-1 rounded-2xl border border-border bg-secondary/60 p-1">
+          {(
+            [
+              { key: "listings", label: `İlanlar (${items.length})` },
+              { key: "showcase", label: "Vitrin & Hız" },
+              { key: "seo", label: "SEO & Bölgeler" },
+            ] as const
+          ).map((t) => (
+            <button
+              key={t.key}
+              onClick={() => setTab(t.key)}
+              className={`truncate rounded-xl px-2 py-2.5 text-[11px] font-black transition-colors md:text-xs ${
+                tab === t.key
+                  ? "bg-primary text-primary-foreground shadow"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              {t.label}
+            </button>
+          ))}
+        </nav>
 
+        {tab === "showcase" ? (
+          <div className="mt-4 space-y-4">
+            <CarouselSpeedSetting />
+            <WhatsAppSettings />
+          </div>
+        ) : null}
+
+        {tab === "seo" ? <SeoSettings /> : null}
+
+        {tab === "listings" ? (
+        <>
         <button
           onClick={() => setDraft({ ...emptyDraft, sort_order: items.length + 1 })}
           className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-black text-primary-foreground"
@@ -261,6 +292,8 @@ function AdminPage() {
           <Plus className="size-4" />
           Yeni ilan ekle
         </button>
+
+
 
 
         {draft ? (
@@ -568,6 +601,8 @@ function AdminPage() {
             <p className="text-center text-sm text-muted-foreground">Henüz ilan yok.</p>
           ) : null}
         </div>
+        </>
+        ) : null}
       </main>
     </div>
   );
