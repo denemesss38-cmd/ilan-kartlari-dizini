@@ -15,6 +15,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as KurulumRouteImport } from './routes/kurulum'
 import { Route as AuthenticatedRagnarRouteImport } from './routes/_authenticated/ragnar'
 import { Route as DiyarbakirIlanlarSayfasiIdRouteImport } from './routes/diyarbakir-ilanlar-sayfasi.$id'
+import { Route as IlanIdRouteImport } from './routes/ilan.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -46,6 +47,11 @@ const DiyarbakirIlanlarSayfasiIdRoute =
     path: '/diyarbakir-ilanlar-sayfasi/$id',
     getParentRoute: () => rootRouteImport,
   } as any)
+const IlanIdRoute = IlanIdRouteImport.update({
+  id: '/ilan/$id',
+  path: '/ilan/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -53,6 +59,7 @@ export interface FileRoutesByFullPath {
   '/kurulum': typeof KurulumRoute
   '/ragnar': typeof AuthenticatedRagnarRoute
   '/diyarbakir-ilanlar-sayfasi/$id': typeof DiyarbakirIlanlarSayfasiIdRoute
+  '/ilan/$id': typeof IlanIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -60,6 +67,7 @@ export interface FileRoutesByTo {
   '/kurulum': typeof KurulumRoute
   '/ragnar': typeof AuthenticatedRagnarRoute
   '/diyarbakir-ilanlar-sayfasi/$id': typeof DiyarbakirIlanlarSayfasiIdRoute
+  '/ilan/$id': typeof IlanIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -69,13 +77,25 @@ export interface FileRoutesById {
   '/kurulum': typeof KurulumRoute
   '/_authenticated/ragnar': typeof AuthenticatedRagnarRoute
   '/diyarbakir-ilanlar-sayfasi/$id': typeof DiyarbakirIlanlarSayfasiIdRoute
+  '/ilan/$id': typeof IlanIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/auth' | '/kurulum' | '/ragnar' | '/diyarbakir-ilanlar-sayfasi/$id'
+    | '/'
+    | '/auth'
+    | '/kurulum'
+    | '/ragnar'
+    | '/diyarbakir-ilanlar-sayfasi/$id'
+    | '/ilan/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/kurulum' | '/ragnar' | '/diyarbakir-ilanlar-sayfasi/$id'
+  to:
+    | '/'
+    | '/auth'
+    | '/kurulum'
+    | '/ragnar'
+    | '/diyarbakir-ilanlar-sayfasi/$id'
+    | '/ilan/$id'
   id:
     | '__root__'
     | '/'
@@ -84,6 +104,7 @@ export interface FileRouteTypes {
     | '/kurulum'
     | '/_authenticated/ragnar'
     | '/diyarbakir-ilanlar-sayfasi/$id'
+    | '/ilan/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -92,6 +113,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   KurulumRoute: typeof KurulumRoute
   DiyarbakirIlanlarSayfasiIdRoute: typeof DiyarbakirIlanlarSayfasiIdRoute
+  IlanIdRoute: typeof IlanIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -138,6 +160,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DiyarbakirIlanlarSayfasiIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/ilan/$id': {
+      id: '/ilan/$id'
+      path: '/ilan/$id'
+      fullPath: '/ilan/$id'
+      preLoaderRoute: typeof IlanIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -158,6 +187,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   KurulumRoute: KurulumRoute,
   DiyarbakirIlanlarSayfasiIdRoute: DiyarbakirIlanlarSayfasiIdRoute,
+  IlanIdRoute: IlanIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
