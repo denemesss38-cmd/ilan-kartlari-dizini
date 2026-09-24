@@ -16,50 +16,65 @@ export type Database = {
     Tables: {
       listings: {
         Row: {
+          age: string | null
           badge: string | null
           created_at: string
           description: string
+          district: string | null
+          height: string | null
           id: string
           is_published: boolean
           location: string
+          meeting: string | null
           name: string
           phone: string
           photos: string[]
           sort_order: number
           updated_at: string
           venue: string | null
+          weight: string | null
           whatsapp: string
           whatsapp_message: string
         }
         Insert: {
+          age?: string | null
           badge?: string | null
           created_at?: string
           description?: string
+          district?: string | null
+          height?: string | null
           id?: string
           is_published?: boolean
           location?: string
+          meeting?: string | null
           name: string
           phone?: string
           photos?: string[]
           sort_order?: number
           updated_at?: string
           venue?: string | null
+          weight?: string | null
           whatsapp?: string
           whatsapp_message?: string
         }
         Update: {
+          age?: string | null
           badge?: string | null
           created_at?: string
           description?: string
+          district?: string | null
+          height?: string | null
           id?: string
           is_published?: boolean
           location?: string
+          meeting?: string | null
           name?: string
           phone?: string
           photos?: string[]
           sort_order?: number
           updated_at?: string
           venue?: string | null
+          weight?: string | null
           whatsapp?: string
           whatsapp_message?: string
         }
