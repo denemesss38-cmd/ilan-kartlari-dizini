@@ -6,6 +6,7 @@ import { PhotoCarousel } from "@/components/PhotoCarousel";
 import { supabase } from "@/integrations/supabase/client";
 import { resolvePhotoUrls } from "@/lib/photos";
 import { siteConfig, type Listing } from "@/data/listings";
+import { parseFooterBoxes } from "@/lib/footer-boxes";
 
 const DEFAULT_TITLE = "Diyarbakır İlan Rehberi — Güncel İlanlar ve İletişim";
 const DEFAULT_DESCRIPTION =
@@ -14,9 +15,6 @@ const DEFAULT_WA_MESSAGE = "Merhaba, Nova'dan geldim bilgi alabilir miyim?";
 
 const QUERY_STALE = 5 * 60 * 1000;
 const QUERY_GC = 30 * 60 * 1000;
-/** İlk alt bilgilendirme kutucuklarının başlıkları; devamı otomatik numaralanır. */
-const FOOTER_BOX_LABELS = ["Ofis", "Yenişehir", "Kayapınar", "Bağlar"];
-
 const listingsQueryOptions = {
   queryKey: ["public-listings"],
   staleTime: QUERY_STALE,
@@ -218,6 +216,7 @@ function Index() {
     footerText: "",
   };
   const contactHref = waLink(settings.whatsappNumber, settings.whatsappMessage);
+  const footerBoxes = parseFooterBoxes(settings.footerText);
 
   return (
     <div className="min-h-screen">
@@ -338,7 +337,7 @@ function Index() {
           </div>
         )}
 
-        {settings.footerText ? (
+        {footerBoxes.length ? (
           <section className="mx-3 mt-10 xs:mx-4 md:mx-6 md:mt-14">
             <div className="mb-4 flex items-center gap-2.5 px-1 md:mb-5">
               <span className="grid size-9 shrink-0 place-items-center rounded-2xl bg-cta text-primary-foreground shadow-glow-gold">
@@ -353,11 +352,7 @@ function Index() {
             </div>
 
             <div className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
-              {settings.footerText
-                .split(/\n{2,}/)
-                .map((para) => para.trim())
-                .filter(Boolean)
-                .map((para, i) => (
+              {footerBoxes.map((box, i) => (
                   <div
                     key={i}
                     className="relative overflow-hidden rounded-2xl border border-primary/25 bg-showcase-card p-4 shadow-[0_16px_40px_-26px_var(--card-glow)] ring-1 ring-primary/10 md:p-5"
@@ -368,10 +363,10 @@ function Index() {
                     />
                     <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-1 text-[9px] font-bold uppercase tracking-widest text-primary ring-1 ring-primary/25 md:text-[10px]">
                       <MapPin className="size-3" aria-hidden />
-                      {FOOTER_BOX_LABELS[i] ?? `Bölge ${i + 1}`}
+                      {box.title || `Bölge ${i + 1}`}
                     </span>
                     <p className="mt-2.5 whitespace-pre-line text-[11px] font-medium leading-relaxed text-foreground/80 md:text-xs">
-                      {para}
+                      {box.text}
                     </p>
                   </div>
                 ))}
