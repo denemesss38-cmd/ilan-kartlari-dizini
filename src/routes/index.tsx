@@ -324,15 +324,9 @@ function Index() {
                     />
                   </>
                 ) : null}
-                <img
-                  src={girlPromo}
-                  alt=""
-                  loading="lazy"
-                  decoding="async"
-                  width={736}
-                  height={912}
-                  className="relative size-12 shrink-0 rounded-full object-cover ring-2 ring-primary-foreground/50 md:size-14"
-                />
+                <span className="relative grid size-10 shrink-0 place-items-center rounded-full bg-background/25 text-primary-foreground ring-1 ring-primary-foreground/35 backdrop-blur-md">
+                  <MessageCircle className="size-5" aria-hidden />
+                </span>
                 <span className="relative min-w-0">
                   <span className="block text-xs font-black uppercase text-primary-foreground drop-shadow-sm md:text-sm">
                     {promo.title}
