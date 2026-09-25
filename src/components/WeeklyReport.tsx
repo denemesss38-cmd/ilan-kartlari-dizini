@@ -38,7 +38,7 @@ export function WeeklyReport({ items }: { items: Listing[] }) {
   const weeks = useMemo(() => {
     const rows = q.data ?? [];
     const today = todayIstanbul();
-    const start = rows.length ? toDay(rows[0].day) : today;
+    const start = rows[0] ? toDay(rows[0].day) : today;
     const count = Math.floor((today - start) / DAY_MS / 7) + 1;
     return Array.from({ length: count }, (_, w) => {
       const from = start + w * 7 * DAY_MS;
@@ -65,6 +65,7 @@ export function WeeklyReport({ items }: { items: Listing[] }) {
   if (q.error) return <p className="mt-4 text-sm text-destructive">Günlük veriler alınamadı.</p>;
 
   const current = weeks[weeks.length - 1];
+  if (!current) return null;
   const done = weeks.filter((w) => w.done);
   const shown = openWeek != null ? weeks[openWeek - 1] : null;
 

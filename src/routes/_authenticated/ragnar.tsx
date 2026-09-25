@@ -845,7 +845,7 @@ function SeoSettings() {
                             const { error } = await supabase.storage
                               .from("listing-photos")
                               .upload(path, file, { contentType: file.type || "image/jpeg" });
-                            if (error) return toast.error(error.message);
+                            if (error) { toast.error(error.message); return; }
                             const boxes = current.footerBoxes.map((item, itemIndex) =>
                               itemIndex === index ? { ...item, image: path } : item,
                             );
