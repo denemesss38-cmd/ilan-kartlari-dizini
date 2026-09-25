@@ -32,6 +32,38 @@ export type Database = {
         }
         Relationships: []
       }
+      listing_daily_stats: {
+        Row: {
+          call_clicks: number
+          day: string
+          listing_id: string
+          views: number
+          wa_clicks: number
+        }
+        Insert: {
+          call_clicks?: number
+          day: string
+          listing_id: string
+          views?: number
+          wa_clicks?: number
+        }
+        Update: {
+          call_clicks?: number
+          day?: string
+          listing_id?: string
+          views?: number
+          wa_clicks?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "listing_daily_stats_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       listing_stats: {
         Row: {
           call_clicks: number
