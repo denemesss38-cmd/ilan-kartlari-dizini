@@ -19,6 +19,7 @@ import { photoUrl, resolvePhotoUrl } from "@/lib/photos";
 import type { Listing } from "@/data/listings";
 import { parseFooterBoxes, serializeFooterBoxes, type FooterBox } from "@/lib/footer-boxes";
 import { StatsPanel } from "@/components/StatsPanel";
+import { WeeklyReport } from "@/components/WeeklyReport";
 
 export const Route = createFileRoute("/_authenticated/ragnar")({
   head: () => ({
@@ -285,7 +286,7 @@ function AdminPage() {
 
         {tab === "seo" ? <SeoSettings /> : null}
 
-        {tab === "stats" ? <StatsPanel items={items} /> : null}
+        {tab === "stats" ? (<><WeeklyReport items={items} /><StatsPanel items={items} /></>) : null}
 
         {tab === "listings" ? (
         <>
@@ -823,6 +824,53 @@ function SeoSettings() {
                 </div>
                 {openFooterBox === index ? (
                   <div className="mt-3 border-t border-border pt-3">
+                    <div className="mb-3 flex items-center gap-3">
+                      {box.image ? (
+                        <Thumb path={box.image} className="size-16 rounded-xl object-cover" />
+                      ) : (
+                        <div className="grid size-16 place-items-center rounded-xl bg-secondary text-[10px] text-muted-foreground">Foto yok</div>
+                      )}
+                      <label className="cursor-pointer rounded-xl bg-primary px-3 py-2 text-xs font-black text-primary-foreground">
+                        Fotoğraf seç
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={async (event) => {
+                            const file = event.target.files?.[0];
+                            event.target.value = "";
+                            if (!file) return;
+                            const ext = file.name.split(".").pop()?.toLowerCase().replace(/[^a-z0-9]/g, "") || "jpg";
+                            const path = `rehber/${crypto.randomUUID()}.${ext}`;
+                            const { error } = await supabase.storage
+                              .from("listing-photos")
+                              .upload(path, file, { contentType: file.type || "image/jpeg" });
+                            if (error) { toast.error(error.message); return; }
+                            const boxes = current.footerBoxes.map((item, itemIndex) =>
+                              itemIndex === index ? { ...item, image: path } : item,
+                            );
+                            setDraft({ ...current, footerBoxes: boxes });
+                            toast.success('Fotoğraf yüklendi. "Kaydet"e basın.');
+                          }}
+                        />
+                      </label>
+                      {box.image ? (
+                        <button
+                          type="button"
+                          className="text-xs font-bold text-destructive"
+                          onClick={() =>
+                            setDraft({
+                              ...current,
+                              footerBoxes: current.footerBoxes.map((item, itemIndex) =>
+                                itemIndex === index ? { ...item, image: "" } : item,
+                              ),
+                            })
+                          }
+                        >
+                          Kaldır
+                        </button>
+                      ) : null}
+                    </div>
                     <input
                       value={box.title}
                       maxLength={50}

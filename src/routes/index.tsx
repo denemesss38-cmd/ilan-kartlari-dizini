@@ -14,6 +14,19 @@ import girlImage3 from "@/assets/girl-3.jpg";
 
 const FOOTER_IMAGES = [girlImage1, girlImage2, girlImage3];
 
+async function resolveFooterImages(footerText: string): Promise<string[]> {
+  const boxes = parseFooterBoxes(footerText);
+  const paths = boxes.map((b) => b.image ?? "").filter(Boolean);
+  if (!paths.length) return boxes.map(() => "");
+  try {
+    const { data } = await supabase.storage.from("listing-photos").createSignedUrls(paths, 60 * 60 * 24 * 7);
+    const map = new Map((data ?? []).map((r) => [r.path, r.signedUrl]));
+    return boxes.map((b) => (b.image ? (map.get(b.image) ?? "") : ""));
+  } catch {
+    return boxes.map(() => "");
+  }
+}
+
 const DEFAULT_TITLE = "Diyarbakır İlan Rehberi — Güncel İlanlar ve İletişim";
 const DEFAULT_DESCRIPTION =
   "Diyarbakır'daki güncel ilanları inceleyin, telefon veya WhatsApp üzerinden tek dokunuşla iletişime geçin.";
@@ -81,6 +94,7 @@ const settingsQueryOptions = {
       seoTitle: str("seo_title", DEFAULT_TITLE),
       seoDescription: str("seo_description", DEFAULT_DESCRIPTION),
       footerText: str("footer_text", ""),
+      footerImages: await resolveFooterImages(str("footer_text", "")),
     };
   },
 };
@@ -235,6 +249,7 @@ function Index() {
     seoTitle: DEFAULT_TITLE,
     seoDescription: DEFAULT_DESCRIPTION,
     footerText: "",
+    footerImages: [] as string[],
   };
   const contactHref = waLink(settings.whatsappNumber, settings.whatsappMessage);
   const footerBoxes = parseFooterBoxes(settings.footerText);
@@ -395,7 +410,7 @@ function Index() {
                       className="pointer-events-none absolute inset-x-4 top-0 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent"
                     />
                     <img
-                      src={FOOTER_IMAGES[i % FOOTER_IMAGES.length]}
+                      src={settings.footerImages?.[i] || FOOTER_IMAGES[i % FOOTER_IMAGES.length]}
                       alt={box.title || `Bölge ${i + 1}`}
                       loading="lazy"
                       decoding="async"

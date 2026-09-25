@@ -63,6 +63,16 @@ export function PhotoCarousel({
   const [activeIndex, setActiveIndex] = useState(0);
   const [pressed, setPressed] = useState(false);
   const lightboxTouch = useRef<{ x: number; y: number } | null>(null);
+  const boxRef = useRef<HTMLDivElement | null>(null);
+  const [visible, setVisible] = useState(true);
+
+  useEffect(() => {
+    const el = boxRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") return;
+    const io = new IntersectionObserver(([e]) => setVisible(!!e?.isIntersecting), { rootMargin: "100px" });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
   const open = lightboxOpen ?? internalOpen;
   const setOpen = onLightboxOpenChange ?? setInternalOpen;
 
@@ -109,11 +119,14 @@ export function PhotoCarousel({
 
   const animationPaused = reduced || intervalSeconds === 0 || pressed;
   // Panelde girilen değer şeridin tam tur süresidir. Küçük değer daha hızlı akış demektir.
-  const marqueeDuration = Math.max(5, Math.min(60, intervalSeconds));
+  // Çok hızlı ayarlarda kasmayı önlemek için süre fotoğraf sayısına göre ölçeklenir.
+  const perScreen = Math.max(1, displayList.length / split);
+  const marqueeDuration = Math.max(6 * perScreen, Math.min(60, intervalSeconds) * perScreen * 0.5, 6);
 
   return (
     <>
       <div
+        ref={boxRef}
         className={`photo-marquee group relative overflow-hidden bg-secondary/70 ${className ?? ""}`}
         onPointerDown={() => setPressed(true)}
         onPointerUp={() => setPressed(false)}
@@ -121,7 +134,7 @@ export function PhotoCarousel({
         onPointerLeave={() => setPressed(false)}
       >
         <div
-          className={`photo-marquee-track flex h-full w-max ${animationPaused ? "is-paused" : ""} ${direction === "right" ? "is-reverse" : ""}`}
+          className={`photo-marquee-track flex h-full w-max ${animationPaused ? "is-paused" : ""} ${direction === "right" ? "is-reverse" : ""} ${visible ? "" : "is-offscreen"}`}
           aria-label={`${alt} fotoğraf galerisi`}
           style={{ "--marquee-duration": `${marqueeDuration}s` } as CSSProperties}
         >
