@@ -197,3 +197,9 @@ Plesk sürümüne göre alan adlarının adı küçük farklılık gösterebilir
 - **Yönetim paneli açılmıyor:** Hesabın yönetici rolüne sahip olduğundan ve oturumun açık olduğundan emin olun.
 - **Yeni sürüm görünmüyor:** Yeniden `npm run build` çalıştırıp PM2 uygulamasını `--update-env` ile yeniden başlatın.
 - **Nginx hatası:** Önce `sudo nginx -t`, ardından `sudo systemctl reload nginx` çalıştırın.
+## Canlı İstatistik (VPS'te de aynen çalışır)
+
+- Sayaçlar `track_listing_event` veritabanı fonksiyonuyla hem toplam (`listing_stats`) hem günlük (`listing_daily_stats`, Türkiye saati) olarak kaydedilir.
+- `/ragnar` → **İstatistik** sekmesinde bu haftanın günlük notları görünür; 7 gün dolunca köşeye "1. Hafta", "2. Hafta" rapor düğmeleri eklenir, tıklayınca haftalık rapor açılır.
+- Veriler buluttaki veritabanında tutulduğu için VPS'te yalnızca `.env` değerlerini girmeniz yeterlidir; ek sunucu ayarı gerekmez.
+- Rehber kutularının fotoğrafları `/ragnar` → **SEO & Bölgeler** → ilgili kutu → **Fotoğraf seç** ile yüklenir, ardından **Kaydet**.
