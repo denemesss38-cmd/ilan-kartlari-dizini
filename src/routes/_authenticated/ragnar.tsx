@@ -826,7 +826,7 @@ function SeoSettings() {
                   <div className="mt-3 border-t border-border pt-3">
                     <div className="mb-3 flex items-center gap-3">
                       {box.image ? (
-                        <StoredThumb path={box.image} className="size-16 rounded-xl object-cover" />
+                        <Thumb path={box.image} className="size-16 rounded-xl object-cover" />
                       ) : (
                         <div className="grid size-16 place-items-center rounded-xl bg-secondary text-[10px] text-muted-foreground">Foto yok</div>
                       )}

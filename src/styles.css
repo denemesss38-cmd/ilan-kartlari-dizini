@@ -203,10 +203,8 @@
 
 .photo-marquee {
   container-type: inline-size;
-  contain: paint layout style;
-  content-visibility: auto;
-  contain-intrinsic-size: auto 178px;
-  -webkit-overflow-scrolling: touch;
+  contain: layout paint;
+  transform: translateZ(0);
 }
 
 
@@ -227,8 +225,13 @@
   animation-play-state: paused;
 }
 
+.photo-marquee-track.is-offscreen {
+  animation-play-state: paused;
+}
+
 .photo-marquee-item {
   width: calc(100cqw / 3);
+  contain: strict;
 }
 
 .listing-showcase-card {
