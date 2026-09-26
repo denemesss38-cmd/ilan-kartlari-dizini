@@ -95,7 +95,7 @@ export function WeeklyReport({ items }: { items: Listing[] }) {
       .eq("listing_id", openId)
       .gte("day", iso(from))
       .lte("day", iso(from + 6 * DAY_MS));
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     setOpenWeek(null);
     toast.success("Haftalık arşiv silindi");
     await qc.invalidateQueries({ queryKey: ["admin-daily-stats"] });
