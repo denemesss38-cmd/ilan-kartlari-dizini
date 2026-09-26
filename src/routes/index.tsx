@@ -408,7 +408,7 @@ function Index() {
                   src={settings.footerImages?.[guide] || FOOTER_IMAGES[guide % FOOTER_IMAGES.length]}
                   alt={openBox.title || `Bölge ${guide + 1}`}
                   decoding="async"
-                  className="aspect-[16/9] w-full object-cover"
+                  className="max-h-[70vh] w-full bg-secondary/40 object-contain"
                 />
                 <div className="p-4 md:p-6">
                   <button type="button" onClick={() => setGuide(null)} className="mb-3 text-xs font-bold text-primary">← Tüm bölgeler</button>

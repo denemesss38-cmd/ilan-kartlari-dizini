@@ -6,9 +6,10 @@ type StatRow = { listing_id: string; views: number; wa_clicks: number; call_clic
 
 export function StatsPanel({ items }: { items: Listing[] }) {
   const statsQuery = useQuery({
-    queryKey: ["admin-stats"],
+    queryKey: ["admin-stats", "today"],
     queryFn: async () => {
-      const { data, error } = await (supabase.from as any)("listing_stats").select("listing_id, views, wa_clicks, call_clicks");
+      const today = new Date().toLocaleDateString("en-CA", { timeZone: "Europe/Istanbul" });
+      const { data, error } = await (supabase.from as any)("listing_daily_stats").select("listing_id, views, wa_clicks, call_clicks").eq("day", today);
       if (error) throw error;
       return (data ?? []) as StatRow[];
     },
@@ -23,6 +24,7 @@ export function StatsPanel({ items }: { items: Listing[] }) {
 
   return (
     <div className="mt-4 space-y-3">
+      <p className="text-xs font-black uppercase text-muted-foreground">Günlük rapor · bugün (00.00'da sıfırlanır)</p>
       <div className="grid grid-cols-3 gap-2">
         {cards.map(([l, v]) => (
           <div key={l} className="rounded-2xl border border-border bg-card p-3 text-center">
@@ -46,7 +48,7 @@ export function StatsPanel({ items }: { items: Listing[] }) {
           </div>
         ))}
       </div>
-      <p className="text-xs text-muted-foreground">Gerçek veriler: aynı kişi aynı oturumda bir kez sayılır. Oran = (WP + Arama) / Görüntü. 30 sn'de bir yenilenir.</p>
+      <p className="text-xs text-muted-foreground">Bugünün gerçek verileri; gece 00.00'da (TR) liste sıfırdan başlar, gün haftalık rapora eklenir. Oran = (WP + Arama) / Görüntü. 30 sn'de bir yenilenir.</p>
     </div>
   );
 }
