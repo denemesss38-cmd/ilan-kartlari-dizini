@@ -1,0 +1,2 @@
+GRANT DELETE ON public.listing_daily_stats TO authenticated;
+CREATE POLICY "Admins can delete daily stats" ON public.listing_daily_stats FOR DELETE TO authenticated USING (public.has_role(auth.uid(), 'admin'::app_role));
