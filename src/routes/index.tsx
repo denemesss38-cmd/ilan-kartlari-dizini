@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { BellRing, MapPin, MessageCircle, Phone, Send, Sparkles } from "lucide-react";
@@ -440,7 +441,7 @@ function Index() {
                         <MapPin className="size-3" aria-hidden />
                         {box.title || `Bölge ${i + 1}`}
                       </span>
-                      <p className="mt-2 whitespace-pre-line text-[11px] font-medium leading-relaxed text-foreground/80 md:text-xs">
+                      <p className="mt-2 line-clamp-3 whitespace-pre-line text-[11px] font-medium leading-relaxed text-foreground/80 md:text-xs">
                         {box.text}
                       </p>
                     </div>
