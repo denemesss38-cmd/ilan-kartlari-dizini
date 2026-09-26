@@ -2,6 +2,7 @@ export type FooterBox = {
   title: string;
   text: string;
   image?: string;
+  detail?: string;
 };
 
 const DEFAULT_TITLES = ["Ofis", "Yenişehir", "Kayapınar", "Bağlar"];
@@ -20,7 +21,8 @@ export function parseFooterBoxes(value: string): FooterBox[] {
         const title = typeof record["title"] === "string" ? record["title"].trim() : "";
         const text = typeof record["text"] === "string" ? record["text"].trim() : "";
         const image = typeof record["image"] === "string" ? record["image"].trim() : "";
-        return title || text ? [{ title, text, image }] : [];
+        const detail = typeof record["detail"] === "string" ? record["detail"].trim() : "";
+        return title || text || detail ? [{ title, text, image, detail }] : [];
       });
     }
   } catch {
@@ -37,7 +39,7 @@ export function parseFooterBoxes(value: string): FooterBox[] {
 export function serializeFooterBoxes(boxes: FooterBox[]) {
   return JSON.stringify(
     boxes
-      .map((box) => ({ title: box.title.trim(), text: box.text.trim(), image: (box.image ?? "").trim() }))
-      .filter((box) => box.title || box.text),
+      .map((box) => ({ title: box.title.trim(), text: box.text.trim(), image: (box.image ?? "").trim(), detail: (box.detail ?? "").trim() }))
+      .filter((box) => box.title || box.text || box.detail),
   );
 }

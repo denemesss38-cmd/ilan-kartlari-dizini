@@ -260,7 +260,7 @@ function AdminPage() {
               { key: "listings", label: `İlanlar (${items.length})` },
               { key: "showcase", label: "Vitrin & Hız" },
               { key: "seo", label: "SEO & Bölgeler" },
-              { key: "stats", label: "İstatistik" },
+              { key: "stats", label: "Veriler" },
             ] as const
           ).map((t) => (
             <button

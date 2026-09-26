@@ -227,6 +227,14 @@
 
 .photo-marquee-track.is-offscreen {
   animation-play-state: paused;
+  will-change: auto;
+}
+
+.photo-marquee-item img {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  -webkit-user-drag: none;
+  pointer-events: none;
 }
 
 .photo-marquee-item {
