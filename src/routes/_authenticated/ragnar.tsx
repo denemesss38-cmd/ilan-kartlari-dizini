@@ -286,7 +286,7 @@ function AdminPage() {
 
         {tab === "seo" ? <SeoSettings /> : null}
 
-        {tab === "stats" ? (<><WeeklyReport items={items} /><StatsPanel items={items} /></>) : null}
+        {tab === "stats" ? (<><StatsPanel items={items} /><WeeklyReport items={items} /></>) : null}
 
         {tab === "listings" ? (
         <>
@@ -891,6 +891,19 @@ function SeoSettings() {
                       onChange={(event) => {
                         const boxes = current.footerBoxes.map((item, itemIndex) =>
                           itemIndex === index ? { ...item, text: event.target.value } : item,
+                        );
+                        setDraft({ ...current, footerBoxes: boxes });
+                      }}
+                      className="mt-2 w-full rounded-xl border border-border bg-secondary px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary"
+                    />
+                    <textarea
+                      value={box.detail ?? ""}
+                      maxLength={20000}
+                      rows={8}
+                      placeholder="Uzun detay yazısı (kutuya tıklanınca açılır)"
+                      onChange={(event) => {
+                        const boxes = current.footerBoxes.map((item, itemIndex) =>
+                          itemIndex === index ? { ...item, detail: event.target.value } : item,
                         );
                         setDraft({ ...current, footerBoxes: boxes });
                       }}
