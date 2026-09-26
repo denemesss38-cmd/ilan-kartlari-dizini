@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { BellRing, MapPin, MessageCircle, Phone, Send, Sparkles } from "lucide-react";
@@ -253,6 +254,8 @@ function Index() {
   };
   const contactHref = waLink(settings.whatsappNumber, settings.whatsappMessage);
   const footerBoxes = parseFooterBoxes(settings.footerText);
+  const [guide, setGuide] = useState<number | null>(null);
+  const openBox = guide != null ? footerBoxes[guide] : undefined;
 
   return (
     <div className="min-h-screen">
@@ -399,11 +402,28 @@ function Index() {
               </span>
             </div>
 
+            {openBox && guide != null ? (
+              <article className="overflow-hidden rounded-2xl border border-primary/25 bg-showcase-card ring-1 ring-primary/10">
+                <img
+                  src={settings.footerImages?.[guide] || FOOTER_IMAGES[guide % FOOTER_IMAGES.length]}
+                  alt={openBox.title || `Bölge ${guide + 1}`}
+                  decoding="async"
+                  className="aspect-[16/9] w-full object-cover"
+                />
+                <div className="p-4 md:p-6">
+                  <button type="button" onClick={() => setGuide(null)} className="mb-3 text-xs font-bold text-primary">← Tüm bölgeler</button>
+                  <h3 className="text-lg font-black text-foreground md:text-xl">{openBox.title || `Bölge ${guide + 1}`}</h3>
+                  <p className="mt-3 whitespace-pre-line text-sm leading-relaxed text-foreground/85">{openBox.detail || openBox.text}</p>
+                </div>
+              </article>
+            ) : (
             <div className="space-y-3 md:space-y-4">
               {footerBoxes.map((box, i) => (
-                  <div
+                  <button
+                    type="button"
+                    onClick={() => setGuide(i)}
                     key={i}
-                    className="relative grid grid-cols-[auto_minmax(0,1fr)] items-center gap-3 overflow-hidden rounded-2xl border border-primary/25 bg-showcase-card p-3 shadow-[0_16px_40px_-26px_var(--card-glow)] ring-1 ring-primary/10 md:gap-4 md:p-4"
+                    className="relative grid w-full grid-cols-[auto_minmax(0,1fr)] items-center text-left gap-3 overflow-hidden rounded-2xl border border-primary/25 bg-showcase-card p-3 shadow-[0_16px_40px_-26px_var(--card-glow)] ring-1 ring-primary/10 md:gap-4 md:p-4"
                   >
                     <div
                       aria-hidden
@@ -421,13 +441,14 @@ function Index() {
                         <MapPin className="size-3" aria-hidden />
                         {box.title || `Bölge ${i + 1}`}
                       </span>
-                      <p className="mt-2 whitespace-pre-line text-[11px] font-medium leading-relaxed text-foreground/80 md:text-xs">
+                      <p className="mt-2 line-clamp-3 whitespace-pre-line text-[11px] font-medium leading-relaxed text-foreground/80 md:text-xs">
                         {box.text}
                       </p>
                     </div>
-                  </div>
+                  </button>
                 ))}
             </div>
+            )}
           </section>
         ) : null}
 

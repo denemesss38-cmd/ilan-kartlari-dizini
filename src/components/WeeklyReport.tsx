@@ -1,5 +1,7 @@
 import { useMemo, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { Lock, Trash2 } from "lucide-react";
+import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import type { Listing } from "@/data/listings";
@@ -9,17 +11,35 @@ type Sum = { v: number; w: number; c: number };
 
 const DAY_MS = 86400000;
 const toDay = (s: string) => Date.parse(`${s}T00:00:00Z`);
+const iso = (ms: number) => new Date(ms).toISOString().slice(0, 10);
 const fmt = (ms: number) =>
   new Date(ms).toLocaleDateString("tr-TR", { day: "2-digit", month: "short", weekday: "short", timeZone: "UTC" });
 const add = (a: Sum, r: DayRow): Sum => ({ v: a.v + r.views, w: a.w + r.wa_clicks, c: a.c + r.call_clicks });
 const zero = (): Sum => ({ v: 0, w: 0, c: 0 });
+/** Haftanın pazartesi günü (UTC gün değeri). */
+const monday = (t: number) => t - ((new Date(t).getUTCDay() + 6) % 7) * DAY_MS;
 
 function todayIstanbul() {
-  const s = new Date().toLocaleDateString("en-CA", { timeZone: "Europe/Istanbul" });
-  return toDay(s);
+  return toDay(new Date().toLocaleDateString("en-CA", { timeZone: "Europe/Istanbul" }));
 }
 
+function Nums({ s }: { s: Sum }) {
+  return (
+    <div className="grid grid-cols-3 gap-2 text-center">
+      {([["Görüntü", s.v, "text-destructive"], ["WhatsApp", s.w, "text-whatsapp"], ["Arama", s.c, "text-chart-3"]] as const).map(([l, v, c]) => (
+        <div key={l} className="rounded-xl bg-secondary/70 p-2">
+          <p className="text-[10px] font-black uppercase text-muted-foreground">{l}</p>
+          <p className={`text-xl font-black ${c}`}>{v}</p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/** "Veriler" sekmesi: her ilanın bağımsız günlük verisi ve kilitli haftalık arşivi. */
 export function WeeklyReport({ items }: { items: Listing[] }) {
+  const qc = useQueryClient();
+  const [openId, setOpenId] = useState<string | null>(null);
   const [openWeek, setOpenWeek] = useState<number | null>(null);
   const q = useQuery({
     queryKey: ["admin-daily-stats"],
@@ -33,104 +53,143 @@ export function WeeklyReport({ items }: { items: Listing[] }) {
     refetchInterval: 30000,
   });
 
-  const names = useMemo(() => new Map(items.map((i) => [i.id, i.name])), [items]);
+  const today = todayIstanbul();
+  const thisWeek = monday(today);
 
-  const weeks = useMemo(() => {
-    const rows = q.data ?? [];
-    const today = todayIstanbul();
-    const start = rows[0] ? toDay(rows[0].day) : today;
-    const count = Math.floor((today - start) / DAY_MS / 7) + 1;
-    return Array.from({ length: count }, (_, w) => {
-      const from = start + w * 7 * DAY_MS;
-      const days = Array.from({ length: 7 }, (_, d) => from + d * DAY_MS);
-      const inWeek = rows.filter((r) => {
-        const t = toDay(r.day);
-        return t >= from && t < from + 7 * DAY_MS;
-      });
-      const perDay = days.map((t) => ({ t, s: inWeek.filter((r) => toDay(r.day) === t).reduce(add, zero()) }));
-      const perListing = new Map<string, Sum>();
-      for (const r of inWeek) perListing.set(r.listing_id, add(perListing.get(r.listing_id) ?? zero(), r));
-      return {
-        n: w + 1,
-        from,
-        done: today >= from + 7 * DAY_MS,
-        total: inWeek.reduce(add, zero()),
-        perDay: perDay.filter((d) => d.t <= today),
-        perListing: [...perListing.entries()].sort((a, b) => b[1].v - a[1].v),
-      };
-    });
+  const byListing = useMemo(() => {
+    const m = new Map<string, DayRow[]>();
+    for (const r of q.data ?? []) m.set(r.listing_id, [...(m.get(r.listing_id) ?? []), r]);
+    return m;
   }, [q.data]);
 
-  if (q.isLoading) return <p className="mt-4 text-sm text-muted-foreground">Günlük veriler yükleniyor…</p>;
-  if (q.error) return <p className="mt-4 text-sm text-destructive">Günlük veriler alınamadı.</p>;
+  const detail = useMemo(() => {
+    if (!openId) return null;
+    const rows = byListing.get(openId) ?? [];
+    const todayRow = rows.find((r) => toDay(r.day) === today);
+    const current = rows.filter((r) => toDay(r.day) >= thisWeek);
+    const days = Array.from({ length: 7 }, (_, d) => thisWeek + d * DAY_MS)
+      .filter((t) => t < today)
+      .map((t) => ({ t, s: current.filter((r) => toDay(r.day) === t).reduce(add, zero()) }));
+    const starts = [...new Set(rows.map((r) => monday(toDay(r.day))).filter((w) => w < thisWeek))].sort((a, b) => a - b);
+    const weeks = starts.map((from, i) => {
+      const inWeek = rows.filter((r) => { const t = toDay(r.day); return t >= from && t < from + 7 * DAY_MS; });
+      return {
+        n: i + 1,
+        from,
+        total: inWeek.reduce(add, zero()),
+        perDay: Array.from({ length: 7 }, (_, d) => from + d * DAY_MS).map((t) => ({ t, s: inWeek.filter((r) => toDay(r.day) === t).reduce(add, zero()) })),
+      };
+    });
+    return {
+      today: todayRow ? add(zero(), todayRow) : zero(),
+      week: current.reduce(add, zero()),
+      days,
+      weeks,
+    };
+  }, [openId, byListing, today, thisWeek]);
 
-  const current = weeks[weeks.length - 1];
-  if (!current) return null;
-  const done = weeks.filter((w) => w.done);
-  const shown = openWeek != null ? weeks[openWeek - 1] : null;
+  const deleteWeek = async (from: number) => {
+    if (!openId || !confirm("Bu haftalık arşiv kalıcı olarak silinsin mi?")) return;
+    const { error } = await (supabase.from as any)("listing_daily_stats")
+      .delete()
+      .eq("listing_id", openId)
+      .gte("day", iso(from))
+      .lte("day", iso(from + 6 * DAY_MS));
+    if (error) { toast.error(error.message); return; }
+    setOpenWeek(null);
+    toast.success("Haftalık arşiv silindi");
+    await qc.invalidateQueries({ queryKey: ["admin-daily-stats"] });
+    await qc.invalidateQueries({ queryKey: ["admin-stats"] });
+  };
+
+  if (q.isLoading) return <p className="mt-4 text-sm text-muted-foreground">Veriler yükleniyor…</p>;
+  if (q.error) return <p className="mt-4 text-sm text-destructive">Veriler alınamadı.</p>;
+
+  const openItem = items.find((i) => i.id === openId);
+  const shownWeek = detail?.weeks.find((w) => w.n === openWeek) ?? null;
 
   return (
-    <div className="relative mt-4 rounded-2xl border border-border bg-card p-3">
-      {done.length ? (
-        <div className="absolute right-2 top-2 flex max-w-[60%] flex-wrap justify-end gap-1">
-          {done.map((w) => (
+    <div className="mt-4">
+      <p className="mb-2 text-xs font-black uppercase text-muted-foreground">Veriler · ilana bas, günlük raporu aç</p>
+      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+        {items.map((item, i) => {
+          const rows = byListing.get(item.id) ?? [];
+          const t = rows.find((r) => toDay(r.day) === today);
+          return (
             <button
-              key={w.n}
+              key={item.id}
               type="button"
-              onClick={() => setOpenWeek(w.n)}
-              className="rounded-full bg-primary px-2 py-0.5 text-[10px] font-black text-primary-foreground"
+              onClick={() => { setOpenId(item.id); setOpenWeek(null); }}
+              className="flex items-center justify-between gap-3 rounded-2xl border border-border bg-card p-4 text-left transition-colors hover:border-primary"
             >
-              {w.n}. Hafta
+              <span className="min-w-0">
+                <span className="block text-[10px] font-black uppercase text-muted-foreground">İlan {i + 1}</span>
+                <span className="block truncate font-black">{item.name}</span>
+              </span>
+              <span className="shrink-0 text-right text-xs font-bold text-muted-foreground">
+                Bugün<br />
+                <span className="text-destructive">{t?.views ?? 0}</span> · <span className="text-whatsapp">{t?.wa_clicks ?? 0}</span> · <span className="text-chart-3">{t?.call_clicks ?? 0}</span>
+              </span>
             </button>
-          ))}
-        </div>
-      ) : null}
-      <p className="text-xs font-black uppercase text-muted-foreground">Günlük not · {current.n}. Hafta</p>
-      <div className="mt-3 space-y-1.5">
-        {current.perDay.map(({ t, s }) => (
-          <div key={t} className="grid grid-cols-[minmax(0,1fr)_repeat(3,3.5rem)] gap-2 rounded-xl bg-secondary/60 px-3 py-2 text-sm">
-            <span className="font-bold">{fmt(t)}</span>
-            <span className="text-center font-black text-destructive">{s.v}</span>
-            <span className="text-center font-black text-whatsapp">{s.w}</span>
-            <span className="text-center font-black text-chart-3">{s.c}</span>
-          </div>
-        ))}
+          );
+        })}
       </div>
-      <p className="mt-2 text-[11px] text-muted-foreground">Sütunlar: Görüntü · WP · Arama. 7 gün dolunca rapor köşeye “{current.n}. Hafta” olarak eklenir.</p>
+      <p className="mt-2 text-[11px] text-muted-foreground">Görüntü · WhatsApp · Arama. Günlük veri gece yarısı (TR saati) haftaya eklenir, yeni gün sıfırdan başlar.</p>
 
-      <Dialog open={!!shown} onOpenChange={(o) => !o && setOpenWeek(null)}>
-        <DialogContent className="max-h-[85dvh] overflow-y-auto">
-          <DialogTitle>{shown?.n}. Hafta Raporu</DialogTitle>
-          <DialogDescription>
-            {shown ? `${fmt(shown.from)} – ${fmt(shown.from + 6 * DAY_MS)}` : ""}
-          </DialogDescription>
-          {shown ? (
-            <div className="space-y-3">
-              <div className="grid grid-cols-3 gap-2 text-center">
-                {([["Görüntü", shown.total.v], ["WhatsApp", shown.total.w], ["Arama", shown.total.c]] as const).map(([l, v]) => (
-                  <div key={l} className="rounded-xl bg-secondary p-2">
-                    <p className="text-[10px] font-black uppercase text-muted-foreground">{l}</p>
-                    <p className="text-xl font-black">{v}</p>
-                  </div>
-                ))}
+      <Dialog open={!!openId} onOpenChange={(o) => { if (!o) { setOpenId(null); setOpenWeek(null); } }}>
+        <DialogContent className="max-h-[88dvh] overflow-y-auto">
+          <DialogTitle>{openItem?.name ?? "İlan"}</DialogTitle>
+          <DialogDescription>Bağımsız günlük ve haftalık veriler</DialogDescription>
+          {detail ? (
+            shownWeek ? (
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <button type="button" className="text-sm font-bold text-primary" onClick={() => setOpenWeek(null)}>← Geri</button>
+                  <button type="button" onClick={() => deleteWeek(shownWeek.from)} className="flex items-center gap-1 rounded-full bg-destructive px-3 py-1 text-xs font-black text-primary-foreground">
+                    <Trash2 className="size-3.5" /> Sil
+                  </button>
+                </div>
+                <p className="font-black">{shownWeek.n}. Hafta · {fmt(shownWeek.from)} – {fmt(shownWeek.from + 6 * DAY_MS)}</p>
+                <Nums s={shownWeek.total} />
+                <div className="space-y-1">
+                  {shownWeek.perDay.map(({ t, s }) => (
+                    <div key={t} className="flex justify-between rounded-lg bg-secondary/50 px-3 py-1.5 text-sm">
+                      <span>{fmt(t)}</span><span className="font-bold">{s.v} / {s.w} / {s.c}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
-              <div className="space-y-1">
-                {shown.perDay.map(({ t, s }) => (
-                  <div key={t} className="flex justify-between text-sm">
-                    <span>{fmt(t)}</span>
-                    <span className="font-bold">{s.v} / {s.w} / {s.c}</span>
+            ) : (
+              <div className="space-y-4">
+                <div>
+                  <p className="mb-1.5 text-xs font-black uppercase text-muted-foreground">Bugün · {fmt(today)}</p>
+                  <Nums s={detail.today} />
+                </div>
+                <div>
+                  <p className="mb-1.5 text-xs font-black uppercase text-muted-foreground">Bu hafta (toplam)</p>
+                  <Nums s={detail.week} />
+                  <div className="mt-2 space-y-1">
+                    {detail.days.map(({ t, s }) => (
+                      <div key={t} className="flex justify-between rounded-lg bg-secondary/50 px-3 py-1.5 text-sm">
+                        <span>{fmt(t)}</span><span className="font-bold">{s.v} / {s.w} / {s.c}</span>
+                      </div>
+                    ))}
                   </div>
-                ))}
+                </div>
+                <div className="border-t border-border pt-3">
+                  <p className="mb-2 text-xs font-black uppercase text-muted-foreground">Kilitli haftalar</p>
+                  {detail.weeks.length ? (
+                    <div className="flex flex-wrap gap-1.5">
+                      {detail.weeks.map((w) => (
+                        <button key={w.from} type="button" onClick={() => setOpenWeek(w.n)} className="flex items-center gap-1 rounded-full bg-primary px-3 py-1 text-xs font-black text-primary-foreground">
+                          <Lock className="size-3" /> {w.n}. Hafta
+                        </button>
+                      ))}
+                    </div>
+                  ) : <p className="text-sm text-muted-foreground">Hafta dolunca burada kilitlenir.</p>}
+                </div>
               </div>
-              <div className="border-t border-border pt-2">
-                {shown.perListing.length ? shown.perListing.map(([id, s]) => (
-                  <div key={id} className="flex justify-between gap-2 text-sm">
-                    <span className="truncate">{names.get(id) ?? "Silinmiş ilan"}</span>
-                    <span className="shrink-0 font-bold">{s.v} / {s.w} / {s.c}</span>
-                  </div>
-                )) : <p className="text-sm text-muted-foreground">Bu hafta veri yok.</p>}
-              </div>
-            </div>
+            )
           ) : null}
         </DialogContent>
       </Dialog>
