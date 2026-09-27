@@ -70,7 +70,7 @@ export function WeeklyReport({ items }: { items: Listing[] }) {
     const days = Array.from({ length: 7 }, (_, d) => thisWeek + d * DAY_MS)
       .filter((t) => t < today)
       .map((t) => ({ t, s: current.filter((r) => toDay(r.day) === t).reduce(add, zero()) }));
-    const starts = [...new Set(rows.map((r) => monday(toDay(r.day))).filter((w) => w < thisWeek))].sort((a, b) => a - b);
+    const starts = [...new Set(rows.map((r) => monday(toDay(r.day))).filter((w) => w < thisWeek))].sort((a, b) => a - b).slice(-4);
     const weeks = starts.map((from, i) => {
       const inWeek = rows.filter((r) => { const t = toDay(r.day); return t >= from && t < from + 7 * DAY_MS; });
       return {
