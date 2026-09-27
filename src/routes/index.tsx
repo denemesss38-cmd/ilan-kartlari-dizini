@@ -407,6 +407,7 @@ function Index() {
                 <img
                   src={settings.footerImages?.[guide] || FOOTER_IMAGES[guide % FOOTER_IMAGES.length]}
                   alt={openBox.title || `Bölge ${guide + 1}`}
+                  loading="lazy"
                   decoding="async"
                   className="max-h-[70vh] w-full bg-secondary/40 object-contain"
                 />

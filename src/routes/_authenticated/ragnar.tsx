@@ -1,3 +1,4 @@
+import { toWebp } from "@/lib/webp";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
@@ -173,11 +174,11 @@ function AdminPage() {
     try {
       const paths: string[] = [];
       for (const file of all) {
-        const ext = file.name.split(".").pop()?.toLowerCase().replace(/[^a-z0-9]/g, "") || "jpg";
-        const path = `${crypto.randomUUID()}.${ext}`;
+        const img = await toWebp(file);
+        const path = `${crypto.randomUUID()}.${img.ext}`;
         const { error } = await supabase.storage
           .from("listing-photos")
-          .upload(path, file, { contentType: file.type || "image/jpeg" });
+          .upload(path, img.blob, { contentType: img.type });
         if (error) throw error;
         paths.push(path);
         setProgress({ done: paths.length, total: all.length });
@@ -840,11 +841,11 @@ function SeoSettings() {
                             const file = event.target.files?.[0];
                             event.target.value = "";
                             if (!file) return;
-                            const ext = file.name.split(".").pop()?.toLowerCase().replace(/[^a-z0-9]/g, "") || "jpg";
-                            const path = `rehber/${crypto.randomUUID()}.${ext}`;
+                            const img = await toWebp(file);
+                            const path = `rehber/${crypto.randomUUID()}.${img.ext}`;
                             const { error } = await supabase.storage
                               .from("listing-photos")
-                              .upload(path, file, { contentType: file.type || "image/jpeg" });
+                              .upload(path, img.blob, { contentType: img.type });
                             if (error) { toast.error(error.message); return; }
                             const boxes = current.footerBoxes.map((item, itemIndex) =>
                               itemIndex === index ? { ...item, image: path } : item,

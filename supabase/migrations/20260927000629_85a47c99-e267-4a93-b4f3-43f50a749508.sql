@@ -1,0 +1,2 @@
+REVOKE EXECUTE ON FUNCTION public.track_listing_event_once(uuid, uuid, text, timestamptz) FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.track_listing_event_once(uuid, uuid, text, timestamptz) TO service_role;

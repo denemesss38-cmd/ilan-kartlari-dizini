@@ -168,6 +168,38 @@ export type Database = {
         }
         Relationships: []
       }
+      metric_events: {
+        Row: {
+          client_timestamp: string | null
+          created_at: string
+          event_id: string
+          kind: string
+          listing_id: string
+        }
+        Insert: {
+          client_timestamp?: string | null
+          created_at?: string
+          event_id: string
+          kind: string
+          listing_id: string
+        }
+        Update: {
+          client_timestamp?: string | null
+          created_at?: string
+          event_id?: string
+          kind?: string
+          listing_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "metric_events_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       site_settings: {
         Row: {
           key: string
@@ -222,6 +254,15 @@ export type Database = {
       }
       track_listing_event: {
         Args: { _kind: string; _listing_id: string }
+        Returns: number
+      }
+      track_listing_event_once: {
+        Args: {
+          _client_ts?: string
+          _event_id: string
+          _kind: string
+          _listing_id: string
+        }
         Returns: number
       }
     }

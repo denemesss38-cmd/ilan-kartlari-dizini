@@ -17,6 +17,7 @@ import { Route as AuthenticatedRagnarRouteImport } from './routes/_authenticated
 import { Route as DiyarbakirIlanlarSayfasiIndexRouteImport } from './routes/diyarbakir-ilanlar-sayfasi.index'
 import { Route as DiyarbakirIlanlarSayfasiIdRouteImport } from './routes/diyarbakir-ilanlar-sayfasi.$id'
 import { Route as IlanIdRouteImport } from './routes/ilan.$id'
+import { Route as ApiMetricsBatchRouteImport } from './routes/api/metrics/batch'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -59,6 +60,11 @@ const IlanIdRoute = IlanIdRouteImport.update({
   path: '/ilan/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiMetricsBatchRoute = ApiMetricsBatchRouteImport.update({
+  id: '/api/metrics/batch',
+  path: '/api/metrics/batch',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -68,6 +74,7 @@ export interface FileRoutesByFullPath {
   '/diyarbakir-ilanlar-sayfasi/$id': typeof DiyarbakirIlanlarSayfasiIdRoute
   '/ilan/$id': typeof IlanIdRoute
   '/diyarbakir-ilanlar-sayfasi/': typeof DiyarbakirIlanlarSayfasiIndexRoute
+  '/api/metrics/batch': typeof ApiMetricsBatchRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -77,6 +84,7 @@ export interface FileRoutesByTo {
   '/diyarbakir-ilanlar-sayfasi/$id': typeof DiyarbakirIlanlarSayfasiIdRoute
   '/ilan/$id': typeof IlanIdRoute
   '/diyarbakir-ilanlar-sayfasi': typeof DiyarbakirIlanlarSayfasiIndexRoute
+  '/api/metrics/batch': typeof ApiMetricsBatchRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -88,6 +96,7 @@ export interface FileRoutesById {
   '/diyarbakir-ilanlar-sayfasi/$id': typeof DiyarbakirIlanlarSayfasiIdRoute
   '/ilan/$id': typeof IlanIdRoute
   '/diyarbakir-ilanlar-sayfasi/': typeof DiyarbakirIlanlarSayfasiIndexRoute
+  '/api/metrics/batch': typeof ApiMetricsBatchRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -99,6 +108,7 @@ export interface FileRouteTypes {
     | '/diyarbakir-ilanlar-sayfasi/$id'
     | '/ilan/$id'
     | '/diyarbakir-ilanlar-sayfasi/'
+    | '/api/metrics/batch'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -108,6 +118,7 @@ export interface FileRouteTypes {
     | '/diyarbakir-ilanlar-sayfasi/$id'
     | '/ilan/$id'
     | '/diyarbakir-ilanlar-sayfasi'
+    | '/api/metrics/batch'
   id:
     | '__root__'
     | '/'
@@ -118,6 +129,7 @@ export interface FileRouteTypes {
     | '/diyarbakir-ilanlar-sayfasi/$id'
     | '/ilan/$id'
     | '/diyarbakir-ilanlar-sayfasi/'
+    | '/api/metrics/batch'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -128,6 +140,7 @@ export interface RootRouteChildren {
   DiyarbakirIlanlarSayfasiIdRoute: typeof DiyarbakirIlanlarSayfasiIdRoute
   IlanIdRoute: typeof IlanIdRoute
   DiyarbakirIlanlarSayfasiIndexRoute: typeof DiyarbakirIlanlarSayfasiIndexRoute
+  ApiMetricsBatchRoute: typeof ApiMetricsBatchRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -188,6 +201,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IlanIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/metrics/batch': {
+      id: '/api/metrics/batch'
+      path: '/api/metrics/batch'
+      fullPath: '/api/metrics/batch'
+      preLoaderRoute: typeof ApiMetricsBatchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -210,6 +230,7 @@ const rootRouteChildren: RootRouteChildren = {
   DiyarbakirIlanlarSayfasiIdRoute: DiyarbakirIlanlarSayfasiIdRoute,
   IlanIdRoute: IlanIdRoute,
   DiyarbakirIlanlarSayfasiIndexRoute: DiyarbakirIlanlarSayfasiIndexRoute,
+  ApiMetricsBatchRoute: ApiMetricsBatchRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
